@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use WCA-Bench, please cite it as below."
+title: "WCA-Bench: A Sports Analytics Benchmark from World Cube Association Competition Data"
+version: "0.1.0"
+date-released: "2026-09-21"
+license: Apache-2.0
+authors:
+  - name: "WCA-Bench Project"
+abstract: >-
+  WCA-Bench is the first comprehensive machine-learning benchmark built on
+  public World Cube Association competition data. It covers result prediction,
+  placement prediction, DNF prediction, human-limit estimation, and skill
+  transfer analysis under a leakage-free temporal evaluation protocol.
+keywords:
+  - benchmark
+  - sports analytics
+  - speedcubing
+  - WCA
+  - machine learning
+repository-code: "https://github.com/"
+preferred-citation:
+  type: article
+  title: "WCA-Bench: A Sports Analytics Benchmark from World Cube Association Competition Data"
+  authors:
+    - name: "WCA-Bench Project"
+  year: 2026

@@ -1,0 +1,4 @@
+task: placement
+model: psych_sheet
+seed: 42
+metrics: [kendall_tau, top3_overlap, brier_podium]

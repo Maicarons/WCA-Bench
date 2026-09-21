@@ -1,0 +1,16 @@
+{
+  "name": "wca-bench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WCA-Bench：基于世界魔方协会数据库的体育数据分析标准化基准",
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "vitepress": "^1.6.3"
+  }
+}

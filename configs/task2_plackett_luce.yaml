@@ -1,0 +1,6 @@
+task: placement
+model: plackett_luce
+seed: 7
+params:
+  n_sim: 100
+metrics: [kendall_tau, top3_overlap, brier_podium]

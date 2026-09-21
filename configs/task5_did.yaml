@@ -1,0 +1,6 @@
+task: transfer
+model: did_proxy
+seed: 42
+params:
+  min_pairs: 5
+metrics: [n_identified_pairs, matrix_stability]

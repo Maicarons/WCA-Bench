@@ -1,0 +1,230 @@
+{
+  "task": "placement",
+  "model": "psych_sheet",
+  "overall": {
+    "kendall_tau": 0.7673476295148504,
+    "top3_overlap": 0.7594936708860759,
+    "brier_podium": NaN,
+    "n": 2260
+  },
+  "stratified": {
+    "by_event": {
+      "222": {
+        "kendall_tau": 0.7319105227494662,
+        "top3_overlap": 0.7142857142857143,
+        "brier_podium": NaN,
+        "n": 327
+      },
+      "333": {
+        "kendall_tau": 0.7962396649498289,
+        "top3_overlap": 0.7222222222222221,
+        "brier_podium": NaN,
+        "n": 732
+      },
+      "333bf": {
+        "kendall_tau": 0.8267099700329513,
+        "top3_overlap": 0.9047619047619048,
+        "brier_podium": NaN,
+        "n": 91
+      },
+      "333fm": {
+        "kendall_tau": 0.9229638952191942,
+        "top3_overlap": 0.8333333333333333,
+        "brier_podium": NaN,
+        "n": 67
+      },
+      "333mbf": {
+        "kendall_tau": 0.9999999999999999,
+        "top3_overlap": 1.0,
+        "brier_podium": NaN,
+        "n": 7
+      },
+      "333oh": {
+        "kendall_tau": 0.7654032076883012,
+        "top3_overlap": 0.7222222222222222,
+        "brier_podium": NaN,
+        "n": 129
+      },
+      "444": {
+        "kendall_tau": 0.665370888185146,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": NaN,
+        "n": 111
+      },
+      "444bf": {
+        "kendall_tau": 1.0,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": NaN,
+        "n": 5
+      },
+      "555": {
+        "kendall_tau": 0.7134283161705295,
+        "top3_overlap": 0.75,
+        "brier_podium": NaN,
+        "n": 138
+      },
+      "555bf": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": NaN,
+        "n": 4
+      },
+      "666": {
+        "kendall_tau": 0.23273875808757555,
+        "top3_overlap": 0.5,
+        "brier_podium": NaN,
+        "n": 34
+      },
+      "777": {
+        "kendall_tau": 0.23273875808757555,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": NaN,
+        "n": 31
+      },
+      "clock": {
+        "kendall_tau": 0.9138386906908722,
+        "top3_overlap": 0.9259259259259258,
+        "brier_podium": NaN,
+        "n": 212
+      },
+      "minx": {
+        "kendall_tau": 0.6144592273876366,
+        "top3_overlap": 0.75,
+        "brier_podium": NaN,
+        "n": 95
+      },
+      "pyram": {
+        "kendall_tau": 0.7989761437173205,
+        "top3_overlap": 0.7333333333333333,
+        "brier_podium": NaN,
+        "n": 151
+      },
+      "skewb": {
+        "kendall_tau": 0.1729658471057519,
+        "top3_overlap": 0.0,
+        "brier_podium": NaN,
+        "n": 24
+      },
+      "sq1": {
+        "kendall_tau": 0.8925035666088299,
+        "top3_overlap": 0.8,
+        "brier_podium": NaN,
+        "n": 102
+      }
+    },
+    "by_skill_level": {
+      "advanced": {
+        "kendall_tau": 0.676713046609603,
+        "top3_overlap": 0.838235294117647,
+        "brier_podium": NaN,
+        "n": 537
+      },
+      "elite": {
+        "kendall_tau": 0.6410396278481408,
+        "top3_overlap": 0.8958333333333334,
+        "brier_podium": NaN,
+        "n": 300
+      },
+      "intermediate": {
+        "kendall_tau": 0.6978801382799699,
+        "top3_overlap": 0.82183908045977,
+        "brier_podium": NaN,
+        "n": 798
+      },
+      "novice": {
+        "kendall_tau": 0.6559880505459715,
+        "top3_overlap": 0.7083333333333334,
+        "brier_podium": NaN,
+        "n": 625
+      }
+    },
+    "by_time_slice": {
+      "test_a": {
+        "kendall_tau": 0.8984766007983929,
+        "top3_overlap": 0.8571428571428571,
+        "brier_podium": NaN,
+        "n": 636
+      },
+      "test_b": {
+        "kendall_tau": 0.9035804012912295,
+        "top3_overlap": 0.8627450980392156,
+        "brier_podium": NaN,
+        "n": 445
+      },
+      "test_c": {
+        "kendall_tau": 0.643697251047708,
+        "top3_overlap": 0.6666666666666667,
+        "brier_podium": NaN,
+        "n": 1179
+      }
+    },
+    "by_continent": {
+      "_Asia": {
+        "kendall_tau": 0.9572650659651568,
+        "top3_overlap": 0.9444444444444443,
+        "brier_podium": NaN,
+        "n": 210
+      },
+      "_Europe": {
+        "kendall_tau": 0.6008558283854876,
+        "top3_overlap": 0.6470588235294117,
+        "brier_podium": NaN,
+        "n": 884
+      },
+      "_North America": {
+        "kendall_tau": 0.8901490517336594,
+        "top3_overlap": 0.8333333333333334,
+        "brier_podium": NaN,
+        "n": 1160
+      },
+      "_Oceania": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": NaN,
+        "n": 3
+      },
+      "_South America": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": NaN,
+        "n": 3
+      }
+    }
+  },
+  "hard_subset": {
+    "overall": {
+      "kendall_tau": 0.771488789981638,
+      "top3_overlap": 0.8587570621468926,
+      "brier_podium": NaN,
+      "n": 509
+    },
+    "n": 509
+  },
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "domain"
+  },
+  "extras": {
+    "cold_start": {
+      "overall": {
+        "kendall_tau": 0.12991311623664822,
+        "top3_overlap": 0.3095238095238095,
+        "brier_podium": NaN,
+        "n": 248
+      },
+      "n_cold": 248,
+      "n_warm": 2012
+    },
+    "n": 2260
+  },
+  "elapsed_sec": 233.50980377197266,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
+}

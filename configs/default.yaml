@@ -1,0 +1,12 @@
+# WCA-Bench configs
+seed: 42
+data:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  splits_dir: data/splits
+  source: synthetic
+protocol:
+  train_end: "2022-12-31"
+  val_end: "2024-12-31"
+  test_end: "2026-12-31"
+  frozen_stats: true

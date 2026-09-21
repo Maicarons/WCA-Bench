@@ -1,0 +1,7 @@
+task: result_prediction
+model: history_mean
+seed: 42
+params:
+  window: 25
+metrics: [mae_log, rmse_log, coverage90]
+protocol: rolling_frozen

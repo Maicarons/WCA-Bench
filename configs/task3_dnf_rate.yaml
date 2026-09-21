@@ -1,0 +1,6 @@
+task: dnf
+model: historical_dnf_rate
+seed: 42
+metrics: [auc_roc, auc_pr, f1, mcc, calibration]
+hard_subset:
+  historical_dnf_rate: [0.1, 0.3]

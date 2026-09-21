@@ -1,0 +1,4 @@
+task: dnf
+model: logistic
+seed: 42
+metrics: [auc_roc, auc_pr, f1, mcc, calibration]

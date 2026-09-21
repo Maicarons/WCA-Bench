@@ -1,0 +1,251 @@
+{
+  "task": "limit",
+  "model": "exponential_decay",
+  "overall": {
+    "events": [
+      {
+        "limit": 38.37681818181818,
+        "lambda": 0.3136363636363636,
+        "year_converge": 2018.196162194992,
+        "n_points": 18,
+        "sse": 51048.26087818096,
+        "loo_std": 5.73828508175766,
+        "method": "exponential_decay",
+        "last_wr": 53.0,
+        "event_id": "222"
+      },
+      {
+        "limit": 469.64,
+        "lambda": 0.18181818181818182,
+        "year_converge": 2022.764631008703,
+        "n_points": 21,
+        "sse": 125818.41955186994,
+        "loo_std": 23.826998291152304,
+        "method": "exponential_decay",
+        "last_wr": 472.0,
+        "event_id": "333"
+      },
+      {
+        "limit": 1467.625,
+        "lambda": 0.8409090909090908,
+        "year_converge": 2012.094648875461,
+        "n_points": 10,
+        "sse": 23566304.854291543,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 1475.0,
+        "event_id": "333bf"
+      },
+      {
+        "limit": 8.610454545454544,
+        "lambda": 0.05,
+        "year_converge": 2051.0517018598807,
+        "n_points": 6,
+        "sse": 20.310205475081016,
+        "loo_std": NaN,
+        "method": "exponential_decay",
+        "last_wr": 19.0,
+        "event_id": "333fm"
+      },
+      {
+        "limit": 1687.52,
+        "lambda": 0.4454545454545454,
+        "year_converge": 2018.078822507659,
+        "n_points": 11,
+        "sse": 10682923.47147619,
+        "loo_std": 2.2737367544323206e-13,
+        "method": "exponential_decay",
+        "last_wr": 1696.0,
+        "event_id": "333ft"
+      },
+      {
+        "limit": 371032805.7227273,
+        "lambda": 0.05,
+        "year_converge": 2054.0517018598807,
+        "n_points": 12,
+        "sse": 1.4945617133385612e+16,
+        "loo_std": 15909720.945469143,
+        "method": "exponential_decay",
+        "last_wr": 630326002.0,
+        "event_id": "333mbf"
+      },
+      {
+        "limit": NaN,
+        "lambda": NaN,
+        "year_converge": NaN,
+        "n_points": 1,
+        "sse": NaN,
+        "loo_std": NaN,
+        "method": "exponential_decay",
+        "last_wr": NaN,
+        "event_id": "333mbo"
+      },
+      {
+        "limit": 798.985,
+        "lambda": 0.7090909090909091,
+        "year_converge": 2010.9871800130638,
+        "n_points": 16,
+        "sse": 4902738.420108408,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 803.0,
+        "event_id": "333oh"
+      },
+      {
+        "limit": 1709.41,
+        "lambda": 0.4454545454545454,
+        "year_converge": 2014.078822507659,
+        "n_points": 20,
+        "sse": 70018298.20933072,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 1718.0,
+        "event_id": "444"
+      },
+      {
+        "limit": 12213.625,
+        "lambda": 1.5,
+        "year_converge": 2013.8025216497708,
+        "n_points": 5,
+        "sse": 37851483891.43972,
+        "loo_std": NaN,
+        "method": "exponential_decay",
+        "last_wr": 12275.0,
+        "event_id": "444bf"
+      },
+      {
+        "limit": 3713.34,
+        "lambda": 0.5772727272727273,
+        "year_converge": 2013.2264009406608,
+        "n_points": 19,
+        "sse": 57568301.2732483,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 3732.0,
+        "event_id": "555"
+      },
+      {
+        "limit": 21994.475,
+        "lambda": 0.4454545454545454,
+        "year_converge": 2017.078822507659,
+        "n_points": 8,
+        "sse": 825575940.7757738,
+        "loo_std": 3905.583242141368,
+        "method": "exponential_decay",
+        "last_wr": 22105.0,
+        "event_id": "555bf"
+      },
+      {
+        "limit": 7210.765,
+        "lambda": 0.5772727272727273,
+        "year_converge": 2017.2264009406608,
+        "n_points": 15,
+        "sse": 41996924.351716615,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 7247.0,
+        "event_id": "666"
+      },
+      {
+        "limit": 11309.17,
+        "lambda": 0.7090909090909091,
+        "year_converge": 2015.9871800130638,
+        "n_points": 12,
+        "sse": 69131510.07123819,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 11366.0,
+        "event_id": "777"
+      },
+      {
+        "limit": 358.2,
+        "lambda": 0.4454545454545454,
+        "year_converge": 2015.078822507659,
+        "n_points": 17,
+        "sse": 508760.3442546431,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 360.0,
+        "event_id": "clock"
+      },
+      {
+        "limit": 71.26363636363635,
+        "lambda": 0.3136363636363636,
+        "year_converge": 2017.196162194992,
+        "n_points": 8,
+        "sse": 763.4817962996253,
+        "loo_std": 8.377400975686795,
+        "method": "exponential_decay",
+        "last_wr": 90.0,
+        "event_id": "magic"
+      },
+      {
+        "limit": 2652.67,
+        "lambda": 1.5,
+        "year_converge": 2009.8025216497708,
+        "n_points": 13,
+        "sse": 129362556.06646165,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 2666.0,
+        "event_id": "minx"
+      },
+      {
+        "limit": 135.21090909090907,
+        "lambda": 0.18181818181818182,
+        "year_converge": 2025.764631008703,
+        "n_points": 5,
+        "sse": 1457.0786351490306,
+        "loo_std": NaN,
+        "method": "exponential_decay",
+        "last_wr": 206.0,
+        "event_id": "mmagic"
+      },
+      {
+        "limit": 122.385,
+        "lambda": 0.4454545454545454,
+        "year_converge": 2016.078822507659,
+        "n_points": 19,
+        "sse": 128692.13115535272,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 123.0,
+        "event_id": "pyram"
+      },
+      {
+        "limit": 75.93409090909091,
+        "lambda": 1.5,
+        "year_converge": 2017.8025216497708,
+        "n_points": 13,
+        "sse": 923181.2570244647,
+        "loo_std": 23.343641728371384,
+        "method": "exponential_decay",
+        "last_wr": 129.0,
+        "event_id": "skewb"
+      },
+      {
+        "limit": 509.44,
+        "lambda": 0.5772727272727273,
+        "year_converge": 2013.2264009406608,
+        "n_points": 16,
+        "sse": 1692874.7721197857,
+        "loo_std": 0.0,
+        "method": "exponential_decay",
+        "last_wr": 512.0,
+        "event_id": "sq1"
+      }
+    ],
+    "n_events": 21,
+    "mean_loo_std": 936099.2832374917,
+    "limit_333": 469.64,
+    "year_333": 2022.764631008703
+  },
+  "stratified": {},
+  "hard_subset": {},
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "statistical"
+  },
+  "extras": {},
+  "elapsed_sec": 0.3384277820587158
+}

@@ -1,0 +1,10 @@
+task: limit
+model: exponential_decay
+seed: 42
+params:
+  min_points: 5
+metrics: [limit, year_converge, loo_std]
+domain_anchor:
+  "333":
+    limit_seconds: 2.37
+    year: 2036

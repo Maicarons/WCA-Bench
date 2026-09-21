@@ -1,0 +1,8 @@
+task: result_prediction
+model: xgboost_log
+seed: 42
+params:
+  n_estimators: 80
+  max_depth: 4
+  learning_rate: 0.08
+metrics: [mae_log, rmse_log]

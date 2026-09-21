@@ -1,0 +1,13 @@
+task,model,primary_metric,primary_value,direction,n,failed,error,_rank
+dnf,historical_dnf_rate,auc_pr,0.3894279760791321,higher,1468.0,False,,1.0
+dnf,logistic,auc_pr,0.1868989613749735,higher,1468.0,False,,2.0
+limit,exponential_decay,mean_loo_std,936099.2832374917,lower,,False,,1.0
+limit,changepoint,mean_loo_std,,lower,,False,,
+placement,plackett_luce,kendall_tau,0.7673476295148504,higher,2260.0,False,,1.5
+placement,psych_sheet,kendall_tau,0.7673476295148504,higher,2260.0,False,,1.5
+result_prediction,xgboost_log,mae_log,0.1907702451110778,lower,2196.0,False,,1.0
+result_prediction,history_mean,mae_log,0.6657161932188251,lower,2196.0,False,,2.5
+result_prediction,kde,mae_log,0.6657161932188251,lower,2196.0,False,,2.5
+result_prediction,ridge_log,mae_log,1.0317528025305351,lower,2196.0,False,,4.0
+transfer,spearman_correlation,n_identified_pairs,423.0,higher,80000.0,False,,1.0
+transfer,did_proxy,n_identified_pairs,151.0,higher,80000.0,False,,2.0

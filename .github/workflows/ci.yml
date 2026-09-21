@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - name: Install
+        run: pip install -e ".[dev,fast,boost]"
+      - name: Unit tests
+        run: pytest tests/unit -q
+      - name: Integration (synthetic small)
+        run: |
+          python scripts/generate_synthetic.py --small
+          python scripts/build_dataset.py --source synthetic
+          python scripts/run_all_baselines.py --mode small
+          python scripts/build_leaderboard.py

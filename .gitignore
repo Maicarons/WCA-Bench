@@ -1,0 +1,30 @@
+# Node / 文档构建
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+*.log
+.DS_Store
+
+# Python / 数据与实验产物
+__pycache__/
+*.py[cod]
+.venv/
+.venv*/
+.ipynb_checkpoints/
+data/raw/
+data/processed/
+data/splits/
+outputs/
+wandb/
+mlruns/
+*.parquet
+*.arrow
+*.zip
+reports/
+scripts/_debug*.py
+scripts/_run_*.py
+
+# large local artifacts
+WCA_export_*.tsv
+WCA_export_*.zip
+

@@ -1,0 +1,4 @@
+task: transfer
+model: spearman_correlation
+seed: 42
+note: non-causal reference baseline
