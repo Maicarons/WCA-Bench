@@ -1,25 +1,25 @@
-# 复现性要求
+# Reproducibility Requirements
 
-## 1. 提交清单
+## 1. Submission Checklist
 
-所有提交的模型**必须**提供：
+Every submitted model **must** provide:
 
-- [ ] 完整的**训练代码**和**随机种子**
-- [ ] **数据预处理脚本**（或引用基准管线版本）
-- [ ] **模型权重**的 HuggingFace 托管链接
-- [ ] **推理时间的计算成本报告**（GPU 小时或 CPU 小时）
+- [ ] Complete **training code** and **random seeds**
+- [ ] **Data preprocessing scripts** (or a reference to the benchmark pipeline version)
+- [ ] A HuggingFace hosting link for the **model weights**
+- [ ] A **report of the inference-time compute cost** (GPU hours or CPU hours)
 
-## 2. 环境与版本
+## 2. Environment and Versions
 
-| 项目 | 要求 |
+| Item | Requirement |
 | --- | --- |
-| Python 版本 | 在 `pyproject.toml` / `environment.yml` 中固定 |
-| 依赖版本 | 锁定（lockfile 或精确版本号） |
-| 数据快照 | 记录 WCA 导出快照版本号（如 v2.0.2） |
-| 硬件 | 记录 GPU / CPU 型号与数量 |
-| 随机性 | 固定所有随机源（Python、NumPy、PyTorch、CUDA） |
+| Python version | Pinned in `pyproject.toml` / `environment.yml` |
+| Dependency versions | Locked (lockfile or exact version numbers) |
+| Data snapshot | Record the WCA export snapshot version (e.g. v2.0.2) |
+| Hardware | Record GPU / CPU models and counts |
+| Randomness | Fix all random sources (Python, NumPy, PyTorch, CUDA) |
 
-## 3. 随机种子策略
+## 3. Random Seed Strategy
 
 ```python
 def set_seed(seed: int) -> None:
@@ -32,13 +32,15 @@ def set_seed(seed: int) -> None:
     torch.backends.cudnn.benchmark = False
 ```
 
-要求：
+Requirements:
 
-- 主结果至少报告 **3 个种子**的均值 ± 标准差
-- 报告中显式给出使用的种子列表
-- Bootstrap / 蒙特卡洛模拟的种子同样固定
+- Primary results must report the mean ± standard deviation over **at least 3 seeds** — *satisfied*: seeds **42 / 43 / 44**, aggregated by `scripts/run_multi_seed.py --device cuda` into `examples/multi_seed.md`
+- The list of seeds used must be given explicitly in the report
+- The seeds of bootstrap / Monte Carlo simulations must also be fixed
 
-## 4. 算力成本报告
+The multi-seed artifact covers all 21 baselines across the five tasks and is committed as `examples/multi_seed.md` (machine-readable output: `outputs/multi_seed/multi_seed.json`). Because seeds change which competitions are sampled from the test window, the reported spread measures the **sampling variance of the evaluation window**, not training instability; T4 (a deterministic estimator over a fixed world-record series) and T5 (computed from the full training history) are correspondingly stable. Headline numbers are tabulated in [Task Suite · Multi-Seed Stability](/tasks/#_5-4-multi-seed-stability).
+
+## 4. Compute Cost Report
 
 ```json
 {
@@ -49,41 +51,50 @@ def set_seed(seed: int) -> None:
 }
 ```
 
-对比基线时，需同时给出**性能与成本的权衡**，避免「用 100 倍算力换来 1% 提升」被隐藏。
+When comparing against baselines, the **performance–cost trade-off** must also be given, so that cases such as "100× the compute for a 1% gain" cannot be hidden.
 
-## 5. 产物与校验
+Reports record the resolved `device`, the wall-clock time and the CPU hours; a GPU run additionally records `gpu_hours` and the accelerator model. The rationale for the CPU-first default, the full field list, and guidance on when a GPU is worth using are given in [Compute and Hardware](/evaluation/compute); the field-level specification is in [Compute and Hardware · Cost Reporting Specification](/evaluation/compute#_4-cost-reporting-specification).
 
-| 产物 | 校验方式 |
+## 5. Artifacts and Verification
+
+| Artifact | Verification method |
 | --- | --- |
-| 预处理 Parquet | 记录行数、列名、校验和（SHA256） |
-| 分割索引 | 与原始表行数对账 |
-| 模型权重 | 记录文件校验和与训练配置 |
-| 预测结果 | 保存每场比赛的原始预测，便于重算指标 |
+| Preprocessed Parquet | Record row counts, column names, and checksums (SHA256) |
+| Split indices | Reconcile with raw table row counts |
+| Model weights | Record file checksums and training configuration |
+| Predictions | Save the raw predictions for every competition so metrics can be recomputed |
 
-## 6. 复现等级
+## 6. Reproduction Levels
 
-| 等级 | 定义 |
+| Level | Definition |
 | --- | --- |
-| L1 可重跑 | 代码可运行，脚本齐全 |
-| L2 可复现 | L1 + 结果在容差内一致（±1% 指标） |
-| L3 可验证 | L2 + 原始预测可下载，指标可独立重算 |
+| L1 Rerunnable | Code runs, scripts complete |
+| L2 Reproducible | L1 + results agree within tolerance (±1% on metrics) |
+| L3 Verifiable | L2 + raw predictions downloadable, metrics independently recomputable |
 
-**基准收录的最低要求为 L2；主排行榜要求 L3。**
+**The minimum requirement for benchmark inclusion is L2; the main leaderboard requires L3.**
 
-## 7. 排行榜提交格式
+## 7. Leaderboard Submission Format
 
 ```text
 submission/
-├── report/               # 见评估框架的报告模板
-├── predictions.parquet   # 每场比赛的原始预测
-├── config.yaml           # 模型与训练配置
-├── environment.yml       # 环境锁定
-├── seeds.json            # 随机种子
-├── cost.json             # 算力报告
-└── README.md             # 复现步骤
+├── report/               # See the report template in the Evaluation Framework
+├── predictions.parquet   # Raw predictions for every competition
+├── config.yaml           # Model and training configuration
+├── environment.yml       # Environment lock
+├── seeds.json            # Random seeds
+├── cost.json             # Compute report
+└── README.md             # Reproduction steps
 ```
 
-## 8. 后续阅读
+Community entries carry the same information in a single flat report JSON
+(`{task}__{model}.json`) added under `community-submissions/`. The accepted
+schema and the validation command are documented in
+[community-submissions/README.md](https://github.com/Maicarons/WCA-Bench/blob/main/community-submissions/README.md),
+and the full workflow — including how to submit through the leaderboard Space —
+is described in [Join the Leaderboard](/guide/participate).
 
-- [评估框架 · 总览 →](/evaluation/)
-- [开发计划 · 验收标准 →](/plan/acceptance)
+## 8. Further Reading
+
+- [Evaluation Framework · Overview →](/evaluation/)
+- [Development Plan · Acceptance Criteria →](/plan/acceptance)
