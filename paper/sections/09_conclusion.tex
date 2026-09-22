@@ -1,0 +1,38 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+We presented \wcabench, a standardized benchmark for prediction and inference
+on World Cube Association competition data. Built on an official export of
+$6{,}909{,}454$ results spanning $298{,}551$ competitors and $18{,}708$
+competitions, it formalizes five tasks---result prediction, placement
+prediction, \DNF{} prediction, human-limit estimation and skill
+transfer---under a single interface with a leakage-safe rolling-window
+protocol, frozen statistics, four-dimensional stratification, a full
+statistical-testing toolbox with effect sizes, and a documented compute and
+hardware specification.
+
+Beyond the infrastructure, the paper reports 21 real reference baselines across
+six methodological families, each evaluated both for a single seed and as a
+mean over three seeds. These include a strong tree-based result model
+(\maelog{} $=0.164$, or $0.1055\pm0.0417$ across seeds) that beats a sequence
+model by roughly an order of magnitude, a three-way Kendall $\kendall=0.7673$
+placement tie among the psychology sheet, Plackett--Luce and a kernel-density
+simulation while a graph network reaches only $0.567$, a tree-based \DNF{}
+classifier (\aucpr{} $=0.373$) whose edge over the historical rate is \emph{not}
+significant and which is beaten on average by a simple Beta--Binomial prior,
+event-level human-limit estimates that disagree sharply with domain anchors,
+and a monotone collapse in identified transfer pairs from $413$ (correlation)
+to $6$ (difference-in-differences). We deliberately frame these as a
+reproducible starting point rather than as state-of-the-art claims.
+
+The benchmark's value is the question it makes answerable: under the real
+constraints of a rule-governed sport, how do different methodological families
+compare? We release the data pipeline, task definitions, baseline
+implementations and leaderboard tooling, and we invite the community to improve
+the baselines and to extend the tasks. Future work includes full-scale
+rolling-window evaluation on all $1.72$M test records across many seeds,
+domain-aware sequence and graph baselines that can exploit round-format and
+head-to-head structure, genuinely causal designs for \task{5}, and a community
+challenge with a public leaderboard. We hope \wcabench{} both serves
+speedcubing and offers a reusable template for trustworthy benchmarking in
+other rule-governed athletic domains.

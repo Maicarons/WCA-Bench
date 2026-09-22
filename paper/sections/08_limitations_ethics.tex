@@ -1,0 +1,127 @@
+\section{Limitations}
+\label{sec:limitations}
+
+We are explicit about what \wcabench{} cannot support, because a benchmark's
+credibility depends on the honesty of its caveats.
+
+\paragraph{Extrapolation risk (\task{4}).} Human-limit estimation has no
+observable ground truth and is intrinsically vulnerable to structural change.
+Historical data cannot anticipate a future jump driven by new hardware (for
+example magnetic cubes), new training regimes, or rule changes. The
+discrepancy between the three-by-three estimates of the change-point model
+($3.02$~s), the Gaussian-process/extreme-value model ($3.29$~s) and exponential
+decay ($3.74$~s), and the community anchor ($\approx 2.37$~s), should be read as
+a warning, not as a resolution. Limits reported here are model-conditional
+statements, not facts about human ability.
+
+\paragraph{Regional imbalance.} Access to sanctioned competitions is uneven
+across countries and continents. Because features such as competition count and
+opponent strength are partly proxies for opportunity, cross-regional
+generalization claims are weak. We report continental strata for transparency,
+but small strata (for example Oceania, South America) contain too few test
+instances for reliable conclusions, and several stratified cells are
+undefined.
+
+\paragraph{Self-selection and confounding (\task{5}).} Participation in an
+event is a choice correlated with ability. Correlation-based transfer
+estimates therefore overstate effects, and even the DID proxy relies on a
+parallel-trends assumption that self-selection may violate. The
+``identifiable pair count'' is a measure of how much the data support an
+estimate, not a guarantee of a causal effect. \wcabench{} should not be used to
+make causal claims about training without an explicit identification argument.
+
+\paragraph{Temporal non-stationarity.} The training window (2003--2022) differs
+from the test window (2025--2026) in hardware, rules and participant
+demographics. Models may degrade in ways that reflect genuine distribution
+shift rather than modelling error; the falling \task{2} Kendall $\kendall$
+across test slices ($0.90 \to 0.64$) is consistent with exactly this.
+
+\paragraph{Sampled small-mode results.} The headlines in
+Section~\ref{sec:results} come from a sampled test window run on a single
+machine with one GPU (Section~\ref{sec:compute}). Absolute values will move
+when the full rolling-window protocol is executed on all $1{,}719{,}290$ test
+records, and ranking ties (such as the \task{2} $0.7673$ tie) may resolve
+differently; the three-seed table (Section~\ref{sec:results-multiseed}) is
+included precisely to expose this sampling variance but does not substitute for
+the full run. We report the sampled numbers because they are real and
+verifiable, not because they are final; the released pipeline supports the full
+run.
+
+\paragraph{Imbalanced, sparse classes.} \DNF{} prediction and skill-transfer
+estimation both suffer from severe imbalance and sparsity. Even conditioning on
+rounds that reach the decision point, the positive rate varies from single
+digits in some events to about $95\%$ in three-by-three blindfolded, and many
+event pairs have too few common competitors for stable estimation.
+
+\paragraph{Native backends and compute reproducibility.} This release runs the
+tree baselines on native XGBoost and the GNN on its native CUDA path
+(Section~\ref{sec:compute}); every report records the device, wall-clock time
+and CPU/GPU hours actually used. Readers reproducing a baseline should hold the
+library versions and device fixed: a different backend (for example a
+scikit-learn fallback for the tree models, or a CPU-only graph kernel) will not
+reproduce these numbers exactly, and the earlier fallback-backed results
+differed materially from the native ones.
+
+\paragraph{Single-snapshot data.} Even with a fixed export (v2.0.2), the \wca{}
+occasionally corrects historical results, and the database grows continuously:
+each weekly export carries a new sequential version label and additional
+competitions. We pin the 2026-09-21 snapshot and record it, so the exact scale
+figures (for example $6{,}909{,}454$ results) are snapshot-specific and a newer
+export will show slightly larger numbers. Readers comparing against the current
+official download should treat our counts as a frozen baseline rather than a
+live value.
+
+\section{Ethics and Broader Impact}
+\label{sec:ethics}
+
+\paragraph{Permitted uses.} \wcabench{} is intended for scientific research and
+teaching: sports data analysis, benchmark methodology, and reproducible
+evaluation of prediction and inference methods. It may also serve the
+speedcubing community directly, for example to help competitors understand
+their own progression or organisers to reason about round structure.
+
+\paragraph{Prohibited uses.} The accompanying data card forbids, in the
+strongest terms, the use of these data or models for:
+\begin{itemize}
+  \item \textbf{gambling, betting or wagering} of any kind, including
+        predictive services marketed to bettors;
+  \item \textbf{discriminatory screening, profiling or shaming} of individual
+        competitors;
+  \item \textbf{impersonating} the \wca{} or other official bodies, or
+        fabricating competition results; and
+  \item redistributing individual-level derived data without anonymization.
+\end{itemize}
+These prohibitions are not decorative. Aggregate competition records are
+public, but they are records of identifiable people, and their aggregation
+enables inference that individuals did not consent to. The risk that a
+predictive benchmark is repurposed for betting is real enough that we treat its
+prevention as a design requirement.
+
+\paragraph{Attribution.} All derived publications must carry the \wca{}
+attribution notice: “This information is based on competition results owned and
+maintained by the World Cube Association, published at
+\url{https://worldcubeassociation.org/results}.” Code is released under
+Apache-2.0; data rights remain with the \wca{}.
+
+\paragraph{Privacy and opt-out.} Although the underlying data are public,
+individuals may have legitimate reasons to withdraw. We therefore commit to an
+opt-out mechanism: a competitor may contact the maintainers to request removal
+of their individual-level derived features from released artifacts. Aggregate
+statistics---which do not single out an individual---are retained, so the
+benchmark's scientific claims remain reproducible while the individual's
+choice is respected. We also recommend that challenge organisers restate the
+prohibited uses in their rules and that the \wca{} Results Team remain a
+standing point of contact.
+
+\paragraph{Fairness considerations.} Because regional opportunity is unequal,
+a model trained predominantly on data from well-represented regions may perform
+worse for under-represented ones, and this could, if misused, disadvantage
+competitors from those regions. We mitigate by stratifying by continent and by
+refusing to publish individual-level rankings as products. We do not claim that
+stratification resolves the underlying inequity; it only makes it visible.
+
+\paragraph{Broader impact.} We hope \wcabench{} nudges sports machine learning
+towards more rigorous evaluation: time-aware splits, frozen statistics,
+stratified reporting, effect sizes and explicit identification assumptions.
+The main societal risk is misuse for betting or individual targeting, which the
+data card and the opt-out mechanism are designed to discourage.

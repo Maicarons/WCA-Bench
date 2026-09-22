@@ -1,0 +1,148 @@
+\section{评估协议}
+\label{sec:protocol}
+
+基准的可信度取决于其评估协议。\wcabench{} 建立在四大支柱之上：防泄漏、分层报告、统计严谨与可复现。这种实证严谨性日益被视为取得进展的必要条件 \citep{sculley_rigor}。本节逐一说明。
+
+\subsection{防泄漏}
+\label{sec:protocol-leakage}
+
+\wcabench{} 采用模拟部署的滚动窗口评估：对每场测试比赛，只有该场比赛\emph{之前}存在的数据可以影响预测。形式化地，对日期为 $d$ 的目标比赛，可用信息集为 $\mathcal{F}_d = \{\, r : \mathrm{date}(r) < d \,\}$，且不得使用日期在 $d$ 及之后的任何记录——包括同一轮次中其他选手的成绩。
+
+三项机制对此加以保证。第一，每个特征函数都必须接受显式的 \asof{} 时间戳；无法“在某时刻”求值的特征不可用。特征缓存以 \asof{} 为键，避免跨时间静默复用。第二，测试工具 \code{assert\_no\_leakage(features, target\_date)} 断言没有任何特征依赖于日期在目标日期及之后的记录。第三，基准统计量被冻结，如下所述。
+
+\subsection{冻结统计量}
+\label{sec:protocol-frozen}
+
+那些本会随测试窗口推进而漂移的统计量，只需从训练窗口计算一次，并在整个测试期固定。表~\ref{tab:frozen} 列出这些统计量。冻结至关重要：例如，若“当前世界纪录”按每场测试比赛重新计算，模型就会受益于真实部署在决策时刻并不拥有的信息。本导出含 \textbf{612{,}224} 条冻结 person--event 统计量，均仅在训练划分上计算。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{从训练窗口冻结、并在整个测试窗口复用的统计量。}
+  \label{tab:frozen}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    统计量 & 计算来源 & 冻结范围 \\
+    \midrule
+    选手历史均值 / 方差 & 训练期（$\le 2022$） & 整个测试窗口 \\
+    项目世界纪录 & 训练期 & 整个测试窗口 \\
+    项目参照分布 & 训练期 & 整个测试窗口 \\
+    选手水平分位阈值 & 训练期 & 整个测试窗口 \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\subsection{滚动窗口算法}
+\label{sec:protocol-algorithm}
+
+算法~\ref{alg:rolling} 给出协议的伪代码。测试比赛按时间顺序处理；特征由冻结统计量与运行中的历史构造；进行泄漏断言；最后聚合各场比赛的报告。
+
+\begin{algorithm}[t]
+\caption{带冻结统计量的滚动窗口评估。}
+\label{alg:rolling}
+\begin{algorithmic}[1]
+\Require 模型 $f$、测试比赛集合 $C$、冻结统计量 $F$
+\Ensure 聚合报告
+\State $R \gets [\,]$
+\State $C \gets \mathrm{sort}(C, \text{key} = \text{date})$ \Comment{按时间排序}
+\ForAll{$c \in C$}
+    \State $\x \gets \textsc{Featurize}(\asof = c.\text{date}, F)$
+    \State \textbf{assert} \Call{NoLeakage}{$\x$, $c.\text{date}$}
+    \State $\hat{\y} \gets f.\mathrm{predict}(\x)$
+    \State $R.\mathrm{append}\big(\textsc{Evaluate}(\hat{\y}, c.\text{truth})\big)$
+\EndFor
+\State \Return \Call{Aggregate}{$R$}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{四维分层}
+\label{sec:protocol-stratification}
+
+聚合指标可能被单一庞大子群主导。为避免结论被掩盖，\wcabench{} 要求沿四个维度分层报告，见表~\ref{tab:strat}。四个维度都与置信区间一并给出，使读者能判断头条增益是否在重要子群内成立。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{每个任务都必须给出的四个分层维度。}
+  \label{tab:strat}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    维度 & 分组 & 理由 \\
+    \midrule
+    项目 & 速拧 / 异形 / 盲拧 / 其他 & 数据量相差数量级 \\
+    选手水平 & 新手（0--25\%）、中级（25--75\%）、 & 不同水平的行为与稳定性不同 \\
+             & 高级（75--95\%）、精英（$>$95\%） & \\
+    时间切片 & Test-A / Test-B / Test-C & 时间鲁棒性 \\
+    地区 & 亚洲、欧洲、北美、 & 跨地区泛化 \\
+         & 南美、大洋洲、非洲 & \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{硬子集。}为防止基准饱和，每个任务还报告硬子集：\task{3} 取历史 \DNF{} 率位于 $[0.1, 0.3]$ 的选手；\task{1} 取近期成绩方差位于上四分位的轮次；\task{2} 取前 8 名选手差异小于阈值的轮次；\task{5} 取样本量位于下四分位的项目对。
+
+\paragraph{冷启动。}首次参赛落在测试窗口内的选手会被标记并单独报告；他们绝不进入头条指标。
+
+\subsection{统计检验}
+\label{sec:protocol-stats}
+
+任何提升主张都必须经得起统计检验。\wcabench{} 规定下列检验，且均需报告效应量。
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \begin{threeparttable}
+  \caption{必需的统计工具。配对单位为（比赛 $\times$ 项目 $\times$ 轮次）。}
+  \label{tab:stats}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}
+                                >{\raggedright\arraybackslash}X
+                                >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    方法 & 用途 & 适用范围 \\
+    \midrule
+    配对 $t$ 检验 & 比较两模型在配对误差上的差异 & 两模型、成对样本 \\
+    自助置信区间（$1000\times$） & 任意指标的不确定性 & 任意指标、分布未知 \\
+    Friedman $+$ Nemenyi & 多模型比较、临界差异图 & $\ge 3$ 个模型 \\
+    效应量（Cohen's $d$ / Cliff's $\delta$） & 区分显著性与重要性 & 所有比较 \\
+    \bottomrule
+  \end{tabularx}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{配对 $t$ 检验。}我们在相同测试实例上比较两个模型，对每个实例误差的配对差做检验，配对单位统一为（比赛 $\times$ 项目 $\times$ 轮次）。我们报告均值差、95\% 置信区间、$p$ 值与效应量。
+
+\paragraph{自助置信区间。}算法~\ref{alg:bootstrap} 给出任意指标的自助法。随机种子固定（默认 42）并记录，重采样次数（默认 1000）也一并报告，使置信区间完全可复现。
+
+\begin{algorithm}[t]
+\caption{指标的自助置信区间。}
+\label{alg:bootstrap}
+\begin{algorithmic}[1]
+\Require 取值 $V$、指标 $M$、重采样次数 $B=1000$、水平 $\alpha=0.05$、种子 $s=42$
+\Ensure 点估计与置信区间
+\State $\mathrm{rng} \gets \textsc{DefaultRng}(s)$
+\State $S \gets [\,]$
+\For{$b = 1$ \textbf{to} $B$}
+    \State $V_b \gets \textsc{SampleWithReplacement}(V, |V|, \mathrm{rng})$
+    \State $S.\mathrm{append}(M(V_b))$
+\EndFor
+\State $(\text{lo}, \text{hi}) \gets \mathrm{percentile}(S,\ [50\alpha,\ 50(2-\alpha)])$
+\State \Return $(M(V), \text{lo}, \text{hi})$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{多模型比较。}当比较三个及以上模型时，先用 Friedman 检验判断是否存在显著差异；若显著，再用 Nemenyi 事后检验做两两比较，并以临界差异图呈现。多重比较需校正（Bonferroni 或 Nemenyi）以控制假阳性膨胀。
+
+\paragraph{效应量。}显著不等于重要，因此每次比较都要求报告 Cohen's $d$（0.2 小 / 0.5 中 / 0.8 大）或 Cliff's $\delta$（$|\delta|<0.147$ 可忽略、$<0.33$ 小、$<0.474$ 中，否则大）。
+
+\paragraph{常见陷阱。}协议明确禁止：比较未配对的聚合均值、省略效应量、不记录自助种子、以及忽略分层。每一项都会夸大表面提升。
+
+\subsection{可复现性}
+\label{sec:protocol-repro}
+
+可复现性被分级并强制执行。提交必须提供训练代码与随机种子、预处理脚本或管线版本引用、模型权重，以及算力成本报告。所有随机源（Python、NumPy、深度学习框架）均固定，头条结果报告至少三个种子的均值与标准差。我们定义三级可复现性：\textbf{L1}（代码可重跑）、\textbf{L2}（L1 且结果在 $\pm 1\%$ 指标容差内一致）、\textbf{L3}（L2 且原始预测可下载、指标可独立重算）。收录的最低要求为 L2；主排行榜要求 L3。预处理产物记录行数与 SHA-256 校验和以供核验。
+
+\paragraph{报告模式。}每个模型提交都输出结构化报告，含整体指标、四个分层视图、校准与自助区间、相对参照基线的显著性检验，以及算力成本文件。正是这种统一性使“同一份评估代码评分所有模型”成为现实，而非口号。

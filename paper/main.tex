@@ -1,0 +1,56 @@
+% =============================================================================
+%  WCA-Bench: A Standardized Benchmark for Sports Analytics on
+%            World Cube Association Competition Data
+%
+%  Compile with (XeLaTeX):
+%      latexmk -xelatex main.tex
+%  or manually:
+%      xelatex main && bibtex main && xelatex main && xelatex main
+%
+%  arXiv-friendly: only common CTAN packages are used; no system-specific fonts.
+% =============================================================================
+\documentclass[11pt]{article}
+
+\input{preamble}
+
+% ------------------------------------------------------------------ metadata
+\title{\textbf{WCA-Bench: A Standardized Benchmark for Sports Analytics\\ on World Cube Association Competition Data}}
+
+\author{
+  WCA-Bench Contributors\thanks{%
+    Code released under the Apache-2.0 license. Competition data are owned and
+    maintained by the World Cube Association and are redistributed only as
+    derived, aggregate artifacts. Correspondence: \texttt{wcabench@example.org}.}
+}
+
+\date{\today}
+
+% ------------------------------------------------------------------- document
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_dataset}
+\input{sections/04_tasks}
+\input{sections/05_protocol}
+\input{sections/05b_compute}
+\input{sections/06_baselines_results}
+\input{sections/07_discussion}
+\input{sections/08_limitations_ethics}
+\input{sections/09_conclusion}
+
+% ------------------------------------------------------------ bibliographies
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% ----------------------------------------------------------------- appendix
+\appendix
+\input{sections/10_appendix}
+
+\end{document}

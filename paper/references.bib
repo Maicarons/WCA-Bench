@@ -1,0 +1,372 @@
+% =============================================================================
+%  references.bib -- WCA-Bench bibliography
+%
+%  Entry policy (see references_verification.md for the full audit)
+%  ------------------------------------------------------------------
+%  * Every entry was checked online against a publisher / repository page.
+%  * author, title, year and venue are included for every entry.
+%  * A DOI is given only where it could be observed on a publisher or
+%    repository page; otherwise a stable URL is used instead.
+%  * Web services and online books use the misc / book entry types with a URL.
+% =============================================================================
+
+% ---------------------------------------------------------------- WCA sources
+@misc{wca_export,
+  author       = {{World Cube Association}},
+  title        = {{WCA} Results Database Export (format v2.0.2)},
+  year         = {2026},
+  howpublished = {\url{https://www.worldcubeassociation.org/export/results}},
+  note         = {Official public results export, snapshot dated 2026-09-21;
+                  machine-readable metadata at
+                  \url{https://www.worldcubeassociation.org/api/v0/export/public}.
+                  Data owned and maintained by the World Cube Association.},
+}
+
+@misc{wca_regs,
+  author       = {{WCA Regulations Committee}},
+  title        = {{WCA} Competition Regulations},
+  year         = {2026},
+  howpublished = {\url{https://www.worldcubeassociation.org/regulations/}},
+  note         = {Version dated 2026-04-01. Defines round formats, DNF/DNS
+                  handling and multi-blind scoring.},
+}
+
+% ------------------------------------------------- speedcubing / cube solvers
+@article{deepcubea,
+  author  = {Agostinelli, Forest and McAleer, Stephen and Shmakov, Alexander and Baldi, Pierre},
+  title   = {Solving the {Rubik's} cube with deep reinforcement learning and search},
+  journal = {Nature Machine Intelligence},
+  volume  = {1},
+  number  = {8},
+  pages   = {356--363},
+  year    = {2019},
+  doi     = {10.1038/s42256-019-0070-z},
+  url     = {https://www.nature.com/articles/s42256-019-0070-z},
+}
+
+@inproceedings{mcaleer_cube,
+  author    = {McAleer, Stephen and Agostinelli, Forest and Shmakov, Alexander and Baldi, Pierre},
+  title     = {Solving the {Rubik's} Cube with Approximate Policy Iteration},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2019},
+  note      = {arXiv:1805.07470},
+  url       = {https://arxiv.org/abs/1805.07470},
+}
+
+@misc{cubebench,
+  author       = {Gao, Huan-ang and Zhang, Zikang and Luo, Tianwei and Yang, Kaisen
+                  and Juan, Xinzhe and Qiu, Jiahao and Chen, Tianxing and He, Bingxiang
+                  and Zhao, Hao and Zhou, Hao and Liu, Shilong and Wang, Mengdi},
+  title        = {{CubeBench}: Diagnosing Interactive, Long-Horizon Spatial Reasoning
+                  Under Partial Observations},
+  year         = {2026},
+  eprint       = {2512.23328},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.AI},
+  url          = {https://arxiv.org/abs/2512.23328},
+  note         = {Accepted at ICLR 2026 (OpenReview id \texttt{MCmQyZ9Gxa}).
+                  Project page \url{https://cubebench.c7w.tech/}; code at
+                  \url{https://github.com/Princeton-AI2-Lab/CubeBench}.},
+}
+
+@misc{cube_bench_mllm,
+  author       = {Anand, Dhruv and Shareghi, Ehsan},
+  title        = {Cube Bench: A Benchmark for Spatial Visual Reasoning in {MLLMs}},
+  year         = {2025},
+  eprint       = {2512.20595},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CL},
+  url          = {https://arxiv.org/abs/2512.20595},
+  note         = {arXiv:2512.20595, submitted 2025-12-23. Evaluates multimodal
+                  LLMs on five cube-related spatial/sequential skills.},
+}
+
+% --------------------------------------------------------- ranking / rating
+@article{plackett_luce,
+  author  = {Plackett, Robin L.},
+  title   = {The Analysis of Permutations},
+  journal = {Journal of the Royal Statistical Society: Series C (Applied Statistics)},
+  volume  = {24},
+  number  = {2},
+  pages   = {193--202},
+  year    = {1975},
+  doi     = {10.2307/2346567},
+  url     = {https://www.jstor.org/stable/2346567},
+}
+
+@article{bradley_terry,
+  author  = {Bradley, Ralph Allan and Terry, Milton E.},
+  title   = {Rank Analysis of Incomplete Block Designs: I. The Method of Paired Comparisons},
+  journal = {Biometrika},
+  volume  = {39},
+  number  = {3--4},
+  pages   = {324--345},
+  year    = {1952},
+  url     = {https://www.jstor.org/stable/2334029},
+}
+
+@book{elo,
+  author    = {Elo, Arpad E.},
+  title     = {The Rating of Chessplayers, Past and Present},
+  publisher = {Arco Publishing},
+  address   = {New York},
+  year      = {1978},
+}
+
+@article{glickman_rating,
+  author  = {Glickman, Mark E.},
+  title   = {Parameter Estimation in Large Dynamic Paired Comparison Experiments},
+  journal = {Journal of the Royal Statistical Society: Series C (Applied Statistics)},
+  volume  = {48},
+  number  = {3},
+  pages   = {377--394},
+  year    = {1999},
+  url     = {https://www.glicko.net/research/glicko.pdf},
+}
+
+% ------------------------------------------------------------ sports analytics
+@article{nevill_running,
+  author  = {Nevill, Alan M. and Whyte, Gregory},
+  title   = {Are there limits to running world records?},
+  journal = {Medicine \& Science in Sports \& Exercise},
+  volume  = {37},
+  number  = {10},
+  pages   = {1785--1788},
+  year    = {2005},
+  url     = {https://pubmed.ncbi.nlm.nih.gov/16177614/},
+}
+
+@article{tatem_sprint,
+  author  = {Tatem, Andrew J. and Guerra, Carlos A. and Atkinson, Peter M. and Hay, Simon I.},
+  title   = {Athletics: Momentous sprint at the 2156 Olympics?},
+  journal = {Nature},
+  volume  = {431},
+  pages   = {525},
+  year    = {2004},
+  doi     = {10.1038/431525a},
+  url     = {https://www.nature.com/articles/431525a},
+}
+
+@article{injury_prediction,
+  author  = {Rossi, Alessio and Pappalardo, Luca and Cintia, Paolo and Iaia, F. Marcello
+             and Fern{\`a}ndez, Javier and Medina, Daniel},
+  title   = {Effective injury forecasting in soccer with {GPS} training data and machine learning},
+  journal = {PLOS ONE},
+  volume  = {13},
+  number  = {7},
+  pages   = {e0201264},
+  year    = {2018},
+  doi     = {10.1371/journal.pone.0201264},
+  url     = {https://doi.org/10.1371/journal.pone.0201264},
+}
+
+% ------------------------------------------------ time-series benchmarking
+@article{m5_competition,
+  author  = {Makridakis, Spyros and Spiliotis, Evangelos and Assimakopoulos, Vassilios},
+  title   = {The {M5} competition: Background, organization, and implementation},
+  journal = {International Journal of Forecasting},
+  volume  = {38},
+  number  = {4},
+  pages   = {1325--1336},
+  year    = {2022},
+  url     = {https://www.sciencedirect.com/science/article/pii/S0169207021001187},
+}
+
+@inproceedings{monash_tsf,
+  author    = {Godahewa, Rakshitha and Bergmeir, Christoph and Webb, Geoffrey I.
+               and Hyndman, Rob J. and Montero-Manso, Pablo},
+  title     = {Monash Time Series Forecasting Archive},
+  booktitle = {NeurIPS Datasets and Benchmarks Track},
+  year      = {2021},
+  note      = {arXiv:2105.06643},
+  url       = {https://arxiv.org/abs/2105.06643},
+}
+
+@article{gluonts,
+  author  = {Alexandrov, Alexander and Benidis, Konstantinos and Bohlke-Schneider, Michael
+             and others},
+  title   = {{GluonTS}: Probabilistic and Neural Time Series Modeling in Python},
+  journal = {Journal of Machine Learning Research},
+  volume  = {21},
+  number  = {116},
+  pages   = {1--6},
+  year    = {2020},
+  url     = {https://jmlr.org/papers/v21/19-820.html},
+}
+
+@article{prequential,
+  author  = {Dawid, A. Philip},
+  title   = {Present Position and Potential Developments: Some Personal Views:
+             Statistical Theory: The Prequential Approach},
+  journal = {Journal of the Royal Statistical Society: Series A},
+  volume  = {147},
+  number  = {2},
+  pages   = {278--292},
+  year    = {1984},
+  doi     = {10.2307/2981683},
+  url     = {https://www.jstor.org/stable/2981683},
+}
+
+@book{hyndman_fpp3,
+  author    = {Hyndman, Rob J. and Athanasopoulos, George},
+  title     = {Forecasting: Principles and Practice},
+  edition   = {3},
+  publisher = {OTexts},
+  address   = {Melbourne, Australia},
+  year      = {2021},
+  url       = {https://otexts.com/fpp3/},
+}
+
+% -------------------------------------------------- extreme-value / limits
+@book{evt_coles,
+  author    = {Coles, Stuart},
+  title     = {An Introduction to Statistical Modeling of Extreme Values},
+  publisher = {Springer},
+  address   = {London},
+  series    = {Springer Series in Statistics},
+  year      = {2001},
+  doi       = {10.1007/978-1-4471-3675-0},
+  url       = {https://link.springer.com/book/10.1007/978-1-4471-3675-0},
+}
+
+@article{pickands,
+  author  = {Pickands, James},
+  title   = {Statistical Inference Using Extreme Order Statistics},
+  journal = {The Annals of Statistics},
+  volume  = {3},
+  number  = {1},
+  pages   = {119--131},
+  year    = {1975},
+  doi     = {10.1214/aos/1176343003},
+  url     = {https://projecteuclid.org/journals/annals-of-statistics/volume-3/issue-1/Statistical-Inference-Using-Extreme-Order-Statistics/10.1214/aos/1176343003.full},
+}
+
+@book{bayesian_hierarchical,
+  author    = {Gelman, Andrew and Carlin, John B. and Stern, Hal S. and Dunson, David B.
+               and Vehtari, Aki and Rubin, Donald B.},
+  title     = {Bayesian Data Analysis},
+  edition   = {3},
+  publisher = {Chapman and Hall/CRC},
+  address   = {Boca Raton, FL},
+  year      = {2013},
+  isbn      = {9781439840955},
+}
+
+% --------------------------------------------------------------- causal ML
+@article{did,
+  author  = {Card, David and Krueger, Alan B.},
+  title   = {Minimum Wages and Employment: A Case Study of the Fast-Food Industry
+             in New Jersey and Pennsylvania},
+  journal = {American Economic Review},
+  volume  = {84},
+  number  = {4},
+  pages   = {772--793},
+  year    = {1994},
+  url     = {https://www.jstor.org/stable/2118030},
+}
+
+@article{iv,
+  author  = {Angrist, Joshua D. and Imbens, Guido W. and Rubin, Donald B.},
+  title   = {Identification of Causal Effects Using Instrumental Variables},
+  journal = {Journal of the American Statistical Association},
+  volume  = {91},
+  number  = {434},
+  pages   = {444--455},
+  year    = {1996},
+  doi     = {10.1080/01621459.1996.10476902},
+  url     = {https://www.jstor.org/stable/2291629},
+}
+
+@article{causal_forest,
+  author  = {Wager, Stefan and Athey, Susan},
+  title   = {Estimation and Inference of Heterogeneous Treatment Effects using Random Forests},
+  journal = {Journal of the American Statistical Association},
+  volume  = {113},
+  number  = {523},
+  pages   = {1228--1242},
+  year    = {2018},
+  doi     = {10.1080/01621459.2017.1319839},
+  url     = {https://www.tandfonline.com/doi/full/10.1080/01621459.2017.1319839},
+}
+
+@article{sensitivity_analysis,
+  author  = {Rosenbaum, Paul R. and Rubin, Donald B.},
+  title   = {The Central Role of the Propensity Score in Observational Studies
+             for Causal Effects},
+  journal = {Biometrika},
+  volume  = {70},
+  number  = {1},
+  pages   = {41--55},
+  year    = {1983},
+  doi     = {10.1093/biomet/70.1.41},
+  url     = {https://academic.oup.com/biomet/article/70/1/41/240879},
+}
+
+% ------------------------------------------------- benchmark methodology
+@article{datasheets,
+  author  = {Gebru, Timnit and Morgenstern, Jamie and Vecchione, Briana and
+             Vaughan, Jennifer Wortman and Wallach, Hanna and Daum{\'e} III, Hal
+             and Crawford, Kate},
+  title   = {Datasheets for Datasets},
+  journal = {Communications of the ACM},
+  volume  = {64},
+  number  = {12},
+  pages   = {86--92},
+  year    = {2021},
+  doi     = {10.1145/3458723},
+  url     = {https://dl.acm.org/doi/10.1145/3458723},
+}
+
+@inproceedings{model_cards,
+  author    = {Mitchell, Margaret and Wu, Simone and Zaldivar, Andrew and
+               Barnes, Parker and Vasserman, Lucy and Hutchinson, Ben and
+               Spitzer, Elena and Raji, Inioluwa Deborah and Gebru, Timnit},
+  title     = {Model Cards for Model Reporting},
+  booktitle = {Proceedings of the Conference on Fairness, Accountability,
+               and Transparency (FAT*)},
+  pages     = {220--229},
+  year      = {2019},
+  doi       = {10.1145/3287560.3287596},
+  url       = {https://dl.acm.org/doi/10.1145/3287560.3287596},
+}
+
+@misc{neurips_dnb,
+  author       = {{NeurIPS Datasets and Benchmarks Track}},
+  title        = {Proceedings of the {NeurIPS} Datasets and Benchmarks Track},
+  year         = {2026},
+  howpublished = {\url{https://datasets-benchmarks-proceedings.neurips.cc/}},
+  note         = {Site hosting the Datasets and Benchmarks track; defines the
+                  dataset/benchmark evaluation philosophy followed here.},
+}
+
+@article{leakage_kaufman,
+  author  = {Kaufman, Shachar and Rosset, Saharon and Perlich, Claudia},
+  title   = {Leakage in Data Mining: Formulation, Detection, and Avoidance},
+  journal = {ACM Transactions on Knowledge Discovery from Data},
+  volume  = {6},
+  number  = {4},
+  pages   = {15:1--15:21},
+  year    = {2012},
+  doi     = {10.1145/2382577.2382579},
+  url     = {https://dl.acm.org/doi/10.1145/2382577.2382579},
+}
+
+@inproceedings{sculley_rigor,
+  author    = {Sculley, D. and Snoek, Jasper and Wiltschko, Alex and Rahimi, Ali},
+  title     = {Winner's Curse? On Pace, Progress, and Empirical Rigor},
+  booktitle = {ICLR Workshop Track},
+  year      = {2018},
+  url       = {https://openreview.net/forum?id=rJWF0Fywf},
+}
+
+@article{breiman_cultures,
+  author  = {Breiman, Leo},
+  title   = {Statistical Modeling: The Two Cultures},
+  journal = {Statistical Science},
+  volume  = {16},
+  number  = {3},
+  pages   = {199--231},
+  year    = {2001},
+  doi     = {10.1214/ss/1009213726},
+  url     = {https://projecteuclid.org/journals/statistical-science/volume-16/issue-3/Statistical-Modeling--The-Two-Cultures-with-comments-and-a/10.1214/ss/1009213726.full},
+}

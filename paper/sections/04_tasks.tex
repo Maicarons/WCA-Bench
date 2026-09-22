@@ -1,0 +1,240 @@
+\section{Tasks}
+\label{sec:tasks}
+
+\wcabench{} defines five tasks that span a continuous difficulty spectrum from
+supervised regression to causal inference. Every task is specified by the same
+five elements---formal definition, inputs and outputs, metrics, baselines and
+domain challenges---and every task is exposed through a single interface so
+that one evaluation code path scores all models. We use the notation
+$\x$ for the model input, $\y$ for the target and $\metric$ for the metric
+set.
+
+\paragraph{The common interface.}
+All tasks implement
+\begin{center}\small
+\code{split()} $\to$ temporal view;\quad
+\code{featurize(as\_of)} $\to$ features;\quad
+\code{metrics()} $\to$ metric list;\quad
+\code{baseline()} $\to$ registered baselines;\quad
+\code{evaluate(model)} $\to$ report.
+\end{center}
+The \asof{} argument is \emph{mandatory} in the feature-construction signature.
+This is a design decision: leakage prevention is a type-level obligation, not
+an afterthought. Baselines are organized into three tiers---trivial, domain and
+methodological---and the methodological tier spans six families (statistical,
+tree, deep, graph, Bayesian and causal), so that a reader can see how much is
+gained over a meaningful reference point rather than over an arbitrary zero, and
+can compare methodological families directly against one another.
+
+% -----------------------------------------------------------------------------
+\subsection{\task{1}: Result Prediction (Regression)}
+\label{sec:task1}
+
+\paragraph{Definition.}
+Given a competitor's pre-competition history, predict the \code{best} and
+\code{average} result the competitor will achieve in a specific competition,
+event and round. Formally, let
+$\y = f_\theta(\x)$ where
+$\x = (\x^{\text{seq}}, \x^{\text{static}}, \asof)$ and
+$\y = (\hat{b}, \hat{a}, \hat{\sigma}^2)$ denote predicted best, average and
+predictive variance.
+
+\paragraph{Inputs.}
+Identity fields (competitor, competition, event, round type); the historical
+result sequence of the last $N$ attempts; static features (age, gender,
+nationality, total competition count); and the enforced decision timestamp
+\asof{}.
+
+\paragraph{Outputs.}
+Continuous best and average predictions (average only where the format
+supports it) and distributional parameters for interval estimation.
+
+\paragraph{Metrics.}
+Because events differ enormously in magnitude, we compute errors in the
+\emph{log domain}: \maelog{} (primary) and \rmselog{} (secondary), plus
+prediction-interval coverage (a calibration metric). Reporting is stratified by
+competitor skill level.
+
+\paragraph{Baselines.}
+Trivial: the historical mean of the last 25 attempts. Domain/statistical:
+linear extrapolation of recent results, and kernel density estimation with
+bootstrap round simulation. Methodological: sequence models such as
+LSTM/Transformer encoders, and gradient-boosted regression on log-transformed
+targets.
+
+\paragraph{Domain challenges.}
+Performance is non-stationary: training-method improvements, injuries and
+hardware changes can produce step changes in a competitor's results.
+Between-event variance differs by orders of magnitude (seconds for
+three-by-three, minutes for seven-by-seven, integer move counts for
+fewest-moves), so event-specific normalization is essential.
+
+% -----------------------------------------------------------------------------
+\subsection{\task{2}: Placement Prediction (Ranking)}
+\label{sec:task2}
+
+\paragraph{Definition.}
+Given the histories of \emph{all} competitors entered in a round, predict the
+final ordering. For a round with competitor set $\mathcal{P}$, learn a scoring
+function $s_\phi(\x_i)$ and output a permutation
+$\hat{\pi} = \mathrm{argsort}_{i \in \mathcal{P}}(-s_\phi(\x_i))$ together with
+a distribution $P(\mathrm{rank}_i = k)$ and a podium probability
+$P(\mathrm{rank}_i \le 3)$.
+
+\paragraph{Inputs.}
+Competition context (competition, event, round type); history features for
+every entered competitor; the enforced \asof{} timestamp.
+
+\paragraph{Outputs.}
+Predicted integer ranks, rank distributions and podium probabilities.
+
+\paragraph{Metrics.}
+Kendall's $\kendall$ rank correlation (primary), top-3 overlap with the true
+podium, the Brier score of the podium probabilities, and a direct comparison
+against the official \wca{} psychology sheet.
+
+\paragraph{Baselines.}
+Domain: the \wca{} \emph{psychology sheet}, which ranks competitors by their
+best historical \code{ao5} and ignores variance or consistency---a strong,
+practically relevant reference. Statistical: kernel-density Monte Carlo rank
+simulation and the Plackett--Luce model \citep{plackett_luce}, which assigns
+each competitor a latent strength and defines a distribution over orderings.
+Methodological: a graph neural network over a competitor--competition
+heterogeneous graph that models head-to-head interactions.
+
+\paragraph{Domain challenges.}
+The central difficulty is interaction: the same competitor may perform
+differently against different fields, so the model must capture relative, not
+merely absolute, strength. Round rules interact with \DNF{}: one \DNF{} is
+usually discarded as the worst \code{ao5} attempt, but two \DNF{}s collapse the
+round and the ranking. Round sizes vary from a handful to several hundred
+competitors, which makes fixed-length ranking architectures awkward.
+
+% -----------------------------------------------------------------------------
+\subsection{\task{3}: DNF Prediction (Imbalanced Classification)}
+\label{sec:task3}
+
+\paragraph{Definition.}
+Given the attempts a competitor has already completed in a round and the
+number remaining, predict the probability that a subsequent attempt is a
+\DNF{}. Formally, with partial sequence
+$\x = (x_1, \dots, x_{k})$ and round context $c$ (format, attempts left),
+estimate $P(\text{DNF} \mid \x, c)$ and the whole-round probability
+$P(\text{round DNF})$.
+
+\paragraph{Inputs.}
+Competitor identity; the completed attempt values (including \DNF{} markers);
+round format and remaining attempts; the competitor's historical \DNF{} rate;
+the enforced \asof{} timestamp.
+
+\paragraph{Outputs.}
+A per-attempt \DNF{} probability and a whole-round \DNF{} probability.
+
+\paragraph{Metrics.}
+\aucroc{} and \aucpr{} (with the latter emphasized under imbalance), F1, the
+Matthews correlation coefficient (MCC), and a reliability diagram for
+calibration. Because \aucroc{} flatters models when positives are rare, we
+require \aucpr{} and MCC alongside a random/global-rate reference. We also
+report a \emph{hard subset} on which the competitor's historical \DNF{} rate
+lies in $[0.1, 0.3]$, to preserve discriminative power against saturation.
+
+\paragraph{Baselines.}
+Trivial/domain: the competitor's historical \DNF{} rate. Statistical:
+logistic regression on completed-attempt mean and variance, and a Bayesian
+hierarchical model with a Beta prior for shrinkage. Methodological: random
+forest / gradient boosting over competitor and round-context features.
+
+\paragraph{Domain challenges.}
+\DNF{} is rare and unevenly distributed: blindfolded and multi-blind events
+fail far more often, while three-by-three is stable, and fewest-moves has its
+own timeout/violation failure mode. \DNF{} occurrence is also
+sequence-dependent: after a failure a competitor may become more conservative
+(reducing risk) or may lose composure (increasing it). Finally, risk is
+rule-dependent---after one \DNF{} in \code{ao5} the tolerance for another
+failure is zero.
+
+% -----------------------------------------------------------------------------
+\subsection{\task{4}: Human-Limit Estimation (Extreme-Value Extrapolation)}
+\label{sec:task4}
+
+\paragraph{Definition.}
+From each event's historical world-record series
+$\{(t_i, y_i)\}$ estimate the theoretical performance ceiling $L$ and the
+year at which it is expected to be approached. Employ the saturating model
+\begin{equation}
+  y(t) = L + (y_0 - L)\,\exp\!\big(-\lambda\, g(t)\big) + \varepsilon(t),
+  \label{eq:limit}
+\end{equation}
+where $L$ is the limit, $g(t)$ is a technological-progress function and
+$\varepsilon$ is noise, and infer the posterior $p(L, \lambda, \text{params}
+\mid \text{data})$.
+
+\paragraph{Inputs.}
+The world-record series per event (date, value), plus event-level features
+(mean, variance, history length).
+
+\paragraph{Outputs.}
+A point estimate and posterior for $L$, the predictive interval, and a
+convergence-year estimate with an interval.
+
+\paragraph{Metrics.}
+There is no observable ground truth for a limit, so evaluation relies on
+(a) stability of the estimate under leave-one-out refitting, (b) empirical
+coverage of the predictive intervals, and (c) consistency with established
+domain knowledge. As an anchor, the speedcubing community estimates the
+three-by-three limit near $2.37$ seconds with convergence around 2036.
+
+\paragraph{Baselines.}
+Statistical: the exponential-decay model of Equation~\ref{eq:limit}.
+Methodological: Gaussian-process regression combined with extreme-value theory
+\citep{evt_coles}; a Bayesian hierarchical extreme-value model
+that treats per-event limits as draws from a hyper-distribution
+\citep{bayesian_hierarchical}; and change-point detection that identifies
+structural breaks in the rate of improvement.
+
+\paragraph{Domain challenges.}
+The dominant risk is extrapolation: historical data cannot anticipate a future
+jump caused by new hardware or training regimes. Data density varies wildly;
+three-by-three has 23 years of dense data, whereas some events provide fewer
+than fifty record points and demand strong priors or hierarchical borrowing.
+Finally, the target is unobservable, so validation must be indirect.
+
+% -----------------------------------------------------------------------------
+\subsection{\task{5}: Skill Transfer (Causal Inference)}
+\label{sec:task5}
+
+\paragraph{Definition.}
+Quantify how an improvement in one event causally affects performance in
+another. For each ordered event pair $(A, B)$ estimate the causal effect
+$\theta_{A \to B}$ and assemble a $17 \times 17$ transfer matrix with
+confidence intervals.
+
+\paragraph{Inputs.}
+Competitors' multi-event records (timestamp, event, result) and the time at
+which each competitor first participated in each event.
+
+\paragraph{Outputs.}
+A transfer matrix $\Theta = [\theta_{A \to B}]$ and interval estimates, with an
+explicit identifiability flag for pairs that cannot be estimated reliably.
+
+\paragraph{Metrics.}
+Point-estimate accuracy against held-out data, robustness of the estimate
+across subsamples, and agreement with domain-expert judgement. Because a
+ground-truth effect is unavailable, we additionally report the
+\emph{number of identifiable event pairs}.
+
+\paragraph{Baselines.}
+Correlational: Pearson/Spearman correlation between event performances---the
+naive approach that ignores confounding. Causal: difference-in-differences
+(DID) \citep{did} treating first participation in event $A$ as treatment;
+instrumental variables (IV) \citep{iv} using the first domestic hosting of an
+event as an instrument; and a causal forest \citep{causal_forest} for
+heterogeneous treatment effects.
+
+\paragraph{Domain challenges.}
+Confounding is severe: talent and training effort raise performance in all
+events simultaneously, producing spurious positive transfer. Participation
+order is non-random---competitors who are good at event $A$ may take up event
+$B$ earlier---which induces self-selection bias. Finally, many event pairs have
+very few common competitors, so effects are poorly identified and the benchmark
+requires an explicit ``not identifiable'' label rather than a forced estimate.

@@ -1,0 +1,129 @@
+\section{Related Work}
+\label{sec:related}
+
+\wcabench{} sits at the intersection of five research lines: \wca{} data
+analysis, cube-solving benchmarks, sports analytics, time-series benchmarking,
+and the methodology of dataset/benchmark papers.
+
+\subsection{Speedcubing and World Cube Association data}
+\label{sec:related-wca}
+
+The \wca{} maintains the world's largest structured record of speedcubing
+results, published as a versioned database export and governed by an explicit
+rule book \citep{wca_export, wca_regs}. Prior work on this data has
+concentrated on three narrow questions. Placement has been analysed with
+dynamic paired-comparison and density-based rating models
+\citep{glickman_rating}. World-record progression has been studied with
+regression and saturating-curve models \citep{tatem_sprint, nevill_running}.
+Human limits have been approached with extreme-value theory and saturating
+curves \citep{evt_coles, nevill_running}. Each of these studies optimizes a
+single task under its own protocol. Our contribution is not a better estimator
+for any one of them but a common protocol under which all of them---and new
+methods---can be evaluated and compared.
+
+\subsection{Cube-solving benchmarks}
+\label{sec:related-cubebench}
+
+A parallel literature evaluates whether machines can \emph{solve} cubes. Early
+work learned to solve the three-by-three cube with deep reinforcement learning
+and search \citep{deepcubea} or with approximate policy iteration
+\citep{mcaleer_cube}. More recently, a family of \emph{cube-reasoning
+benchmarks} has emerged. CubeBench \citep{cubebench} builds a three-tiered
+generative benchmark on the Rubik's cube to diagnose three cognitive challenges
+that hinder LLM agents in physically grounded settings---spatial reasoning,
+long-horizon state tracking, and active exploration under partial observations.
+Cube Bench \citep{cube_bench_mllm} evaluates multimodal LLMs on five
+spatial/sequential skills, from reconstructing cube faces from images to
+multi-step planning and self-correction.
+
+These benchmarks and ours are \emph{complementary rather than competing}: the
+cube-reasoning benchmarks measure an agent's reasoning and planning ability on
+\emph{synthetic} cube states, whereas \wcabench{} measures the predictive and
+inferential ability of statistical and machine-learning models on \emph{real,
+noisy, rule-governed competition records}. We therefore adopt a different
+evaluation object (statistical/ML models rather than LLM/MLLM agents), a
+different data source (real competitions rather than generated scrambles) and a
+different task family (regression, ranking, classification, extreme-value
+estimation and causal inference).
+
+\subsection{Sports analytics}
+\label{sec:related-sports}
+
+Sports analytics has a long tradition of forecasting and rating. In
+individual sports, performance-progression models for running and swimming
+records are closely related to our \task{4} \citep{tatem_sprint,
+nevill_running}. In team sports, ranking and outcome models built on
+Bradley--Terry and Elo-style priors \citep{bradley_terry, elo} are the
+ancestors of our \task{2} baselines, with the Plackett--Luce model
+\citep{plackett_luce} providing the probabilistic ranking generalization we
+use. In cricket, the Duckworth--Lewis method and its successors quantify how
+context changes performance targets, an example of a \emph{rule-aware}
+performance model. Injury- and fatigue-risk modelling in soccer and basketball
+\citep{injury_prediction} resembles our \task{3} in that it predicts rare,
+consequential events from longitudinal records. Our benchmark borrows the
+discipline of these fields---time-aware splits, calibration, effect sizes---and
+packages it for a new domain.
+
+\subsection{Time-series and tabular benchmarking}
+\label{sec:related-ts}
+
+Standardized forecasting competitions and corpora have shaped evaluation
+practice, notably the M-competitions and the M5 accuracy competition
+\citep{m5_competition}, the Monash Time Series Forecasting Archive
+\citep{monash_tsf} and the GluonTS toolkit \citep{gluonts}. These resources
+established the norms we follow: a fixed, frozen test window; explicit
+avoidance of future leakage; stratified reporting; and public leaderboards,
+building on standard forecasting methodology \citep{hyndman_fpp3}.
+\wcabench{} differs in that its series are indexed by irregular competition
+calendars rather than regular timestamps, and in that the prediction targets
+are governed by formal round rules. For online/incremental learning, the
+prequential (test-then-train) evaluation tradition \citep{prequential} is the
+closest methodological relative of our rolling-window protocol.
+
+\subsection{Extreme-value estimation and human limits}
+\label{sec:related-evt}
+
+Estimating an unobservable performance ceiling is an extrapolation problem.
+Extreme-value theory provides the asymptotic machinery for tail behaviour
+\citep{evt_coles, pickands}, while saturating-curve models are the pragmatic
+choice in sports \citep{nevill_running, tatem_sprint}. Bayesian hierarchical models let
+sports with scarce data borrow strength from a population of similar events
+\citep{bayesian_hierarchical}. Our \task{4} benchmark exposes exactly this
+tension: recurring events have dense histories, while emerging or discontinued
+events may have fewer than fifty world-record points, forcing explicit
+modelling choices that we make comparable across methods.
+
+\subsection{Causal inference in observational sports data}
+\label{sec:related-causal}
+
+Our \task{5} formalizes a question---does practising event $A$ causally improve
+event $B$?---that is deceptively hard because participation is self-selected.
+Difference-in-differences \citep{did}, instrumental variables \citep{iv},
+regression discontinuity, and causal forests \citep{causal_forest} are the
+standard tools, each resting on a different identification assumption. This
+mirrors causal inference in economics and epidemiology, where the honest
+reporting of assumptions and sensitivity analyses has become standard
+\citep{sensitivity_analysis}. We deliberately include a naive correlational
+baseline to make the gap between association and causation measurable.
+
+\subsection{Benchmark and dataset methodology}
+\label{sec:related-methodology}
+
+Our documentation and reporting follow the datasheet \citep{datasheets} and
+model-card \citep{model_cards} traditions, which argue that datasets and
+models must document provenance, composition, recommended uses and limitations.
+We adopt the NeurIPS Datasets and Benchmarks evaluation philosophy
+\citep{neurips_dnb} by requiring stratified results, calibration and effect
+sizes rather than a single headline number. Our leakage-aware protocol echoes
+broader warnings about spurious leakage in machine learning evaluation
+\citep{leakage_kaufman}.
+
+\paragraph{Deep and graph methods in this setting.} Our measured multi-seed
+results speak directly to the above lines of work
+(Section~\ref{sec:results-multiseed}): on \task{1} a sequence model
+(\maelog{} $0.9436\pm0.0754$) is roughly nine times worse than tree boosting
+($0.1055\pm0.0417$), and on \task{2} a graph neural network
+($\kendall=0.7440\pm0.1258$) trails a simple domain ranking
+($0.8132\pm0.0342$). In rule-governed longitudinal sports records, domain-aware
+features currently appear to matter more than generic deep or graph
+architectures.

@@ -1,0 +1,41 @@
+\section{相关工作}
+\label{sec:related}
+
+\wcabench{} 处于五条研究脉络的交汇处：\wca{} 数据分析、魔方求解基准、体育数据分析、时序基准以及数据集/基准论文的方法学。
+
+\subsection{速拧与 WCA 数据}
+\label{sec:related-wca}
+
+\wca{} 维护着全球最大的结构化速拧成绩库，以带版本的数据库导出形式发布，并受一套显式规则手册约束 \citep{wca_export, wca_regs}。针对该数据的已有工作集中在三个狭窄问题上。名次预测方面，已有研究采用动态配对比较与基于密度的等级分模型 \citep{glickman_rating}。世界纪录轨迹方面，已有研究使用回归与饱和曲线模型 \citep{tatem_sprint, nevill_running}。人类极限方面，已有研究采用极值理论与饱和曲线 \citep{evt_coles, nevill_running}。这些研究各自在单一任务、自有协议下优化。我们的贡献不是某一任务上更好的估计器，而是一个可对所有方法（包括新方法）进行统一评估与比较的公共协议。
+
+\subsection{魔方求解基准}
+\label{sec:related-cubebench}
+
+另一条并行文献评估机器能否\emph{求解}魔方。早期工作用深度强化学习与搜索 \citep{deepcubea} 或近似策略迭代 \citep{mcaleer_cube} 学习求解三阶魔方。更晚近出现了\emph{魔方推理基准}家族：CubeBench \citep{cubebench} 以魔方构建三层生成式基准，诊断阻碍 LLM 智能体进入物理世界的三大认知挑战——空间推理、长程状态跟踪，以及部分观测下的主动探索；Cube Bench \citep{cube_bench_mllm} 则在五项空间/序列技能上评测多模态 LLM，涵盖从由图像重建魔方各面到多步规划与自我纠错。这些基准与我们的工作\emph{互补而非竞争}：魔方推理基准在\emph{合成}魔方状态上度量智能体的推理与规划能力，而 \wcabench{} 在\emph{真实、含噪、受规则约束的比赛记录}上度量统计与机器学习模型的预测与推断能力。因此我们采用不同的评估对象（统计/机器学习模型而非 LLM/MLLM 智能体）、不同的数据来源（真实比赛而非生成的打乱）以及不同的任务族（回归、排序、分类、极值估计与因果推断）。
+
+\subsection{体育数据分析}
+\label{sec:related-sports}
+
+体育数据分析在预测与评级上有悠久传统。在个人项目中，跑步与游泳纪录的表现演进模型与我们的 \task{4} 密切相关 \citep{tatem_sprint, nevill_running}。在团体项目中，基于 Bradley--Terry 与 Elo 式先验的排序与胜负模型 \citep{bradley_terry, elo} 是 \task{2} 基线的源头，而 Plackett--Luce 模型 \citep{plackett_luce} 提供了我们使用的概率化排序推广。在板球中，Duckworth--Lewis 方法及其后继量化了情境如何改变成绩目标，是\emph{规则感知}表现模型的范例。足球与篮球中的伤病/疲劳风险建模 \citep{injury_prediction} 与 \task{3} 相似，都是从纵向记录预测稀有且后果重大的事件。本基准借鉴这些学科的方法纪律——时间感知划分、校准、效应量——并将其打包用于一个新领域。
+
+\subsection{时序与表格基准}
+\label{sec:related-ts}
+
+标准化的预测竞赛与语料库塑造了评估实践，尤其是 M 系列竞赛与 M5 准确率竞赛 \citep{m5_competition}、Monash 时间序列预测档案 \citep{monash_tsf} 与 GluonTS 工具包 \citep{gluonts}。这些资源确立了我们所遵循的规范：固定的冻结测试窗口、显式避免未来泄漏、分层报告与公开排行榜，并建立在标准预测方法学之上 \citep{hyndman_fpp3}。\wcabench{} 的不同之处在于，其序列由不规则的比赛日历而非规则时间戳索引，且预测目标受正式轮次规则支配。在在线/增量学习方面，prequential（先测后训）评估传统 \citep{prequential} 与我们滚动窗口协议在方法学上最为接近。
+
+\subsection{极值估计与人类极限}
+\label{sec:related-evt}
+
+估计不可观测的表现上限是一个外推问题。极值理论为尾部行为提供了渐近机制 \citep{evt_coles, pickands}，而饱和曲线模型是体育中更务实的选择 \citep{nevill_running, tatem_sprint}。贝叶斯分层模型让数据稀缺的项目从相似项目总体中借力 \citep{bayesian_hierarchical}。我们的 \task{4} 基准恰好暴露了这一张力：常设项目有密集历史，而新兴或已废止项目的世界纪录点可能不足五十个，迫使做出显式建模选择，而我们使这些选择可跨方法比较。
+
+\subsection{体育观测数据中的因果推断}
+\label{sec:related-causal}
+
+我们的 \task{5} 形式化了一个看似简单却异常困难的问题——练习项目 $A$ 是否会因果地改善项目 $B$？——其难点在于参赛是自选择的。双重差分 \citep{did}、工具变量 \citep{iv}、断点回归与因果森林 \citep{causal_forest} 是标准工具，各自依赖不同的识别假设。这与经济学与流行病学中的因果推断相呼应，其中对假设的如实报告与敏感性分析已成规范 \citep{sensitivity_analysis}。我们特意纳入朴素的关联基线，使“关联”与“因果”之间的差距可被度量。
+
+\subsection{基准与数据集方法学}
+\label{sec:related-methodology}
+
+我们的文档与报告遵循数据表 \citep{datasheets} 与模型卡 \citep{model_cards} 传统，二者主张数据集与模型必须记录来源、构成、建议用途与局限。我们采纳 NeurIPS 数据集与基准赛道的评估理念 \citep{neurips_dnb}，要求分层结果、校准与效应量，而非单一头条数字。我们的防泄漏协议也呼应了关于机器学习评估中虚假泄漏的更广泛警示 \citep{leakage_kaufman}。
+
+\paragraph{深度与图方法在此场景下的表现。}我们实测的多种子结果直接回应上述文献（第~\ref{sec:results-multiseed} 节）：在 \task{1} 上，序列模型（\maelog{} $0.9436\pm0.0754$）比树模型提升（$0.1055\pm0.0417$）差约九倍；在 \task{2} 上，图神经网络（$\kendall=0.7440\pm0.1258$）低于简单的领域排序基线（$0.8132\pm0.0342$）。在受规则约束的纵向体育记录中，领域感知特征目前看来比通用深度或图架构更为关键。

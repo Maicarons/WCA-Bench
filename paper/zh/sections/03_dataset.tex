@@ -1,0 +1,165 @@
+\section{WCA-Bench 数据集}
+\label{sec:dataset}
+
+本节说明数据来源、规模、表结构、领域特定解码规则、时间划分与已知偏差。我们遵循数据表规范 \citep{datasheets}：下游用户判断该基准是否适合其问题所需的一切信息，均在正文或随附数据卡中给出。
+
+\subsection{来源与出处}
+\label{sec:data-source}
+
+全部数据来自 \wca{} 官方公开数据库导出 \citep{wca_export}，即经认证比赛的结构化、可免费下载的快照。我们使用 \code{Results Export} 格式 \textbf{v2.0.2}（snake\_case 列名，含 \code{result\_attempts} 表），导出日期为 2026-09-21。头条结果不使用任何私有、抓取或合成数据；我们另行提供合成数据生成器用于离线持续集成，其中任何在合成数据上计算的结果都会明确标注。代码以 Apache-2.0 发布；数据版权归 \wca{} 所有，且仅以派生聚合产物形式再分发。
+
+\subsection{规模}
+\label{sec:data-scale}
+
+表~\ref{tab:scale} 汇总了构建产物的规模。原始导出包含数百万条个人计时尝试，这既使基准在统计上丰富，也使其计算开销巨大。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{\wcabench{} 数据产物的规模。所有行数均为本基准固定导出的\emph{快照统计值}（v2.0.2，导出日期 2026-09-21）。}
+  \label{tab:scale}
+  \begin{tabular}{lr}
+    \toprule
+    数量 & 数值 \\
+    \midrule
+    成绩记录（person--event--round） & 6{,}909{,}454 \\
+    选手（\code{persons}） & 298{,}551 \\
+    比赛（\code{competitions}） & 18{,}708 \\
+    单次尝试（\code{result\_attempts}） & 31{,}847{,}257 \\
+    打乱行（\code{scrambles}） & 3{,}186{,}380 \\
+    项目（现役 + 已废止） & 22 \\
+    \midrule
+    训练集（2003--2022） & 3{,}211{,}294 \\
+    验证集（2023--2024） & 1{,}978{,}851 \\
+    测试集（2025--2026） & 1{,}719{,}290 \\
+    \midrule
+    全局尝试级 \DNF{} 率 & 3.18\% \\
+    冻结 person--event 统计量 & 612{,}224 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item “冻结 person--event 统计量”指在训练窗口上计算、并在整个测试窗口保持固定的每（选手, 项目）历史汇总（第~\ref{sec:protocol} 节）。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+这些计数是\textbf{本基准的快照统计值}，并非 \wca{} 发布的数字：它们是固定导出快照的精确行数，可复现于 \code{data/processed/manifest.json} 与对账报告。\footnote{快照元数据：导出格式版本 \textbf{v2.0.2}；导出日期 \textbf{2026-09-21}（readme 与 \code{metadata.json}）；官方导出共列出 14 个表，但\emph{不}公布各表行数。}官方 \wca{} 导出页面仅给出格式版本（v2.0.2）、导出日期与实际下载体积（截至 2026-09-21，SQL 压缩包 $390{,}136{,}209$ 字节，TSV 压缩包 $377{,}258{,}709$ 字节）。因此我们同时给出快照精确值与官方量级，并提醒读者 \wca{} 数据库持续增长，更新后的导出不会与这些数字完全一致（第~\ref{sec:limitations} 节）。
+
+这 22 个项目包含 17 个现役项目（三阶到七阶、三阶单手、三阶盲拧、最少步、多盲、魔表、五魔方、金字塔、斜转、SQ1）以及 5 个已废止项目（三阶脚拧、magic、master magic、旧制多盲）。项目覆盖率极不均衡：三阶以数量级优势居首，而多盲、四盲、五盲记录相对稀少。这种不均衡正是第~\ref{sec:protocol} 节分层报告的首要动因。
+
+\subsection{表结构}
+\label{sec:data-schema}
+
+基准使用以下关系表，并按下表的键进行连接。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{核心表及定义基准关系视图的连接键。}
+  \label{tab:schema}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    表 & 关键字段 & 在基准中的角色 \\
+    \midrule
+    \code{persons} & \code{wca\_id}、姓名、国家、性别 & 选手身份 \\
+    \code{competitions} & \code{id}、日期、城市、坐标 & 时间锚点 \\
+    \code{results} & (person, competition, event, round) & 标签：best、average、pos \\
+    \code{result\_attempts} & result 键、attempt 序号 & 单次尝试值 \\
+    \code{scrambles} & 轮次键、组 & 打乱序列 \\
+    \code{events} / \code{formats} / \code{round\_types} & id & 计分语义 \\
+    \code{countries} / \code{continents} & iso2 & 地区分层 \\
+    \code{championships} & competition id & 可选的比赛背景 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item 在 v2.0.2 中，\code{result\_attempts} 表不再包含
+          \code{id}/\code{created\_at}/\code{updated\_at}；管线不应依赖这些字段。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{领域特定解码}
+\label{sec:data-decoding}
+
+\wca{} 数据的关键特征在于：存储整数的含义取决于项目的 \code{format}。我们显式给出解码规则，因为处理不当会污染所有下游任务。
+
+\paragraph{计时与计数类数值。}对 \code{time} 项目，正数值为百分之一秒（\code{8653} $= 1{:}26.53$）。对最少步项目（\code{number}），正数值为原始步数，且平均值以 $100\times$ 均值存储。负值与零为状态哨兵：$-1$ 表示 \DNF{}（未完成）、$-2$ 表示 \DNS{}（未开始）、$0$ 表示“无成绩”。\DNF{} 尝试计入 \DNF{} 率统计但绝不计入平均；\DNS{} 通常从训练中剔除；$0$ 视为缺失。
+
+\paragraph{多盲复合编码。}多盲项目（\code{333mbf}）将完成数、尝试数与用时打包进一个复合整数，共十位数字，并以首位数字区分两代格式。算法~\ref{alg:multi} 给出我们实现的解码器（及其精确逆运算，用于往返测试）。
+
+\begin{algorithm}[t]
+\caption{\wca{} 多盲复合值的解码。}
+\label{alg:multi}
+\begin{algorithmic}[1]
+\Require 正整数 $v$（十位、左补零字符串 $s$）
+\Ensure solved、attempted、seconds
+\State $s \gets \mathrm{zfill}(\mathrm{str}(v), 10)$
+\If{$s_0 = \texttt{1}$} \Comment{旧格式 \texttt{1SSAATTTTT}}
+    \State $SS \gets \mathrm{int}(s_{1:3})$，$AA \gets \mathrm{int}(s_{3:5})$
+    \State solved $\gets 99 - SS$
+    \State attempted $\gets AA$
+    \State seconds $\gets \mathrm{int}(s_{5:10})$
+    \State missed $\gets$ attempted $-$ solved \Comment{要求 missed $\ge 0$}
+\ElsIf{$s_0 = \texttt{0}$} \Comment{新格式 \texttt{0DDTTTTTMM}}
+    \State $DD \gets \mathrm{int}(s_{1:3})$，$MM \gets \mathrm{int}(s_{8:10})$
+    \State seconds $\gets \mathrm{int}(s_{3:8})$
+    \State difference $\gets 99 - DD$
+    \State solved $\gets$ difference $+$ missed，其中 missed $\gets MM$
+    \State attempted $\gets$ solved $+$ missed
+\Else
+    \State \textbf{error} 未知版本位
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+用于排序的存储分数是“越小越好”的替代量 $(100-\text{solved})\times 10^6 + \text{seconds} + \text{missed}$，它在保持 \wca{} 排序的同时为每次尝试提供单一标量。
+
+\paragraph{轮次格式归一化。}若干轮次格式需要带去极值的平均。对\emph{5 次去极值平均}（\code{ao5}），将五次尝试排序，去掉最好与最差各一次，再对剩余三次取平均；若出现两次及以上 \DNF{}，则整轮为 \DNF{}。对\emph{3 次平均}（\code{mo3}），三次取平均，任一 \DNF{} 即令整轮为 \DNF{}。我们从 \code{result\_attempts} 重建每轮平均值，并与官方 \code{results.average} 校验；一致率作为数据质量门禁加以追踪。该去极值规则很重要：\code{ao5} 中单次 \DNF{} 通常作为“最差”被丢弃，因此单次 \DNF{} 的边际影响较小，而第二次 \DNF{} 会使整轮崩塌——这是一个模型必须显式刻画的非连续效应，而非简单取平均。
+
+\paragraph{打乱序列。}多盲打乱由若干以换行分隔的三阶打乱组成；在 TSV 导出中换行被替换为竖线 \code{|}。管线按 \code{|}（或换行）切分、去除空白，并校验所得序列长度与项目匹配。
+
+\subsection{时间划分}
+\label{sec:data-splits}
+
+我们采用严格的时间划分而非随机划分。随机划分会泄漏未来信息，因为同一选手相邻比赛高度相关；时间划分则贴近“用过去预测未来”的真实部署场景。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{\wcabench{} 的时间划分。测试窗口固定，以便新数据到达时主排行榜仍可比。}
+  \label{tab:splits}
+  \begin{tabular}{llr}
+    \toprule
+    集合 & 时间范围 & 记录数 \\
+    \midrule
+    训练集 & 2003--2022 & 3{,}211{,}294 \\
+    验证集 & 2023--2024 & 1{,}978{,}851 \\
+    测试集（冻结） & 2025--2026 & 1{,}719{,}290 \\
+    \quad Test-A & 2025 上半年 & --- \\
+    \quad Test-B & 2025 下半年 & --- \\
+    \quad Test-C & 2026 上半年 & --- \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item 各子切片记录数在评估时报告，取决于抽样测试集；子切片用于时间鲁棒性分层。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+此外，每名选手都保留完整、按时间排序的参赛历史，以支持纵向分析。由于 \wca{} 数据库持续增长，主排行榜始终在固定的 2025--2026 测试窗口上计算；此后新增比赛作为单独的\emph{扩展测试集}发布，遵循时序基准的惯例。
+
+\subsection{已知偏差}
+\label{sec:data-biases}
+
+我们列出负责任用户必须留意的偏差；同一清单也出现在数据卡中。
+\begin{itemize}
+  \item \textbf{项目不均衡。}三阶记录远超多盲、四盲、五盲。未分层的平均值因此由三阶主导。
+  \item \textbf{地区不均衡。}各国家/大洲获得比赛机会差异显著，因此跨地区泛化结论天然较弱。
+  \item \textbf{类别不均衡。}\DNF{} 稀有（全局占尝试的 3.18\%）且跨项目极不均匀；盲拧与多盲项目的失败率远高于其他。
+  \item \textbf{非平稳性。}硬件更迭（如磁力魔方）、规则变化与训练方法革新使时间序列非平稳；在 2003--2022 上拟合的模型面对 2025--2026 的分布并不相同。
+  \item \textbf{自选择。}是否参加某项目是选择行为，因此技能迁移估计存在混淆；简单相关会系统性高估迁移（第~\ref{sec:tasks} 节）。
+  \item \textbf{冷启动。}首次参赛落在测试窗口内的选手没有可用历史；他们会被标记并单独报告，而非静默并入主指标。
+\end{itemize}

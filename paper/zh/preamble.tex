@@ -1,0 +1,102 @@
+% =============================================================================
+%  preamble.tex -- WCA-Bench 中文版宏包与宏定义
+%
+%  设计约束
+%  --------
+%   * 必须使用 XeLaTeX 编译（ctexart 默认调用 xeCJK）。
+%   * 仅使用 CTAN 常见宏包，标准 TeX Live 2024 可直接编译。
+%   * 中文排版由 ctex 处理（默认 fontset=auto，在 Windows 上自动使用系统
+%     中文字体，如 SimSun；在其他平台自动选择可用中文字体）。
+%   * 专有名词（WCA-Bench、Plackett--Luce、XGBoost、GNN、DNF、
+%     Psych Sheet 等）保留英文。
+% =============================================================================
+
+% --- 版面 -------------------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+\setlength{\emergencystretch}{3em}
+
+% --- 数学 -------------------------------------------------------------------
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% --- 表格 -------------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\usepackage{makecell}
+
+% --- 图 ---------------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+\graphicspath{{../figures/}}
+
+% --- 算法 -------------------------------------------------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{算法}
+
+% --- 排版与列表 -------------------------------------------------------------
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.6em,topsep=2pt,itemsep=1pt}
+\setlist[enumerate]{leftmargin=1.8em,topsep=2pt,itemsep=1pt}
+
+% --- 超链接与文献（置于最后） ----------------------------------------------
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[unicode,hidelinks,breaklinks]{hyperref}
+
+% --- 图注 -------------------------------------------------------------------
+\captionsetup{font=small,labelfont=bf}
+
+% --- 颜色 -------------------------------------------------------------------
+\definecolor{wcablu}{HTML}{1F4E79}
+\definecolor{wcared}{HTML}{B03A2E}
+\definecolor{wcagrn}{HTML}{1E6B52}
+
+% =============================================================================
+%  记号宏
+% =============================================================================
+\newcommand{\wca}{WCA}
+\newcommand{\wcabench}{WCA-Bench}
+\newcommand{\task}[1]{\textsf{T#1}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{y}
+\newcommand{\asof}{\textsf{as\_of}}
+\newcommand{\metric}{\mathcal{M}}
+\newcommand{\loss}{\mathcal{L}}
+\newcommand{\DNF}{\textsc{DNF}}
+\newcommand{\DNS}{\textsc{DNS}}
+\newcommand{\kendall}{\ensuremath{\tau}}
+\newcommand{\brier}{\ensuremath{B}}
+\newcommand{\aucpr}{\ensuremath{\mathrm{AUC\text{-}PR}}}
+\newcommand{\aucroc}{\ensuremath{\mathrm{AUC\text{-}ROC}}}
+\newcommand{\maelog}{\ensuremath{\mathrm{MAE}_{\log}}}
+\newcommand{\rmselog}{\ensuremath{\mathrm{RMSE}_{\log}}}
+\newcommand{\ev}{\text{event}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+% 表格中“越小越好 / 越大越好”的箭头
+\newcommand{\arrdown}{$\downarrow$}
+\newcommand{\arrup}{$\uparrow$}
+
+% =============================================================================
+%  算法环境中文关键字
+% =============================================================================
+\algrenewcommand\algorithmicrequire{\textbf{输入：}}
+\algrenewcommand\algorithmicensure{\textbf{输出：}}
+\algrenewcommand\algorithmicif{如果}
+\algrenewcommand\algorithmicthen{则}
+\algrenewcommand\algorithmicelse{否则}
+\algrenewcommand\algorithmicfor{对于}
+\algrenewcommand\algorithmicdo{执行}
+\algrenewcommand\algorithmicreturn{返回}
+\algrenewcommand\algorithmicwhile{当}
+\algrenewcommand\algorithmicend{结束}
+
+\endinput

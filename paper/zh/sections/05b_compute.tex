@@ -1,0 +1,34 @@
+\section{计算与硬件}
+\label{sec:compute}
+
+\paragraph{为什么大多数基线在 CPU 上运行。}本基准的 21 个基线以表格型方法为主：核密度估计、Plackett--Luce、Ridge 与 Logistic 回归、Beta--Binomial、高斯过程叠加极值理论、双重差分、工具变量与因果森林。其特征矩阵仅 $2$k--$80$k 行，瓶颈是\emph{每场比赛的小批量前向与规则感知解码}，而非大规模稠密张量运算。因此它属延迟敏感而非吞吐敏感：GPU 的内核启动与主机--设备传输开销通常超过所节省的计算，故这些基线默认在 CPU 上运行。
+
+\paragraph{GPU 用在哪里。}尽管如此，本基准在确有收益之处使用 GPU。深度基线（\code{baselines/deep/}，即 LSTM）与图基线（\code{baselines/graph/}，即 GNN）在 CUDA 上训练，树模型基线也可通过 \code{device="cuda"} 在 GPU 上拟合。本次发布中，GNN 不再回退到 NumPy 传播路径，而是以原生 \code{gnn} 后端运行在 CUDA 上；树模型基线使用真实的 \textsc{XGBoost} 后端，而非 scikit-learn 随机森林。
+
+\paragraph{本次发布所用硬件。}第~\ref{sec:results} 节报告的全部数字均在单机环境下产生：
+\begin{itemize}
+  \item \textbf{GPU：}NVIDIA GeForce RTX 4060 Laptop GPU（8~GB，compute capability 8.9）；
+  \item \textbf{CUDA：}13.0，驱动 610.88，\code{torch} 2.13.0+cu130；
+  \item \textbf{其他库：}\code{xgboost} 3.4.1、\code{lightgbm} 4.7.0、\code{statsmodels} 0.15.0。
+\end{itemize}
+运行命令为：
+\begin{itemize}
+  \item \code{run\_all\_baselines.py --mode small --device cuda}（seed 42）；
+  \item \code{run\_multi\_seed.py --seeds 42 43 44 --mode small --device cuda}。
+\end{itemize}
+
+\paragraph{成本报告规范。}每个基线报告都记录机器可读的 \code{cost} 块，含实际使用的设备、墙钟时间、CPU 小时数，并在 GPU 上额外记录 GPU 小时数与 GPU 型号。例如 \task{1} 的 LSTM 报告包含：
+\begin{verbatim}
+"cost": {
+  "mode": "small",
+  "baseline_kind": "method",
+  "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+  "wall_clock_sec": 31.385,
+  "cpu_hours": 0.00872,
+  "gpu_hours": 0.00872,
+  "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+}
+\end{verbatim}
+仅 CPU 的基线省略 \code{gpu\_hours}/\code{gpu\_model}，并报告 \code{"device": "cpu"}。将成本与精度一并发布，可避免把“用更多算力换来更低指标”误读为进展。
+
+\paragraph{何时值得使用 GPU。}当整体规模放大时 GPU 才划算：把全部测试比赛跑完整滚动窗口，再乘以多种子，再乘以序列与图基线的大批量训练。在该场景下推荐的做法是把每场比赛的小批量合并为更大的批，以真正提高加速器利用率；对于本文报告的抽样 \emph{small} 模式运行，CPU 已足以支撑表格型基线，只有深度与图模型从 CUDA 中获益。

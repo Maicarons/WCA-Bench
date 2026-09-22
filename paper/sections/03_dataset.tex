@@ -1,0 +1,261 @@
+\section{The \wcabench{} Dataset}
+\label{sec:dataset}
+
+This section documents the data source, scale, schema, domain-specific
+decoding rules, temporal splits and known biases. We follow the datasheet
+convention \citep{datasheets}: anything a downstream user needs in order to
+judge whether the benchmark is appropriate for their question is stated here
+or in the accompanying data card.
+
+\subsection{Source and provenance}
+\label{sec:data-source}
+
+All data originate from the official \wca{} public database export
+\citep{wca_export}, a versioned, freely downloadable snapshot of every
+sanctioned competition. We use the \code{Results Export} format
+\textbf{v2.0.2} (snake-case column names, including the \code{result\_attempts}
+table) with an export date of 2026-09-21. No private, scraped or synthetic data
+are used for headline results; a synthetic generator is provided separately for
+offline continuous-integration runs, and any result computed on synthetic data
+is labelled as such. The code is released under Apache-2.0; the data remain
+the property of the \wca{} and are redistributed only as derived aggregates.
+
+\subsection{Scale}
+\label{sec:data-scale}
+
+Table~\ref{tab:scale} summarizes the scale of the built artifacts. The raw
+export contains millions of individual timed attempts, which is what makes the
+benchmark statistically rich and simultaneously computationally demanding.
+
+These counts are \textbf{this benchmark's snapshot statistics}, not figures
+published by \wca{}: they are the exact row counts of the pinned export
+snapshot and are reproducible from \code{data/processed/manifest.json} and the
+reconciliation report.\footnote{Snapshot metadata: export format version
+\textbf{v2.0.2}; export date \textbf{2026-09-21} (readme and
+\code{metadata.json}); the official export enumerates 14 tables but publishes
+\emph{no} per-table row counts.} The official \wca{} export pages expose only
+the format version (v2.0.2), the export date and download sizes (the SQL
+archive is $390{,}136{,}209$~bytes and the TSV archive $377{,}258{,}709$~bytes,
+as of 2026-09-21). We therefore report both the snapshot counts and the
+official qualitative scale, and we caution that the \wca{} database grows
+continuously, so a newer export will not match these numbers exactly
+(Section~\ref{sec:limitations}).
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Scale of the \wcabench{} data artifacts. All row counts are
+  \emph{snapshot statistics} of this benchmark's pinned export
+  (v2.0.2, export date 2026-09-21).}
+  \label{tab:scale}
+  \begin{tabular}{lr}
+    \toprule
+    Quantity & Value \\
+    \midrule
+    Results (person--event--round records) & 6{,}909{,}454 \\
+    Competitors (\code{persons}) & 298{,}551 \\
+    Competitions (\code{competitions}) & 18{,}708 \\
+    Single attempts (\code{result\_attempts}) & 31{,}847{,}257 \\
+    Scramble rows (\code{scrambles}) & 3{,}186{,}380 \\
+    Events (active + discontinued) & 22 \\
+    \midrule
+    Train split (2003--2022) & 3{,}211{,}294 \\
+    Validation split (2023--2024) & 1{,}978{,}851 \\
+    Test split (2025--2026) & 1{,}719{,}290 \\
+    \midrule
+    Global attempt-level \DNF{} rate & 3.18\% \\
+    Frozen person--event statistics & 612{,}224 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item ``Frozen person--event statistics'' counts the per-(person, event)
+          historical summaries computed on the training window and held fixed
+          for the whole test window (Section~\ref{sec:protocol}).
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+The 21 events comprise the 17 currently sanctioned events (three-by-three
+through seven-by-seven, one-handed, blindfolded, fewest-moves, multi-blind,
+clock, megaminx, pyraminx, skewb, square-1) plus four historical or
+discontinued events (three-by-three feet, magic, master magic and old-style
+multi-blind). Event coverage is highly imbalanced: three-by-three dominates by
+an order of magnitude, whereas multi-blind, four-blind and five-blind have
+comparatively few records. This imbalance is the primary reason for the
+stratified reporting in Section~\ref{sec:protocol}.
+
+\subsection{Schema}
+\label{sec:data-schema}
+
+The benchmark uses the following relational tables, joined through the keys
+shown in Table~\ref{tab:schema}.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Core tables and the joins that define the benchmark's relational
+  view.}
+  \label{tab:schema}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Table & Key fields & Role in the benchmark \\
+    \midrule
+    \code{persons} & \code{wca\_id}, name, country, gender & competitor identity \\
+    \code{competitions} & \code{id}, date, city, coordinates & temporal anchor \\
+    \code{results} & (person, competition, event, round) & labels: best, average, pos \\
+    \code{result\_attempts} & result key, attempt number & per-attempt values \\
+    \code{scrambles} & round key, group & scramble sequences \\
+    \code{events} / \code{formats} / \code{round\_types} & id & scoring semantics \\
+    \code{countries} / \code{continents} & iso2 & regional stratification \\
+    \code{championships} & competition id & optional competition context \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item In v2.0.2 the \code{result\_attempts} table no longer carries
+          \code{id}/\code{created\_at}/\code{updated\_at}; pipelines must not
+          depend on them.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{Domain-specific decoding}
+\label{sec:data-decoding}
+
+The decisive feature of \wca{} data is that the meaning of a stored integer
+depends on the event's \code{format}. We state the decoding rules explicitly,
+because mishandling them corrupts every downstream task.
+
+\paragraph{Timed and count-based values.}
+For \code{time} events a positive value is a number of centiseconds
+(\code{8653} $= 1{:}26.53$). For the fewest-moves event (\code{number}) a
+positive value is a raw move count, and averages are stored as $100\times$ the
+mean. Negative and zero sentinels encode status: $-1$ means \DNF{} (did not
+finish), $-2$ means \DNS{} (did not start), and $0$ means ``no result''.
+\DNF{} attempts participate in \DNF{}-rate statistics but never in an average;
+\DNS{} is normally excluded from training; $0$ is treated as missing.
+
+\paragraph{Multi-blind compound encoding.}
+The multi-blind event (\code{333mbf}) stores a composite integer whose ten
+digits pack the number of solved cubes, the number attempted and the elapsed
+time into one value. Two generations exist, distinguished by the leading digit.
+Algorithm~\ref{alg:multi} gives the decoder we implement (and its exact
+inverse, used for round-trip testing).
+
+\begin{algorithm}[t]
+\caption{Decoding of the \wca{} multi-blind compound value.}
+\label{alg:multi}
+\begin{algorithmic}[1]
+\Require positive integer $v$ (10-digit, zero-padded string $s$)
+\Ensure solved, attempted, seconds
+\State $s \gets \mathrm{zfill}(\mathrm{str}(v), 10)$
+\If{$s_0 = \texttt{1}$} \Comment{old format \texttt{1SSAATTTTT}}
+    \State $SS \gets \mathrm{int}(s_{1:3})$, $AA \gets \mathrm{int}(s_{3:5})$
+    \State solved $\gets 99 - SS$
+    \State attempted $\gets AA$
+    \State seconds $\gets \mathrm{int}(s_{5:10})$
+    \State missed $\gets$ attempted $-$ solved \Comment{requires missed $\ge 0$}
+\ElsIf{$s_0 = \texttt{0}$} \Comment{new format \texttt{0DDTTTTTMM}}
+    \State $DD \gets \mathrm{int}(s_{1:3})$, $MM \gets \mathrm{int}(s_{8:10})$
+    \State seconds $\gets \mathrm{int}(s_{3:8})$
+    \State difference $\gets 99 - DD$
+    \State solved $\gets$ difference $+$ missed, where missed $\gets MM$
+    \State attempted $\gets$ solved $+$ missed
+\Else
+    \State \textbf{error} unknown version digit
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+The stored double-blind score used for ranking is the lower-is-better surrogate
+$(100-\text{solved})\times 10^6 + \text{seconds} + \text{missed}$, which
+preserves the \wca{} ordering while remaining a single scalar per attempt.
+
+\paragraph{Round-format normalization.}
+Several round formats require averaging with outlier trimming. For
+\emph{average of 5} (\code{ao5}) an attempt set of five is sorted, the best and
+worst attempts are discarded, and the remaining three are averaged; if two or
+more attempts are \DNF{}, the whole round is \DNF{}. For \emph{mean of 3}
+(\code{mo3}) all three attempts are averaged, and any \DNF{} makes the round
+\DNF{}. We reconstruct each round's average from \code{result\_attempts} and
+check it against the official \code{results.average}; the consistency rate is
+tracked as a data-quality gate. This trimming rule matters because a single
+\DNF{} in \code{ao5} is usually absorbed as the discarded ``worst'' attempt,
+so the marginal effect of one \DNF{} is small, while a second \DNF{} collapses
+the round---a discontinuity that models must represent explicitly rather than
+average away.
+
+\paragraph{Scrambles.}
+Multi-blind scrambles consist of several newline-separated three-by-three
+scrambles; in the TSV export newlines are replaced by the pipe character
+(\code{|}). The pipeline splits on \code{|} (or newline), trims, and validates
+the resulting sequence length against the event.
+
+\subsection{Temporal splits}
+\label{sec:data-splits}
+
+We adopt a strict temporal split rather than a random one. Random splits leak
+future information, because adjacent competitions of the same competitor are
+strongly correlated; a temporal split instead mirrors the real deployment
+setting of predicting the future from the past.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Temporal split of \wcabench{}. The test window is fixed so that the
+  main leaderboard remains comparable as new data arrive.}
+  \label{tab:splits}
+  \begin{tabular}{llr}
+    \toprule
+    Split & Window & Records \\
+    \midrule
+    Train & 2003--2022 & 3{,}211{,}294 \\
+    Validation & 2023--2024 & 1{,}978{,}851 \\
+    Test (frozen) & 2025--2026 & 1{,}719{,}290 \\
+    \quad Test-A & 2025 H1 & --- \\
+    \quad Test-B & 2025 H2 & --- \\
+    \quad Test-C & 2026 H1 & --- \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item Per-slice record counts are reported at evaluation time and depend on
+          the sampled test set; the sub-slices are used for temporal-robustness
+          stratification.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+Each competitor additionally retains a complete, time-ordered competition
+history, enabling longitudinal analysis. Because the \wca{} database keeps
+growing, the main leaderboard is always computed on the fixed 2025--2026 test
+window; later competitions are published as a separate \emph{extended test
+set}, following the convention of time-series benchmarks.
+
+\subsection{Known biases}
+\label{sec:data-biases}
+
+We list the biases that a responsible user must keep in mind; the same list
+appears in the data card.
+\begin{itemize}
+  \item \textbf{Event imbalance.} Three-by-three records vastly outnumber
+        multi-blind, four-blind and five-blind records. Unstratified averages
+        are therefore dominated by three-by-three.
+  \item \textbf{Regional imbalance.} Access to competitions differs sharply by
+        country and continent, so cross-regional generalization claims are
+        weak by construction.
+  \item \textbf{Class imbalance.} \DNF{} is rare (3.18\% of attempts overall)
+        and extremely uneven across events; blindfolded and multi-blind events
+        have far higher failure rates.
+  \item \textbf{Non-stationarity.} Hardware changes (for example magnetic
+        cubes), rule changes and training-method shifts make the time series
+        non-stationary; a model fitted on 2003--2022 does not face the same
+        distribution in 2025--2026.
+  \item \textbf{Self-selection.} Participation in an event is a choice, so
+        skill-transfer estimates are confounded; simple correlation
+        systematically overstates transfer (Section~\ref{sec:tasks}).
+  \item \textbf{Cold start.} Competitors whose first appearance falls inside
+        the test window have no usable history; they are flagged and reported
+        separately rather than silently merged into the main metric.
+\end{itemize}

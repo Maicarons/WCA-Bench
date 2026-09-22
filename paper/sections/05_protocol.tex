@@ -1,0 +1,222 @@
+\section{Evaluation Protocol}
+\label{sec:protocol}
+
+A benchmark is only as trustworthy as its evaluation protocol. \wcabench{}
+rests on four pillars: leakage prevention, stratified reporting, statistical
+rigour, and reproducibility. Empirical rigour of this kind is increasingly
+recognized as essential for progress \citep{sculley_rigor}. This section
+specifies each pillar in turn.
+
+\subsection{Leakage prevention}
+\label{sec:protocol-leakage}
+
+\wcabench{} uses a rolling-window evaluation that simulates deployment: for
+every test competition, only data that existed \emph{before} that competition
+may influence a prediction. Formally, for a target competition with date $d$,
+the admissible information set is
+$\mathcal{F}_d = \{\, r : \mathrm{date}(r) < d \,\}$, and no record at or after
+$d$---including other competitors' results in the same round---may be used.
+
+Three mechanisms enforce this. First, every feature function must accept an
+explicit \asof{} timestamp; a feature that cannot be evaluated ``as of'' a
+moment is not admissible. Feature caches are keyed by \asof{} so results cannot
+be silently reused across time. Second, a testing utility
+\code{assert\_no\_leakage(features, target\_date)} asserts that no feature
+depends on a record dated at or after the target. Third, benchmark statistics
+are frozen, as described next.
+
+\subsection{Frozen statistics}
+\label{sec:protocol-frozen}
+
+Statistics that would otherwise drift as the test window advances are computed
+once from the training window and held fixed for the entire test period.
+Table~\ref{tab:frozen} lists them. Freezing is essential: if, for example,
+``current world record'' were recomputed per test competition, a model could
+benefit from information that a real deployment would not have at the decision
+moment. The export contains \textbf{612{,}224} frozen person--event
+statistics, each computed on the training split only.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Statistics frozen from the training window and reused for the whole
+  test window.}
+  \label{tab:frozen}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Statistic & Computed from & Frozen for \\
+    \midrule
+    Competitor historical mean / variance & training ($\le 2022$) & whole test window \\
+    Event world record & training & whole test window \\
+    Event reference distribution & training & whole test window \\
+    Skill-level percentile thresholds & training & whole test window \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\subsection{Rolling-window algorithm}
+\label{sec:protocol-algorithm}
+
+Algorithm~\ref{alg:rolling} gives the protocol in pseudocode. Test competitions
+are processed in chronological order; features are built from the frozen
+statistics and the running history, a leakage assertion is checked, and
+per-competition reports are aggregated at the end.
+
+\begin{algorithm}[t]
+\caption{Rolling-window evaluation with frozen statistics.}
+\label{alg:rolling}
+\begin{algorithmic}[1]
+\Require model $f$, test competitions $C$, frozen statistics $F$
+\Ensure aggregated report
+\State $R \gets [\,]$
+\State $C \gets \mathrm{sort}(C, \text{key} = \text{date})$ \Comment{chronological}
+\ForAll{$c \in C$}
+    \State $\x \gets \textsc{Featurize}(\asof = c.\text{date}, F)$
+    \State \textbf{assert} \Call{NoLeakage}{$\x$, $c.\text{date}$}
+    \State $\hat{\y} \gets f.\mathrm{predict}(\x)$
+    \State $R.\mathrm{append}\big(\textsc{Evaluate}(\hat{\y}, c.\text{truth})\big)$
+\EndFor
+\State \Return \Call{Aggregate}{$R$}
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Four-dimensional stratification}
+\label{sec:protocol-stratification}
+
+Aggregate metrics can be dominated by a single large subgroup. To prevent
+conclusions from being masked, \wcabench{} mandates stratified reports along
+four dimensions, summarized in Table~\ref{tab:strat}. All four are emitted
+together with confidence intervals, so a reader can see whether a headline gain
+holds within important subgroups.
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{The four stratification dimensions required for every task.}
+  \label{tab:strat}
+  \begin{tabular}{@{}lll@{}}
+    \toprule
+    Dimension & Groups & Rationale \\
+    \midrule
+    Event & speed-solving / variant / blind / other & data volume differs by orders of magnitude \\
+    Skill level & novice (0--25\%), intermediate (25--75\%), & behaviour and stability differ by level \\
+                & advanced (75--95\%), elite ($>$95\%) & \\
+    Time slice & Test-A / Test-B / Test-C & temporal robustness \\
+    Region & Asia, Europe, North America, & cross-regional generalization \\
+           & South America, Oceania, Africa & \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{Hard subsets.}
+To guard against benchmark saturation, each task also reports a hard subset:
+for \task{3}, competitors whose historical \DNF{} rate is in $[0.1, 0.3]$; for
+\task{1}, rounds in the top quartile of recent-result variance; for \task{2},
+rounds in which the top-8 competitors differ by less than a threshold; and for
+\task{5}, event pairs in the bottom quartile by sample size.
+
+\paragraph{Cold start.}
+Competitors whose first appearance falls inside the test window are flagged and
+reported separately; they never enter the headline metric.
+
+\subsection{Statistical testing}
+\label{sec:protocol-stats}
+
+Every claim of improvement must survive statistical scrutiny. \wcabench{}
+prescribes the following tests, all reported with effect sizes.
+
+\begin{table}[t]
+  \centering
+  \footnotesize
+  \begin{threeparttable}
+  \caption{Required statistical tools. Paired units are
+  (competition $\times$ event $\times$ round).}
+  \label{tab:stats}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.3cm}
+                                >{\raggedright\arraybackslash}X
+                                >{\raggedright\arraybackslash}X@{}}
+    \toprule
+    Method & Purpose & Applicability \\
+    \midrule
+    Paired $t$-test & compare two models on paired errors
+      & two models, paired samples \\
+    Bootstrap CI ($1000\times$) & uncertainty for arbitrary metrics
+      & any metric, unknown distribution \\
+    Friedman $+$ Nemenyi & multi-model comparison, critical-difference diagram
+      & $\ge 3$ models \\
+    Effect size (Cohen's $d$ / Cliff's $\delta$)
+      & distinguish significance from importance & all comparisons \\
+    \bottomrule
+  \end{tabularx}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{Paired $t$-test.}
+We compare two models on the same test instances by testing the paired
+difference of their per-instance errors, using a single pairing unit
+(competition $\times$ event $\times$ round). We report the mean difference, a
+95\% confidence interval, the $p$-value and an effect size.
+
+\paragraph{Bootstrap confidence intervals.}
+Algorithm~\ref{alg:bootstrap} gives the bootstrap used for arbitrary metrics.
+The random seed is fixed (default 42) and recorded, and the number of
+resamples (default 1000) is reported so that confidence intervals are exactly
+reproducible.
+
+\begin{algorithm}[t]
+\caption{Bootstrap confidence interval for a metric.}
+\label{alg:bootstrap}
+\begin{algorithmic}[1]
+\Require values $V$, metric $M$, resamples $B = 1000$, level $\alpha = 0.05$, seed $s = 42$
+\Ensure point estimate and CI
+\State $\mathrm{rng} \gets \textsc{DefaultRng}(s)$
+\State $S \gets [\,]$
+\For{$b = 1$ \textbf{to} $B$}
+    \State $V_b \gets \textsc{SampleWithReplacement}(V, |V|, \mathrm{rng})$
+    \State $S.\mathrm{append}(M(V_b))$
+\EndFor
+\State $(\text{lo}, \text{hi}) \gets \mathrm{percentile}(S,\ [50\alpha,\ 50(2-\alpha)])$
+\State \Return $(M(V), \text{lo}, \text{hi})$
+\end{algorithmic}
+\end{algorithm}
+
+\paragraph{Multi-model comparison.}
+When three or more models are compared, a Friedman test first establishes
+whether a difference exists; if it does, a Nemenyi post-hoc test performs
+pairwise comparisons and a critical-difference diagram summarizes the result.
+Multiple comparisons are corrected (Bonferroni or Nemenyi) to control
+false-positive inflation.
+
+\paragraph{Effect sizes.}
+Significance does not imply importance, so we require Cohen's $d$ (0.2 small /
+0.5 medium / 0.8 large) or Cliff's $\delta$ ($|\delta|<0.147$ negligible,
+$<0.33$ small, $<0.474$ medium, otherwise large) for every comparison.
+
+\paragraph{Common pitfalls.}
+The protocol explicitly forbids comparing unpaired aggregate means, omitting
+effect sizes, leaving bootstrap seeds unrecorded, and ignoring stratification.
+Each of these would inflate apparent improvements.
+
+\subsection{Reproducibility}
+\label{sec:protocol-repro}
+
+Reproducibility is graded and enforced. Submissions must provide training code
+and seeds, the preprocessing script or a pipeline version reference, model
+weights, and a compute-cost report. All random sources (Python, NumPy, deep
+learning frameworks) are fixed, and headline results report the mean and
+standard deviation over at least three seeds. We define three reproducibility
+levels: \textbf{L1} (code reruns), \textbf{L2} (L1 plus results within a
+$\pm 1\%$ metric tolerance) and \textbf{L3} (L2 plus downloadable raw
+predictions and independently recomputable metrics). The minimum bar for
+inclusion is L2; the main leaderboard requires L3. Preprocessing artifacts
+record row counts and SHA-256 checksums for verification.
+
+\paragraph{Report schema.}
+Every model submission emits a structured report containing overall metrics,
+the four stratified views, calibration and bootstrap intervals, significance
+tests against baselines, and a compute-cost file. This uniformity is what makes
+``the same evaluation code scores every model'' a reality rather than a slogan.

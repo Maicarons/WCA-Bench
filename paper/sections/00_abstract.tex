@@ -1,0 +1,26 @@
+We introduce \wcabench, the first standardized machine-learning benchmark built
+on the complete public competition database of the World Cube Association
+(\wca). Speedcubing is an unusual but instructive competitive setting: it is a
+decades-long, globally distributed, individual-sport record of \emph{millions}
+of timed attempts, governed by explicit rule systems (round formats,
+``average of 5'' outlier trimming, multi-blind encodings, DNF/DNS status
+codes) that generic time-series and tabular pipelines do not model. From a raw
+export of \textbf{6{,}909{,}454 results}, \textbf{298{,}551 competitors} and
+\textbf{18{,}708 competitions} we define a time split (train 2003--2022, val
+2023--2024, test 2025--2026) and five tasks spanning regression, ranking,
+imbalanced classification, extreme-value extrapolation and causal inference:
+\task{1} result prediction, \task{2} placement prediction, \task{3} DNF
+prediction, \task{4} human-limit estimation, and \task{5} skill transfer.
+This paper makes four contributions: (i) a reproducible, columnar data
+infrastructure with rule-aware decoding and a documented data card;
+(ii) formal, metric-complete definitions for all five tasks together with
+domain challenges; (iii) a leakage-safe rolling-window evaluation protocol
+with frozen statistics, four-dimensional stratified reporting and a full
+statistical-testing toolbox; and (iv) 21 reference baselines spanning six
+methodological families---statistical, tree, deep, graph, Bayesian and
+causal---with real measured numbers, for example \maelog{} $=0.164$
+(single run) for tree-based result prediction, Kendall $\kendall=0.767$ for the
+official psychology-sheet ranking baseline, and \aucpr{} $=0.373$ for
+tree-based DNF prediction. We also release an honest account of where simple statistical
+models remain competitive and where extrapolation and confounding make claims
+unreliable.

@@ -1,0 +1,305 @@
+\section{基线与结果}
+\label{sec:results}
+
+本节报告 \wcabench{} 随附的参考基线。下列数字是已发布基线在官方导出上的\emph{真实}输出，直接取自仓库的排行榜与多种子产物，并非示例值。在呈现之前，我们强调两点如实说明。第一，这些结果产生于基准的\emph{小样本（small）}模式，该模式对测试比赛与训练集做代表性抽样，以便整套基线在单机运行；最终排行榜应在全量数据与滚动窗口协议下重跑。第二，由于基准的目标是定义问题而非赢得问题，这些数字的价值在于其可比性，而非绝对量级。所用硬件见第~\ref{sec:compute} 节。
+
+\subsection{基线覆盖}
+\label{sec:results-taxonomy}
+
+已发布的基线套件包含 \textbf{21 个基线}，覆盖 \textbf{六大方法家族}——统计、树模型、深度、图、贝叶斯与因果——外加若干领域与平凡参照模型，且每个任务至少 4 个基线。表~\ref{tab:coverage} 将各家族对应到任务。\emph{平凡}基线建立下界（历史均值、历史比率）。\emph{领域}基线反映当前实践（\wca{} Psych Sheet、历史 \DNF{} 率、核密度模型）。\emph{方法论}基线检验额外机制——提升、序列模型、图传播、贝叶斯收缩或因果识别——是否确有帮助。所有重量级基线现均运行在原生后端上：树模型使用真实的 XGBoost，GNN 使用其原生 CUDA 路径（第~\ref{sec:compute} 节）。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{基线覆盖情况：21 个基线，覆盖六大方法家族及领域/平凡参照。}
+  \label{tab:coverage}
+  \begin{tabular}{@{}p{2.2cm}p{8.4cm}p{2.6cm}@{}}
+    \toprule
+    家族 & 基线 & 任务 \\
+    \midrule
+    领域 / 平凡 & \texttt{history\_mean}、\texttt{kde}、\texttt{psych\_sheet}、
+                       \texttt{historical\_dnf\_rate} & T1、T2、T3 \\
+    统计 & \texttt{ridge\_log}、\texttt{logistic}、\texttt{kde\_simulation}、
+                  \texttt{plackett\_luce}、\texttt{spearman\_correlation}、
+                  \texttt{exponential\_decay}、\texttt{changepoint}、\texttt{gp\_evt} & T1--T5 \\
+    树模型 & \texttt{xgboost\_log}、\texttt{xgboost\_dnf} & T1、T3 \\
+    深度 & \texttt{lstm} & T1 \\
+    图 & \texttt{gnn} & T2 \\
+    贝叶斯 & \texttt{beta\_binomial}、\texttt{hierarchical\_shrinkage} & T3、T4 \\
+    因果 & \texttt{did\_proxy}、\texttt{iv\_2sls}、\texttt{causal\_forest} & T5 \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\subsection{主结果}
+\label{sec:results-main}
+
+表~\ref{tab:main} 报告每个基线在 seed-42 运行中的主指标及评估实例数。每个任务的最优值以粗体标出。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{全部 21 个参考基线（抽样测试集，官方导出 v2.0.2，seed 42，GPU 运行）。主指标方向以箭头标出；$n$ 为评估实例数。所有数值均为实测，非假设值。}
+  \label{tab:main}
+  \begin{tabular}{@{}llllr@{}}
+    \toprule
+    任务 & 基线 & 家族 & 主指标 & 数值（$n$） \\
+    \midrule
+    \multirow{5}{*}{\task{1} 成绩}
+      & \texttt{xgboost\_log} & 树模型 & \maelog{} \arrdown & \textbf{0.1639} (2196) \\
+      & \texttt{history\_mean} & 平凡 & \maelog{} \arrdown & 0.6657 (2196) \\
+      & \texttt{kde} & 领域 & \maelog{} \arrdown & 0.6657 (2196) \\
+      & \texttt{ridge\_log} & 统计 & \maelog{} \arrdown & 1.0068 (2196) \\
+      & \texttt{lstm} & 深度 & \maelog{} \arrdown & 1.0440 (2196) \\
+    \midrule
+    \multirow{4}{*}{\task{2} 名次}
+      & \texttt{plackett\_luce} & 统计 & Kendall $\kendall$ \arrup & \textbf{0.7673} (2260) \\
+      & \texttt{kde\_simulation} & 统计 & Kendall $\kendall$ \arrup & \textbf{0.7673} (2260) \\
+      & \texttt{psych\_sheet} & 领域 & Kendall $\kendall$ \arrup & \textbf{0.7673} (2260) \\
+      & \texttt{gnn} & 图 & Kendall $\kendall$ \arrup & 0.5670 (2260) \\
+    \midrule
+    \multirow{4}{*}{\task{3} DNF}
+      & \texttt{xgboost\_dnf} & 树模型 & \aucpr{} \arrup & \textbf{0.3731} (2260) \\
+      & \texttt{beta\_binomial} & 贝叶斯 & \aucpr{} \arrup & 0.3725 (2260) \\
+      & \texttt{historical\_dnf\_rate} & 领域 & \aucpr{} \arrup & 0.3591 (2260) \\
+      & \texttt{logistic} & 统计 & \aucpr{} \arrup & 0.2290 (2260) \\
+    \midrule
+    \multirow{4}{*}{\task{4} 极限}
+      & \texttt{gp\_evt} & 统计 & LOO 稳定性 \arrdown & \textbf{0.9836} (21 项目) \\
+      & \texttt{exponential\_decay} & 统计 & LOO 稳定性 \arrdown & 6{,}485{,}301 (21 项目) \\
+      & \texttt{hierarchical\_shrinkage} & 贝叶斯 & LOO 稳定性 \arrdown & 9{,}260{,}100 (21 项目) \\
+      & \texttt{changepoint} & 统计 & LOO 稳定性 \arrdown & n/r \\
+    \midrule
+    \multirow{4}{*}{\task{5} 迁移}
+      & \texttt{spearman\_correlation} & 统计 & 可识别项目对 \arrup & \textbf{413} (80{,}000) \\
+      & \texttt{causal\_forest} & 因果 & 可识别项目对 \arrup & 312 (80{,}000) \\
+      & \texttt{iv\_2sls} & 因果 & 可识别项目对 \arrup & 270 (80{,}000) \\
+      & \texttt{did\_proxy} & 因果 & 可识别项目对 \arrup & 6 (80{,}000) \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item “n/r” 表示未报告：变点基线不输出留一法稳定性统计量。\task{4} 的稳定性数值被量级极大的多盲项目对主导；附录~\ref{app:limit} 给出按项目的尺度稳健视图。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{多种子评估}
+\label{sec:results-multiseed}
+
+由于种子控制测试比赛与训练子集的重采样方式，跨多个种子重复运行度量的是各指标的\emph{评估集抽样方差}——正是单次运行无法揭示的不确定性。表~\ref{tab:multiseed} 给出每个基线在种子 $\{42,43,44\}$ 上的均值 $\pm$ 标准差。\task{4} 与 \task{5} 的确定性估计器与种子无关（标准差 $=0$），因此只有 \task{1}、\task{2} 与 \task{3} 呈现有意义的离散度。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{种子 $\{42,43,44\}$ 的多种子结果（small 模式，GPU）。数值为主指标的均值 $\pm$ 标准差；种子重采样评估集，故离散度反映评估集抽样方差。每个任务的最优均值以粗体标出。}
+  \label{tab:multiseed}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    任务 & 基线 & 指标 & 均值 $\pm$ 标准差 \\
+    \midrule
+    \multirow{5}{*}{\task{1} 成绩}
+      & \texttt{xgboost\_log} & \maelog{} & \textbf{0.1055 $\pm$ 0.0417} \\
+      & \texttt{history\_mean} & \maelog{} & 0.4003 $\pm$ 0.1945 \\
+      & \texttt{kde} & \maelog{} & 0.4003 $\pm$ 0.1945 \\
+      & \texttt{ridge\_log} & \maelog{} & 0.9381 $\pm$ 0.0526 \\
+      & \texttt{lstm} & \maelog{} & 0.9436 $\pm$ 0.0754 \\
+    \midrule
+    \multirow{4}{*}{\task{2} 名次}
+      & \texttt{psych\_sheet} & Kendall $\kendall$ & \textbf{0.8132 $\pm$ 0.0342} \\
+      & \texttt{plackett\_luce} & Kendall $\kendall$ & 0.8132 $\pm$ 0.0342 \\
+      & \texttt{kde\_simulation} & Kendall $\kendall$ & 0.8132 $\pm$ 0.0342 \\
+      & \texttt{gnn} & Kendall $\kendall$ & 0.7440 $\pm$ 0.1258 \\
+    \midrule
+    \multirow{4}{*}{\task{3} DNF}
+      & \texttt{beta\_binomial} & \aucpr{} & \textbf{0.2938 $\pm$ 0.0570} \\
+      & \texttt{xgboost\_dnf} & \aucpr{} & 0.2779 $\pm$ 0.0724 \\
+      & \texttt{historical\_dnf\_rate} & \aucpr{} & 0.2631 $\pm$ 0.0690 \\
+      & \texttt{logistic} & \aucpr{} & 0.1687 $\pm$ 0.0429 \\
+    \midrule
+    \multirow{3}{*}{\task{4} 极限}
+      & \texttt{gp\_evt} & LOO 稳定性 & \textbf{0.9836 $\pm$ 0.0000} \\
+      & \texttt{exponential\_decay} & LOO 稳定性 & 6{,}485{,}301 $\pm$ 0 \\
+      & \texttt{hierarchical\_shrinkage} & LOO 稳定性 & 9{,}260{,}100 $\pm$ 0 \\
+    \midrule
+    \multirow{4}{*}{\task{5} 迁移}
+      & \texttt{spearman\_correlation} & 项目对 & \textbf{413 $\pm$ 0} \\
+      & \texttt{causal\_forest} & 项目对 & 312 $\pm$ 0 \\
+      & \texttt{iv\_2sls} & 项目对 & 270 $\pm$ 0 \\
+      & \texttt{did\_proxy} & 项目对 & 2 $\pm$ 0 \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+多种子视角在三个方面具有信息量。\task{1} 对种子最敏感：树模型平均为 $0.1055\pm0.0417$，而 LSTM 平均为 $0.9436\pm0.0754$，均值上差约九倍，相对离散度相当，因此深度/图模型的劣势并非某一次划分的偶然。\task{3} 的排序发生变化：Beta--Binomial 在均值上最好（$0.2938\pm0.0570$），而树模型在单次 seed-42 运行中居首（$0.3731$ 对 $0.3725$）——两者之差落在一个标准差之内，这本身就是诚实的结论，也是不应过度解读单次运行的原因。对于 \task{2}，领域与统计排序在均值上仍无法区分（$0.8132\pm0.0342$），而 GNN 明显更低（$0.7440\pm0.1258$）。
+
+\subsection{\task{1}：成绩预测}
+\label{sec:results-t1}
+
+对数变换目标上的树模型回归是最强的 \task{1} 基线，在 $n=2196$ 个实例上取得 \maelog{} $=0.1639$（三种子 $0.1055\pm0.0417$）。若改用选手历史均值（\texttt{history\_mean}）或核密度估计（\texttt{kde}），误差约增至四倍（$0.6657$）。朴素对数线性回归达到 $1.0068$，而——令人瞩目的是——序列模型（\texttt{lstm}）是\emph{最差}基线（$1.0440$，三种子 $0.9436\pm0.0754$），甚至差于历史均值。一旦点明，这一排序合乎直觉：成绩在选手内部高度自相关，因此能利用近期历史与项目背景的灵活模型取胜，而全局线性外推或轻度调参的循环模型在差异巨大的项目量级上严重设定错误。深度序列模型未能超越平凡基线，本身就是一个有用的基准结果。
+
+树模型的优势并不均匀。其次指标为 \rmselog{} $=0.4490$，明显大于平均误差，说明存在由少量难预测样本（如稀疏的盲拧项目）构成的尾部，主导了平方损失。这正是分层报告的必要性所在，见下文。
+
+\subsection{\task{2}：名次预测}
+\label{sec:results-t2}
+
+\task{2} 的头条观察是三者并列。官方 \wca{} Psych Sheet（按历史最佳 \code{ao5} 排序）、Plackett--Luce 模型与核密度蒙特卡洛模拟在同一 $n=2260$ 轮次上均取得 Kendall $\kendall=0.7673$，精确到小数点后四位（三种子 $0.8132\pm0.0342$）；Psych Sheet 的前 3 重叠度为 $0.7595$。它们的配对差恰为零，因此无法定义显著性检验。在此样本规模下，额外的分布建模相较良好的点排序并无增益。
+
+图基线则给出相反的故事：GNN 仅达到 $\kendall=0.5670$，前 3 重叠度 $0.5021$（三种子 $0.7440\pm0.1258$），显著低于所有简单排序模型。相对 Psych Sheet 的配对比较为 $\Delta=0.200$（95\% CI $[0.122,0.268]$），$p=3.2\times10^{-7}$，效应量中等（Cohen's $d=0.56$，Cliff's $\delta=0.30$）。这是一个真正有用的负结果：它告诉社区当前努力\emph{不}被奖励的方向，并树立了一个任何新排序方法必须超越的强领域基线。
+
+\subsection{\task{3}：DNF 预测}
+\label{sec:results-t3}
+
+基于树模型的分类器取得 \aucpr{} $=0.3731$（\aucroc{} $=0.5911$、F1 $=0.2121$、MCC $=0.3148$、校准误差 $=0.1584$），略高于贝叶斯 Beta-Binomial 后验（\aucpr{} $=0.3725$）与历史率先验（$0.3591$）；logistic 模型明显落后（$0.2290$）。关键在于，树模型与历史先验之间的差距\emph{并不}显著——$\Delta=0.0005$（95\% CI $[-0.003,0.003]$），$p=0.749$，效应可忽略（$d=0.002$）；而树模型对 Beta--Binomial 先验的微弱优势虽显著但幅度很小（$\Delta=0.042$，$p=4.5\times10^{-7}$，$d=0.16$），事实上 Beta--Binomial 在多种子均值上最好（表~\ref{tab:multiseed}）。logistic 的劣势既大又高度显著（$\Delta=0.278$，$p=1.6\times10^{-15}$，$d=1.57$）。
+
+这印证了本任务的设计教训：在稀有与不平衡条件下，一个强且校准良好的先验难以被超越，且单看 \aucroc{} 会产生误导。评估测试集的正类率为 $18.27\%$，远高于全局尝试级 \DNF{} 率 $3.18\%$，因为该任务以“已进入决策点”的轮次为条件。即便如此，项目间差异仍极极端：三阶盲拧子集正类率高达 $94.5\%$，而若干速拧项目只有个位数。任何未分层的平均都会产生误导。
+
+\subsection{\task{4}：人类极限估计}
+\label{sec:results-t4}
+
+人类极限估计没有可观测真值，因此基准报告稳定性而非准确性。高斯过程叠加极值理论的基线（\texttt{gp\_evt}）稳定性远超其他，聚合留一法稳定性为 $0.9836$，比指数衰减模型（$6{,}485{,}301$）与贝叶斯分层收缩模型（$9{,}260{,}100$）小两个数量级——后两者的数值被多盲项目（编码极限约 $10^8$）抬高。变点基线不输出稳定性统计量，记为“n/r”。三者的稳定性聚合置信区间都很宽，在 $21$ 个项目上并不显著分离（$p\ge0.30$），我们如实报告而非夸大。
+
+点估计的差异对领域使用至关重要。对三阶：\texttt{gp\_evt} 给出 $329.38$ 百分之一秒（$3.29$~秒，收敛于 2028 年），变点模型 $302.25$ 百分之一秒（$3.02$~秒），指数衰减 $373.69$ 百分之一秒（$3.74$~秒）。三者都明显高于社区常引用的领域锚点 $\approx 2.37$~秒——我们把这一差异视为外推风险的必然表现，而非缺陷。
+
+\subsection{\task{5}：技能迁移}
+\label{sec:results-t5}
+
+关联基线在 $17 \times 17$ 个有序项目对中标记出 $413$ 对为“可识别”。随着识别假设趋严，该数量单调下降：因果森林 $312$、工具变量（2SLS）$270$、双重差分仅 $6$（三种子均值 $2$），且均在相同 $80{,}000$ 名选手样本上。每个因果估计与关联基线的差异都达到 $p\le5\times10^{-21}$，效应量从中等到极大（Cliff's $\delta$：因果森林 $0.19$、IV $0.29$、DID $0.91$）。该差距量化了朴素相关的高估程度：它无法将真实迁移与共享的天赋和训练投入区分开，而更严格的方法识别出的项目对越来越少。
+
+这些估计都不是因果真值——DID 依赖平行趋势、IV 依赖工具外生性、因果森林依赖无未观测混淆——因此基准的贡献不是一个数字，而是\emph{跨假设的离散度}。报告可识别项目对数量、而非为每个格子强行给出估计，是让“不可识别”可见的刻意设计。
+
+\subsection{统计显著性}
+\label{sec:results-significance}
+
+表~\ref{tab:significance} 汇总已发布报告中的关键配对比较。所有检验使用相同的配对单位（比赛 $\times$ 项目 $\times$ 轮次，\task{4} 为项目），相同种子（42），并以 1000 次自助法给出置信区间，遵循第~\ref{sec:protocol} 节。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{相对各任务参照基线的关键配对比较。对 \task{1} 与 \task{4} 越小越好，故正的 $\Delta$ 表示模型\emph{更差}；对 \task{2} 与 \task{3} 越大越好。效应量为 Cohen's $d$。}
+  \label{tab:significance}
+  \begin{tabular}{@{}llrrr@{}}
+    \toprule
+    任务 & 比较（相对参照） & $\Delta$ & 95\% CI & $p$ \\
+    \midrule
+    \task{1} & \texttt{lstm} vs \texttt{xgboost\_log} & $+1.087$ & $[0.810,1.509]$ & $5.2\mathrm{e}{-8}$ \\
+    \task{1} & \texttt{ridge\_log} vs \texttt{xgboost\_log} & $+0.906$ & $[0.723,1.119]$ & $3.2\mathrm{e}{-14}$ \\
+    \task{1} & \texttt{history\_mean} vs \texttt{xgboost\_log} & $+0.685$ & $[0.305,1.089]$ & $6.5\mathrm{e}{-4}$ \\
+    \task{2} & \texttt{gnn} vs \texttt{psych\_sheet} & $+0.200$ & $[0.122,0.268]$ & $3.2\mathrm{e}{-7}$ \\
+    \task{3} & \texttt{historical\_dnf\_rate} vs \texttt{xgboost\_dnf} & $+0.0005$ & $[-0.003,0.003]$ & $0.749$ \\
+    \task{3} & \texttt{beta\_binomial} vs \texttt{xgboost\_dnf} & $+0.042$ & $[0.029,0.057]$ & $4.5\mathrm{e}{-7}$ \\
+    \task{3} & \texttt{logistic} vs \texttt{xgboost\_dnf} & $+0.278$ & $[0.221,0.329]$ & $1.6\mathrm{e}{-15}$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item \task{2} 的并列项（\texttt{plackett\_luce}、\texttt{kde\_simulation} 相对 \texttt{psych\_sheet}）$\Delta$ 恰为 $0$，无 $p$ 值。\task{4} 的稳定性聚合不显著分离（$p\ge0.30$）；\task{5} 的对比在正文中给出。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\subsection{分层结果}
+\label{sec:results-stratified}
+
+表~\ref{tab:strat-results} 给出各任务最强基线的代表性分层视图，揭示聚合指标所掩盖的模式。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{代表性分层结果，说明聚合指标掩盖了什么。}
+  \label{tab:strat-results}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    任务 / 基线 & 维度 & 分组 & 指标 \\
+    \midrule
+    \multirow{4}{*}{\task{1} \texttt{xgboost\_log}}
+      & 水平 & 新手 & \maelog{} $=0.4151$ \\
+      & 水平 & 中级 & \maelog{} $=0.0626$ \\
+      & 水平 & 高级 & \maelog{} $=0.0780$ \\
+      & 水平 & 精英 & \maelog{} $=0.1031$ \\
+    \midrule
+    \multirow{3}{*}{\task{2} \texttt{psych\_sheet}}
+      & 时间 & Test-A（2025 上半年） & $\kendall=0.8985$ \\
+      & 时间 & Test-B（2025 下半年） & $\kendall=0.9036$ \\
+      & 时间 & Test-C（2026 上半年） & $\kendall=0.6437$ \\
+    \midrule
+    \multirow{4}{*}{\task{3} \texttt{xgboost\_dnf}}
+      & 时间 & Test-A & \aucpr{} $=0.5887$ \\
+      & 时间 & Test-C & \aucpr{} $=0.2962$ \\
+      & 水平 & 新手 & \aucpr{} $=0.5527$ \\
+      & 水平 & 精英 & \aucpr{} $=0.1399$ \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item 水平划分：新手为后 25\%，中级 25--75\%，高级 75--95\%，精英为前 5\%，按训练窗口分位阈值分配。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+三种模式尤为突出。第一，\task{1} 误差由新手主导（$0.4151$，其他人仅 $0.0626$--$0.1031$）：新手历史少且进步快，因此其结果本质上更难预测。第二，时间鲁棒性并无保证：\task{2} 的 Kendall $\kendall$ 从 2025 年的约 $0.90$ 降至 2026 上半年的 $0.64$，\task{3} 的 \aucpr{} 同期从 $0.5887$ 降至 $0.2962$，说明较晚切片更难或更不稳定。第三，\task{3} 对新手表现强、对精英表现弱，与精英执行近乎确定性、因而可预测信号更少相一致。
+
+冷启动选手更难：\task{1} 冷启动 \maelog{} 为 $0.9827$（整体 $0.1639$），\task{2} 冷启动 Kendall $\kendall$ 为 $0.1299$（整体 $0.7673$）。将其单独报告，可避免乐观的头条掩盖真实的失败模式。
+
+\subsection{性能与成本}
+\label{sec:results-cost}
+
+表~\ref{tab:cost} 将各基线与所用设备及其在小样本模式下的墙钟时间配对。多数表格型基线在 CPU 上以毫秒级完成；只有深度与图模型使用 CUDA（树模型也可）。该比较刻意具有“降温”意味：LSTM 在 \task{1} 套件中耗时最多，却是该任务\emph{最差}的模型；而近乎瞬时的 \task{4} 拟合最为稳定。将成本与精度一并发布，可避免把“用更多算力换来更差指标”读作进展。
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{代表性基线的性能与成本（small 模式）。\code{cpu}/\code{cuda} 为实际使用的设备；墙钟含数据加载。CUDA 基线给出 GPU 小时数。}
+  \label{tab:cost}
+  \begin{tabular}{@{}llrrl@{}}
+    \toprule
+    任务 & 基线（主指标值） & 设备 & 墙钟（秒） & GPU 小时 \\
+    \midrule
+    \task{1} & \texttt{xgboost\_log} (0.1639) & cuda & 2.12 & 0.00059 \\
+    \task{1} & \texttt{lstm} (1.0440) & cuda & 31.39 & 0.00872 \\
+    \task{2} & \texttt{gnn} (0.5670) & cuda & 1.17 & 0.00033 \\
+    \task{3} & \texttt{xgboost\_dnf} (0.3731) & cuda & 0.52 & 0.00015 \\
+    \task{3} & \texttt{beta\_binomial} (0.3725) & cpu & 0.002 & --- \\
+    \task{3} & \texttt{logistic} (0.2290) & cpu & 0.73 & --- \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{fig2_result_prediction.pdf}
+    \caption{\task{1} \maelog{}。}
+    \label{fig:t1}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{fig3_dnf_models.pdf}
+    \caption{\task{3} \aucpr{}。}
+    \label{fig:t3}
+  \end{subfigure}\hfill
+  \begin{subfigure}[b]{0.32\linewidth}
+    \includegraphics[width=\linewidth]{fig4_transfer_pairs.pdf}
+    \caption{\task{5} 项目对。}
+    \label{fig:t5}
+  \end{subfigure}
+  \caption{\task{1}、\task{3} 与 \task{5} 的分任务细节。}
+  \label{fig:taskdetail}
+\end{figure}
+
+\subsection{复现这些数字}
+\label{sec:results-repro}
+
+上述所有数字均可由已发布管线重新生成：
+\begin{center}\small
+\code{build\_dataset} $\to$
+\code{run\_all\_baselines --mode small --device cuda} $\to$
+\code{run\_multi\_seed --seeds 42 43 44 --mode small --device cuda} $\to$
+\code{build\_leaderboard}。
+\end{center}
+离线路径替换为合成生成器，使持续集成无需联网；在合成数据上计算的结果会被标注，且绝不进入排行榜。每个基线输出结构化报告，含整体指标、四个分层视图、校准、相对已注册参照基线的显著性检验，以及成本文件（含设备与 CPU/GPU 小时数），完全符合第~\ref{sec:protocol} 节的规定。

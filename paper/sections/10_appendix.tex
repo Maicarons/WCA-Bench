@@ -1,0 +1,154 @@
+\section{Task metric reference}
+\label{app:metrics}
+
+Table~\ref{tab:metric-ref} collects every metric required per task, its
+direction and the reason it is included. This is the normative list that a
+submission's report must contain.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Normative metric list per task. ``Dir.'' indicates the preferred
+  direction of the primary metric.}
+  \label{tab:metric-ref}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    Task & Metric & Dir. & Notes \\
+    \midrule
+    \task{1} & \maelog{} & $\downarrow$ & primary; log domain \\
+    \task{1} & \rmselog{} & $\downarrow$ & sensitive to outliers \\
+    \task{1} & interval coverage & $\to 0.90$ & calibration of 90\% intervals \\
+    \midrule
+    \task{2} & Kendall $\kendall$ & $\uparrow$ & primary rank correlation \\
+    \task{2} & top-3 overlap & $\uparrow$ & podium accuracy \\
+    \task{2} & Brier (podium) & $\downarrow$ & probabilistic ranking quality \\
+    \midrule
+    \task{3} & \aucpr{} & $\uparrow$ & primary under imbalance \\
+    \task{3} & \aucroc{} & $\uparrow$ & reported but not primary \\
+    \task{3} & F1, MCC & $\uparrow$ & thresholded performance \\
+    \task{3} & calibration error & $\downarrow$ & reliability diagram \\
+    \midrule
+    \task{4} & LOO stability (std) & $\downarrow$ & leave-one-out refit variance \\
+    \task{4} & interval coverage & $\to$ nominal & predictive calibration \\
+    \task{4} & domain consistency & qualitative & vs.\ expert anchors \\
+    \midrule
+    \task{5} & point-estimate accuracy & $\uparrow$ & vs.\ held-out data \\
+    \task{5} & subsample robustness & $\uparrow$ & stability across subsets \\
+    \task{5} & \# identifiable pairs & --- & honesty about support \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\section{Worked examples for the multi-blind encoding}
+\label{app:multi}
+
+We give two round-trip examples, one per encoding generation, that the test
+suite asserts.
+
+\paragraph{Old format \texttt{1SSAATTTTT}.} Let solved $=5$, attempted $=6$,
+time $=300$~s. Then missed $=1$, $SS = 99-5 = 94$, $AA = 06$, and the stored
+integer is
+$1\!\times\!10^{9} + 94\!\times\!10^{7} + 6\!\times\!10^{5} + 300
+= 1{,}940{,}600{,}300$.
+Decoding recovers $SS=94$, $AA=06$, seconds $=300$, hence solved $=99-94=5$,
+attempted $=6$, missed $=1$.
+
+\paragraph{New format \texttt{0DDTTTTTMM}.} Let solved $=10$, attempted $=12$,
+missed $=2$, time $=600$~s. Then difference $=10-2=8$, $DD = 99-8 = 91$,
+$MM = 02$, and the stored integer is
+$91\!\times\!10^{7} + 600\!\times\!100 + 2 = 910{,}060{,}002$, i.e.\ the
+zero-padded string \code{0910060002}. Decoding gives $DD=91$, seconds $=600$,
+$MM=02$, difference $=8$, solved $=8+2=10$, attempted $=12$.
+
+The encoder rejects impossible values (attempted $>99$, time $>99{,}999$~s,
+or a negative difference in the new format), and the decoder rejects negative
+or out-of-range integers. A round-trip test
+$\mathrm{encode}(\mathrm{decode}(v)) = v$ is part of the continuous-integration
+gate.
+
+\section{Scale-robust view of \task{4} limits}
+\label{app:limit}
+
+The aggregate \task{4} stability statistic is dominated by the multi-blind
+event, whose encoded limit is of order $10^{8}$ and which therefore dwarfs the
+centisecond-scale events in any unweighted mean. Table~\ref{tab:limit} reports
+per-event limits for a representative subset, comparing the most stable method
+(\texttt{gp\_evt}) with exponential decay, so that the numbers can be read on a
+human scale. Values are the fitted asymptotes $L$ of Equation~\ref{eq:limit};
+$n$ is the number of world-record points used by the stability estimate.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Human-limit estimates for selected events: \texttt{gp\_evt}
+  (Gaussian process $+$ extreme-value theory) versus exponential decay.
+  $L$ in seconds unless noted; the underlying solver stores centiseconds.}
+  \label{tab:limit}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    Event & \texttt{gp\_evt} $L$ (s) & \texttt{exp\_decay} $L$ (s) & $n$ \\
+    \midrule
+    \code{222} (2$\times$2) & 0.32 & 0.52 & 16 \\
+    \code{333} (3$\times$3) & 3.29 & 3.74 & 26 \\
+    \code{333oh} (one-handed) & 4.67 & 6.82 & 25 \\
+    \code{444} (4$\times$4) & 10.18 & 17.09 & 33 \\
+    \code{555} (5$\times$5) & 26.95 & 35.08 & 28 \\
+    \code{666} (6$\times$6) & 45.73 & 51.35 & 19 \\
+    \code{777} (7$\times$7) & 78.73 & 110.31 & 18 \\
+    \code{pyram} (pyraminx) & 0.40 & 1.04 & 15 \\
+    \code{skewb} & 0.45 & 0.75 & 17 \\
+    \code{sq1} (square-1) & 2.08 & 4.43 & 24 \\
+    \code{333fm} (fewest moves) & 14.42 (moves) & 7.70 (moves) & 9 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item The three-by-three estimates span $3.02$~s (change point), $3.29$~s
+          (\texttt{gp\_evt}) and $3.74$~s (exponential decay), all above the
+          community anchor of $\approx 2.37$~s. The multi-blind event
+          (\texttt{gp\_evt} limit $\sim 4.8\times 10^{8}$ in encoded units) is
+          excluded from this table.
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\section{Reproduction artifacts}
+\label{app:artifacts}
+
+Table~\ref{tab:artifacts} lists the released components that support
+reproduction, and the commands that rebuild them.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{Released artifacts and their rebuild commands.}
+  \label{tab:artifacts}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    Artifact & Command / location \\
+    \midrule
+    Processed Parquet tables & \code{build\_dataset --source raw} \\
+    Temporal split indices & produced by the dataset build \\
+    Frozen person--event statistics & produced by the dataset build (612{,}224 rows) \\
+    Baseline results & \code{run\_all\_baselines --mode small} \\
+    Leaderboard & \code{build\_leaderboard} \\
+    Synthetic CI data & \code{generate\_synthetic --small} \\
+    Data card & repository root \code{datacard.md} \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{Submission format.} A leaderboard submission contains a report
+directory (overall, by-event, by-skill-level, by-time-slice, by-continent,
+calibration, significance and cost files), the raw per-instance predictions, a
+model/training configuration, an environment lock file, the seed list and a
+README. The minimum accepted reproducibility level is L2; the main leaderboard
+requires L3 (Section~\ref{sec:protocol-repro}).
+
+\paragraph{Citation and license.} Code is released under Apache-2.0. Any
+derived work must reproduce the \wca{} attribution notice given in
+Section~\ref{sec:ethics}.

@@ -1,0 +1,130 @@
+\section{Introduction}
+\label{sec:intro}
+
+Predictive modelling of athletic performance is one of the oldest quantitative
+pursuits in science, and the statistical literature on sports is enormous: it
+ranges from rating systems for chess and ball games to forecasting individual
+records in running and swimming. Yet most sports-analytics research is
+conducted on bespoke, private or rapidly-changing datasets, which makes
+results hard to compare. Each paper tends to choose its own data split, its own
+preprocessing and its own metric, so two reported ``state-of-the-art'' numbers
+are frequently not measuring the same thing. \wcabench{} addresses this
+problem in a setting that has been almost entirely overlooked by the machine
+learning community: competitive speedcubing, as recorded by the World Cube
+Association (\wca).
+
+\subsection{Motivation}
+\label{sec:motivation}
+
+Three problems motivate the benchmark.
+\paragraph{Fragmented research.}
+Existing work on \wca{} data is scattered across single tasks. Prior studies
+have predicted competition placement with kernel density estimation, fitted
+linear models to world-record trajectories, and estimated human limits with
+Gaussian processes and extreme-value theory. Because these studies use
+different splits, metrics and preprocessing, their conclusions cannot be
+compared.
+\paragraph{No standardized evaluation.}
+The existing ``CubeBench''-style benchmarks target \emph{cube solving}: they
+evaluate whether a language model or agent can plan a sequence of moves to
+restore a scrambled cube. Those benchmarks are valuable, but they are
+unrelated to the \wca's real competition records and cannot answer questions
+such as ``which model predicts a competitor's time more accurately?'' or
+``which method estimates the probability of a DNF more reliably?''. There is,
+to our knowledge, no standardized benchmark for prediction and inference on
+real speedcubing data.
+\paragraph{Domain-specific structure is ignored.}
+\wca{} data has unusual structure that general-purpose pipelines do not
+handle: longitudinal competitor histories that span years; cross-event skill
+transfer across 17 active events; round formats (\code{ao5}, \code{mo3},
+best-of-3) that change how an average is computed; special status codes
+($-1$ for \DNF{}, $-2$ for \DNS{}, $0$ for no result); and a compound encoding
+for multi-blind results. A model that ignores the ``average of 5'' trimming
+rule, for instance, will systematically miscalibrate both time and placement
+predictions. We argue that these constraints deserve first-class treatment in
+a benchmark rather than ad-hoc handling per paper.
+
+\subsection{Contributions}
+\label{sec:contributions}
+
+We introduce \wcabench, a benchmark for prediction and inference on \wca{}
+competition data. Our contributions are:
+
+\begin{enumerate}
+  \item \textbf{A reproducible data infrastructure.} A columnar
+        (Parquet-based) pipeline that decodes every domain-specific value,
+        including the \wca{} multi-blind compound encoding, round-format
+        averaging with outlier trimming, and special status codes
+        (Section~\ref{sec:dataset}). The pipeline is single-command
+        reproducible and ships with a data card that documents provenance,
+        scale, splits, biases and permitted/forbidden uses.
+
+  \item \textbf{Five formalized tasks with domain-specific challenges.} We
+        define \task{1} result prediction (regression), \task{2} placement
+        prediction (ranking), \task{3} DNF prediction (imbalanced
+        classification), \task{4} human-limit estimation (extreme-value
+        extrapolation) and \task{5} skill-transfer analysis (causal
+        inference). Each task is specified by an input/output/metric triple
+        together with a baseline taxonomy and the domain challenges that make
+        it non-trivial (Section~\ref{sec:tasks}).
+
+  \item \textbf{A leakage-safe evaluation protocol and stratified
+        reporting framework.} We specify a rolling-window protocol with
+        frozen statistics, a four-dimensional stratification scheme (event,
+        skill level, time slice, region) and a statistical-testing toolbox
+        with effect sizes, designed so that small apparent gains are not
+        over-claimed (Section~\ref{sec:protocol}).
+
+  \item \textbf{21 reference baselines with real measured numbers.} We report
+        actual baseline results on the official export
+        (Section~\ref{sec:results}), covering six methodological
+        families---statistical, tree, deep, graph, Bayesian and causal---with at
+        least four baselines per task. For example, tree-based regression
+        attains \maelog{} $=0.164$ on \task{1}; the \wca{} psychology sheet, a
+        Plackett--Luce model and a kernel-density simulation all attain Kendall
+        $\kendall=0.767$ on \task{2}; and tree-based classification attains
+        \aucpr{} $=0.373$ on \task{3}. We deliberately do not claim
+        state-of-the-art accuracy: the benchmark's scientific value lies in the
+        standardized question, not in a new model.
+\end{enumerate}
+
+\subsection{Findings at a glance}
+\label{sec:findings}
+
+Because we release real numbers rather than hypothetical ones, the paper also
+contains a first set of empirical observations, reported both for a single
+seed and as a mean over three seeds (Section~\ref{sec:results-multiseed}).
+Simple, well-specified models remain surprisingly competitive. On \task{2}, a
+Plackett--Luce model, a kernel-density simulation and the official psychology
+sheet produce \emph{identical} Kendall $\kendall=0.767$ to four decimals in the
+seed-42 run ($0.8132\pm0.0342$ across seeds), whereas a graph neural network
+reaches only $0.567$ ($0.7440\pm0.1258$). On \task{1}, a sequence model (LSTM,
+\maelog{} $=1.044$, or $0.9436\pm0.0754$ across seeds) is much worse than
+tree-based regression (\maelog{} $=0.164$, or $0.1055\pm0.0417$); and on
+\task{3} the difference between the best tree model ($\aucpr{} 0.373$) and the
+historical-rate prior ($\aucpr{} 0.359$) is \emph{not} statistically
+significant ($p=0.749$, Cohen's $d=0.002$), while a Bayesian Beta--Binomial
+model with no tree machinery is in fact best on average
+($0.2938\pm0.0570$). Together these results suggest that, at this sample size,
+rule-aware features combined with tree models dominate generic deep and graph
+architectures. For human-limit estimation, the exponential-decay fit yields a
+three-by-three limit of $3.74$ seconds, while the change-point model gives
+$3.02$ seconds and the most stable method (Gaussian process plus extreme-value
+theory) gives $3.29$ seconds---all well above the commonly cited domain anchor
+of $2.37$ seconds, a concrete illustration of extrapolation risk. Finally, on
+skill transfer, the number of ``identifiable'' event pairs falls monotonically
+as identification assumptions tighten: Spearman correlation marks $413$, causal
+forest $312$, instrumental variables $270$, and difference-in-differences only
+$6$ ($2$ on average across seeds), quantifying how much the naive approach
+over-claims. These observations are discussed in Section~\ref{sec:discussion}.
+
+\subsection{Ethics and scope}
+\label{sec:scope}
+
+\wcabench{} is an evaluation benchmark, not a prediction product. It uses only
+the publicly released \wca{} database export and never scrapes private data. We
+explicitly forbid gambling, betting and any use that targets, ranks or
+stigmatizes individual competitors, and we provide an opt-out mechanism
+(Section~\ref{sec:limitations}). Out of scope are cube-solving/step-optimization
+tasks (covered by cube-solving benchmarks such as \citep{cubebench, cube_bench_mllm}), LLM spatial-reasoning
+evaluation, and live broadcast prediction systems.

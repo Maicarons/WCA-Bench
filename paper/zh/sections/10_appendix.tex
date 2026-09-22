@@ -1,0 +1,119 @@
+\section{任务指标参考}
+\label{app:metrics}
+
+表~\ref{tab:metric-ref} 汇总每个任务所需的全部指标、方向与纳入理由。这是提交报告必须包含的规范性清单。
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{各任务的规范性指标清单。“方向”指主指标的偏好方向。}
+  \label{tab:metric-ref}
+  \begin{tabular}{@{}llll@{}}
+    \toprule
+    任务 & 指标 & 方向 & 说明 \\
+    \midrule
+    \task{1} & \maelog{} & $\downarrow$ & 主指标；对数域 \\
+    \task{1} & \rmselog{} & $\downarrow$ & 对离群更敏感 \\
+    \task{1} & 区间覆盖率 & $\to 0.90$ & 90\% 区间校准 \\
+    \midrule
+    \task{2} & Kendall $\kendall$ & $\uparrow$ & 主排序相关 \\
+    \task{2} & 前 3 重叠 & $\uparrow$ & 领奖台准确率 \\
+    \task{2} & Brier（领奖台） & $\downarrow$ & 概率排序质量 \\
+    \midrule
+    \task{3} & \aucpr{} & $\uparrow$ & 不平衡下的主指标 \\
+    \task{3} & \aucroc{} & $\uparrow$ & 报告但不作主指标 \\
+    \task{3} & F1、MCC & $\uparrow$ & 阈值化表现 \\
+    \task{3} & 校准误差 & $\downarrow$ & 可靠性图 \\
+    \midrule
+    \task{4} & LOO 稳定性（标准差） & $\downarrow$ & 留一重拟合方差 \\
+    \task{4} & 区间覆盖率 & $\to$ 名义值 & 预测校准 \\
+    \task{4} & 领域一致性 & 定性 & 相对专家锚点 \\
+    \midrule
+    \task{5} & 点估计精度 & $\uparrow$ & 相对留出数据 \\
+    \task{5} & 子样本稳健性 & $\uparrow$ & 跨子集稳定性 \\
+    \task{5} & 可识别项目对数 & --- & 对支撑度的诚实说明 \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\section{多盲编码的算例}
+\label{app:multi}
+
+我们给出两个往返算例，每种编码一代一个，测试套件会对其断言。
+
+\paragraph{旧格式 \texttt{1SSAATTTTT}。}设 solved $=5$、attempted $=6$、用时 $=300$~秒。则 missed $=1$，$SS = 99-5 = 94$，$AA = 06$，存储整数为
+$1\!\times\!10^{9} + 94\!\times\!10^{7} + 6\!\times\!10^{5} + 300
+= 1{,}940{,}600{,}300$。
+解码恢复 $SS=94$、$AA=06$、seconds $=300$，从而 solved $=99-94=5$、attempted $=6$、missed $=1$。
+
+\paragraph{新格式 \texttt{0DDTTTTTMM}。}设 solved $=10$、attempted $=12$、missed $=2$、用时 $=600$~秒。则 difference $=10-2=8$，$DD = 99-8 = 91$，$MM = 02$，存储整数为
+$91\!\times\!10^{7} + 600\!\times\!100 + 2 = 910{,}060{,}002$，即左补零字符串 \code{0910060002}。解码得到 $DD=91$、seconds $=600$、$MM=02$、difference $=8$、solved $=8+2=10$、attempted $=12$。
+
+编码器拒绝不可能的值（attempted $>99$、用时 $>99{,}999$~秒，或新格式下的负差值），解码器拒绝负数或越界整数。往返测试 $\mathrm{encode}(\mathrm{decode}(v)) = v$ 是持续集成门禁的一部分。
+
+\section{\task{4} 极限的尺度稳健视图}
+\label{app:limit}
+
+\task{4} 的聚合稳定性统计量被多盲项目主导：其编码极限量级为 $10^{8}$，在任意未加权均值中都会远超以百分之一秒计的项目。表~\ref{tab:limit} 给出代表性子集的按项目极限，比较最稳定的方法（\texttt{gp\_evt}）与指数衰减，使数字可在人类尺度上解读。数值为式~\ref{eq:limit} 拟合的渐近极限 $L$；$n$ 为稳定性估计使用的世界纪录点数。
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{代表性项目的人类极限估计：\texttt{gp\_evt}（高斯过程 $+$ 极值理论）与指数衰减对比。$L$ 以秒计，除非另有说明；底层求解器以百分之一秒存储。}
+  \label{tab:limit}
+  \begin{tabular}{@{}lrrr@{}}
+    \toprule
+    项目 & \texttt{gp\_evt} $L$（秒） & \texttt{exp\_decay} $L$（秒） & $n$ \\
+    \midrule
+    \code{222}（二阶） & 0.32 & 0.52 & 16 \\
+    \code{333}（三阶） & 3.29 & 3.74 & 26 \\
+    \code{333oh}（单手） & 4.67 & 6.82 & 25 \\
+    \code{444}（四阶） & 10.18 & 17.09 & 33 \\
+    \code{555}（五阶） & 26.95 & 35.08 & 28 \\
+    \code{666}（六阶） & 45.73 & 51.35 & 19 \\
+    \code{777}（七阶） & 78.73 & 110.31 & 18 \\
+    \code{pyram}（金字塔） & 0.40 & 1.04 & 15 \\
+    \code{skewb}（斜转） & 0.45 & 0.75 & 17 \\
+    \code{sq1}（SQ1） & 2.08 & 4.43 & 24 \\
+    \code{333fm}（最少步） & 14.42（步） & 7.70（步） & 9 \\
+    \bottomrule
+  \end{tabular}
+  \begin{tablenotes}\footnotesize
+    \item 三阶估计跨越 $3.02$~秒（变点）、$3.29$~秒（\texttt{gp\_evt}）与 $3.74$~秒（指数衰减），均高于社区锚点 $\approx 2.37$~秒。多盲项目（\texttt{gp\_evt} 编码极限约 $4.8\times 10^{8}$）未列入本表。
+  \end{tablenotes}
+  \end{threeparttable}
+\end{table}
+
+\section{复现产物}
+\label{app:artifacts}
+
+表~\ref{tab:artifacts} 列出支撑复现的已发布组件及重建命令。
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{threeparttable}
+  \caption{已发布产物及重建命令。}
+  \label{tab:artifacts}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    产物 & 命令 / 位置 \\
+    \midrule
+    预处理 Parquet 表 & \code{build\_dataset --source raw} \\
+    时间划分索引 & 由数据集构建产生 \\
+    冻结 person--event 统计量 & 由数据集构建产生（612{,}224 行） \\
+    基线结果 & \code{run\_all\_baselines --mode small} \\
+    排行榜 & \code{build\_leaderboard} \\
+    合成 CI 数据 & \code{generate\_synthetic --small} \\
+    数据卡 & 仓库根目录 \code{datacard.md} \\
+    \bottomrule
+  \end{tabular}
+  \end{threeparttable}
+\end{table}
+
+\paragraph{提交格式。}一个排行榜提交包含报告目录（整体、按项目、按水平、按时间切片、按大洲、校准、显著性与成本文件）、每实例原始预测、模型/训练配置、环境锁定文件、种子列表与 README。最低接受的复现等级为 L2；主排行榜要求 L3（第~\ref{sec:protocol-repro} 节）。
+
+\paragraph{引用与许可。}代码以 Apache-2.0 发布。任何派生工作都必须复现第~\ref{sec:ethics} 节给出的 \wca{} 署名声明。

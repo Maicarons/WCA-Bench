@@ -1,0 +1,110 @@
+% =============================================================================
+%  preamble.tex -- shared packages and macros for WCA-Bench
+%
+%  Design constraints
+%  ------------------
+%   * Must compile with XeLaTeX (and also with pdfLaTeX as a fallback).
+%   * Only widely available CTAN packages are used, so the source can be
+%     uploaded to arXiv without a custom TeX Live installation.
+%   * No fontawesome / academicons / todonotes / system-specific fonts.
+%   * We deliberately avoid \usepackage{fontspec} and instead use the
+%     Type-1 Times clone from the newtx bundle, which is available on every
+%     TeX Live / MiKTeX installation and renders identically under XeLaTeX.
+% =============================================================================
+
+% --- encoding and fonts (Type-1, cross-platform, XeLaTeX-safe) --------------
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext}
+\usepackage{newtxmath}
+
+% --- page geometry ----------------------------------------------------------
+\usepackage[margin=1in]{geometry}
+% Allow a little extra inter-word stretch so that long URLs / inline math do
+% not force text into the margin.
+\setlength{\emergencystretch}{3em}
+
+% --- mathematics ------------------------------------------------------------
+% NOTE: amssymb / amsfonts are intentionally omitted. They redefine \Bbbk,
+% which newtxmath also provides, and loading both raises
+% "Command \Bbbk already defined". newtxmath already supplies the AMS symbol
+% fonts, and this document does not use any amssymb-only symbol.
+\usepackage{amsmath}
+\usepackage{mathtools}
+
+% --- tables -----------------------------------------------------------------
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{threeparttable}
+\usepackage{makecell}
+
+% --- figures ----------------------------------------------------------------
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{caption}
+\usepackage{subcaption}
+
+% --- algorithms -------------------------------------------------------------
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% --- typography and lists ---------------------------------------------------
+\usepackage{microtype}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=1.4em,topsep=2pt,itemsep=1pt}
+\setlist[enumerate]{leftmargin=1.6em,topsep=2pt,itemsep=1pt}
+
+% --- urls and references (loaded late) --------------------------------------
+\usepackage{url}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage[hidelinks,breaklinks]{hyperref}
+
+% --- captions ---------------------------------------------------------------
+\captionsetup{font=small,labelfont=bf}
+
+% --- custom colours ---------------------------------------------------------
+\definecolor{wcablu}{HTML}{1F4E79}
+\definecolor{wcared}{HTML}{B03A2E}
+\definecolor{wcagrn}{HTML}{1E6B52}
+
+% =============================================================================
+%  Notation macros
+% =============================================================================
+\newcommand{\wca}{WCA}
+\newcommand{\wcabench}{\textsc{WCA-Bench}}
+\newcommand{\task}[1]{\textsf{T#1}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\y}{y}
+\newcommand{\asof}{\textsf{as\_of}}
+\newcommand{\metric}{\mathcal{M}}
+\newcommand{\loss}{\mathcal{L}}
+\newcommand{\DNF}{\textsc{DNF}}
+\newcommand{\DNS}{\textsc{DNS}}
+% $\ensuremath{...}$ lets these macros be used in both text and math mode.
+\newcommand{\kendall}{\ensuremath{\tau}}
+\newcommand{\brier}{\ensuremath{B}}
+\newcommand{\aucpr}{\ensuremath{\mathrm{AUC\text{-}PR}}}
+\newcommand{\aucroc}{\ensuremath{\mathrm{AUC\text{-}ROC}}}
+\newcommand{\maelog}{\ensuremath{\mathrm{MAE}_{\log}}}
+\newcommand{\rmselog}{\ensuremath{\mathrm{RMSE}_{\log}}}
+\newcommand{\ev}{\text{event}}
+
+% "best seen so far", lower-is-better indicator used in result tables
+\newcommand{\arrdown}{$\downarrow$}
+\newcommand{\arrup}{$\uparrow$}
+
+% =============================================================================
+%  Algorithmic environment tweaks
+% =============================================================================
+\algrenewcommand\algorithmicrequire{\textbf{Input:}}
+\algrenewcommand\algorithmicensure{\textbf{Output:}}
+
+% =============================================================================
+%  Small helpers
+% =============================================================================
+% tight column type for numeric tables
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\endinput

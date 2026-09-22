@@ -1,0 +1,116 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{What the baselines tell us}
+\label{sec:disc-insights}
+
+The measured results support four methodological observations.
+
+\paragraph{Simple, well-specified models are strong.} On \task{2}, the official
+psychology sheet, a Plackett--Luce model and a kernel-density simulation all
+produce identical Kendall $\kendall=0.7673$ in the seed-42 run and
+$0.8132\pm0.0342$ across seeds. On \task{3}, the historical \DNF{} rate
+($0.3591$) is statistically indistinguishable from the best tree model
+($0.3731$, $p=0.749$, negligible effect), and a Bayesian Beta--Binomial
+posterior ($0.3725$) is in fact best \emph{on average} across seeds
+($0.2938\pm0.0570$ vs $0.2779\pm0.0724$ for the tree model). In both cases a
+simple, domain-informed baseline matches or nearly matches more expressive
+alternatives. This is not a reason to abandon richer models; it is a calibration
+of expectations. A benchmark that reports only ``model A beats model B'' hides
+the fact that both may be matched by a good prior at a fraction of the cost.
+
+\paragraph{Generic deep and graph models underperform here.} Two of the six
+methodological families do markedly worse than their simpler counterparts, and
+the multi-seed results make the gap robust to evaluation-set resampling. On
+\task{1}, the LSTM (\maelog{} $=1.0440$, or $0.9436\pm0.0754$ across seeds) is
+the \emph{worst} baseline, worse even than the historical mean
+($0.6657$), with a large paired effect against the tree model
+($\Delta=+1.087$, $p=5.2\times10^{-8}$, Cohen's $d=0.90$). On \task{2}, the GNN
+($\kendall=0.5670$, or $0.7440\pm0.1258$ across seeds) trails the psychology
+sheet by $0.200$ ($p=3.2\times10^{-7}$, $d=0.56$). Meanwhile rule-aware
+features plus tree boosting win \task{1} and are competitive on \task{3}. At
+this sample size and feature budget, the domain structure---competitor history,
+round format, event identity---appears to matter more than architectural
+capacity, and sequence and graph models likely need domain-specific inductive
+biases before they can compete. We regard this as the benchmark's clearest
+actionable finding.
+
+\paragraph{The hard cases are structural, not incidental.} Errors concentrate
+where the data are thin or the phenomenon is stochastic: novices on \task{1}
+(\maelog{} $0.4151$), the late test slice on \task{2} ($\kendall=0.6437$) and
+\task{3} (\aucpr{} $0.2962$), elites on \task{3} (\aucpr{} $0.1399$), and
+cold-start competitors everywhere (\maelog{} $0.9827$). These are not sampling
+accidents; they follow from little history, distribution shift and
+near-deterministic execution. A useful benchmark must therefore be judged on
+the hard subsets, which is why \wcabench{} makes them first-class.
+
+\paragraph{Extrapolation and identification are where claims become fragile.}
+\task{4} and \task{5} are included precisely because they are hard to validate.
+The \task{4} three-by-three estimates span $3.02$~s (change point), $3.29$~s
+(GP+EVT) and $3.74$~s (exponential decay), all far from the community anchor of
+$\approx 2.37$~s. None is ``wrong'' in a statistical sense---each is a
+consistent fit to its assumptions---but the spread across reasonable methods is
+itself the finding, and the aggregate stability scores are not significantly
+separated at $21$ events. Similarly, the number of transfer pairs identified
+drops from $413$ (correlation) to $312$ (causal forest) to $270$ (IV) to $6$
+(DID; $2$ on average across seeds). Reporting the disagreement and the
+non-identifiability, rather than a single number, is the scientifically honest
+outcome.
+
+\paragraph{Evaluation-set variance matters.} Re-running over three seeds shows
+that some conclusions are stable (the tree model wins \task{1} by a wide margin
+under every seed) while others are not (the \task{3} winner flips between the
+tree model and the Beta--Binomial prior, and the GNN's \task{2} spread,
+$\pm0.1258$, is larger than several inter-model gaps). Single-run leaderboards
+in this domain should therefore be read with the multi-seed table alongside
+them.
+
+\subsection{Towards avoiding saturation}
+\label{sec:disc-saturation}
+
+Benchmarks decay: once a task is solved, it stops discriminating. We built two
+defences. First, the five tasks form a difficulty spectrum from well-specified
+regression to causal identification, so improvements at the easy end do not
+exhaust the benchmark. Second, every task carries a hard subset
+(Section~\ref{sec:protocol-stratification}); for \task{3}, restricting to
+competitors with a historical \DNF{} rate in $[0.1,0.3]$ removes the
+easy-to-classify extremes, and for \task{2} the near-tie subset removes rounds
+where ranking is trivial. The small-mode results already show that several
+subsets are far from saturated, for example elite \task{3} (\aucpr{}
+$0.1399$) and cold-start \task{1} (\maelog{} $0.9827$), so the benchmark retains
+headroom.
+
+\subsection{Why a domain benchmark, and why speedcubing}
+\label{sec:disc-domain}
+
+The coexistence of strong simple models and more expressive alternatives
+recalls the long-standing tension between data modelling and algorithmic
+prediction \citep{breiman_cultures}: the benchmark's job is to make the
+comparison fair, not to anoint a winner. \wcabench{} is a case study in a
+broader idea: \emph{rule-governed individual sports} are an underused testbed
+for machine learning. Such data combine large scale with genuine
+structure---explicit formats, deterministic averaging rules, discrete status
+codes---that is invisible to generic pipelines but decisive for accuracy.
+Speedcubing is an unusually clean instance: it is fully individual, precisely
+timed to the centisecond, globally distributed and publicly released. The
+lessons transfer to swimming, track and field, or powerlifting, where analogous
+round formats and disqualification rules exist. We therefore see \wcabench{}
+less as an endpoint than as a template for building trustworthy benchmarks in
+rule-governed athletic domains.
+
+\subsection{Open problems}
+\label{sec:disc-open}
+
+Several directions are deliberately left open. Sequence models
+(LSTM/Transformer) and graph neural networks currently underperform, so the open
+question is not whether they are more accurate in principle but what
+domain-specific inductive biases---event-aware embeddings, round-format
+constraints, or interaction graphs anchored on head-to-head history---would let
+them exploit the structure that tree models already capture. On \task{5}, the
+steep drop from $413$ correlational pairs to $270$ IV pairs and $6$ DID pairs
+invites more credible causal designs (for example instruments built from the
+staggered domestic introduction of events, or synthetic-control designs) while
+the difficulty of validating any of them motivates better sensitivity analysis.
+Finally, the interaction between non-stationarity and event scale suggests that
+per-event hierarchical normalization, rather than a single global
+preprocessing, may be the most promising generic improvement.

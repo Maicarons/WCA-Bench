@@ -1,0 +1,66 @@
+\section{Compute and Hardware}
+\label{sec:compute}
+
+\paragraph{Why most baselines run on CPU.}
+The benchmark's 21 baselines are predominantly tabular: kernel-density
+estimation, Plackett--Luce, ridge and logistic regression, Beta--Binomial,
+Gaussian-process plus extreme-value theory, difference-in-differences,
+instrumental variables and causal forests. Their feature matrices have only
+$2$k--$80$k rows, and the workload is dominated by \emph{per-competition
+mini-batch forwards and rule-aware decoding} rather than large dense tensor
+products. It is therefore latency-sensitive, not throughput-sensitive: GPU
+kernel-launch and host--device transfer overheads typically exceed the compute
+saved, so these baselines run on CPU by default.
+
+\paragraph{Where the GPU is used.}
+The benchmark nevertheless uses the GPU where it helps. The deep baseline
+(\code{baselines/deep/}, the LSTM) and the graph baseline
+(\code{baselines/graph/}, the GNN) are trained on CUDA, and the tree baselines
+can fit with \code{device="cuda"}. In this release the GNN no longer falls back
+to a NumPy propagation path: it runs the native \code{gnn} backend on CUDA, and
+the tree baselines use a real \textsc{XGBoost} backend rather than a
+scikit-learn random forest.
+
+\paragraph{Hardware used for this release.}
+All numbers reported in Section~\ref{sec:results} were produced on a single
+machine with:
+\begin{itemize}
+  \item \textbf{GPU:} NVIDIA GeForce RTX 4060 Laptop GPU (8~GB,
+        compute capability 8.9);
+  \item \textbf{CUDA:} 13.0, driver 610.88, \code{torch} 2.13.0+cu130;
+  \item \textbf{other libraries:} \code{xgboost} 3.4.1, \code{lightgbm} 4.7.0,
+        \code{statsmodels} 0.15.0.
+\end{itemize}
+Runs used:
+\begin{itemize}
+  \item \code{run\_all\_baselines.py --mode small --device cuda} (seed 42);
+  \item \code{run\_multi\_seed.py --seeds 42 43 44 --mode small --device cuda}.
+\end{itemize}
+
+\paragraph{Cost reporting.}
+Every baseline report records a machine-readable \code{cost} block with the
+device actually used, wall-clock time, CPU hours, and---on the GPU---GPU hours
+and the GPU model. For example, the \task{1} LSTM report contains:
+\begin{verbatim}
+"cost": {
+  "mode": "small",
+  "baseline_kind": "method",
+  "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+  "wall_clock_sec": 31.385,
+  "cpu_hours": 0.00872,
+  "gpu_hours": 0.00872,
+  "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+}
+\end{verbatim}
+CPU-only baselines omit \code{gpu\_hours}/\code{gpu\_model} and report an integer
+\code{"device": "cpu"}. Publishing cost alongside accuracy prevents a
+``more compute for less metric'' result from being read as progress.
+
+\paragraph{When a GPU pays off.}
+A GPU becomes worthwhile when the whole benchmark is scaled up: a full
+rolling-window sweep over all test competitions, multiplied by multiple seeds,
+multiplied by large-batch training of the sequence and graph baselines. In that
+regime the recommended pattern is to merge the per-competition mini-batches
+into larger batches so that the accelerator is actually utilized; for the
+sampled \emph{small}-mode runs reported here, the CPU already suffices for the
+tabular baselines and only the deep and graph models benefit from CUDA.

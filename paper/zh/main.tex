@@ -1,0 +1,55 @@
+% =============================================================================
+%  WCA-Bench 中文版论文（主文件）
+%
+%  编译（XeLaTeX）：
+%      latexmk -xelatex main.tex
+%  或：
+%      xelatex main && bibtex main && xelatex main && xelatex main
+%
+%  说明：中文版与英文版（paper/main.tex）共用同一份 paper/references.bib
+%        （相对路径 ../references.bib），数字与结构完全一致。
+% =============================================================================
+\documentclass[11pt]{ctexart}
+
+\input{preamble}
+
+% ------------------------------------------------------------------ 元数据
+\title{\textbf{WCA-Bench：面向世界魔方协会赛事数据的\\体育数据分析标准化基准}}
+
+\author{
+  WCA-Bench 贡献者\thanks{%
+    代码以 Apache-2.0 许可证发布；比赛数据版权归 World Cube Association 所有，
+    本基准仅以派生的聚合产物形式再分发。联系邮箱：\texttt{wcabench@example.org}。}
+}
+
+\date{\today}
+
+% ------------------------------------------------------------------- 正文
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_related_work}
+\input{sections/03_dataset}
+\input{sections/04_tasks}
+\input{sections/05_protocol}
+\input{sections/05b_compute}
+\input{sections/06_baselines_results}
+\input{sections/07_discussion}
+\input{sections/08_limitations_ethics}
+\input{sections/09_conclusion}
+
+% ------------------------------------------------------------ 参考文献
+\bibliographystyle{plainnat}
+\bibliography{../references}
+
+% ----------------------------------------------------------------- 附录
+\appendix
+\input{sections/10_appendix}
+
+\end{document}
