@@ -19,11 +19,25 @@ jobs:
           cache: pip
       - name: Install
         run: pip install -e ".[dev,fast,boost]"
-      - name: Unit tests
-        run: pytest tests/unit -q
+      - name: Lint
+        run: ruff check src tests scripts
+      - name: Unit + integration tests
+        run: pytest tests/unit tests/integration --cov=wca_bench --cov-report=term-missing -q
       - name: Integration (synthetic small)
         run: |
           python scripts/generate_synthetic.py --small
           python scripts/build_dataset.py --source synthetic
           python scripts/run_all_baselines.py --mode small
           python scripts/build_leaderboard.py
+      - name: Validate submission template
+        run: python scripts/validate_submission.py examples/submission_template
+
+  community:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate community submissions
+        run: python scripts/validate_community_submission.py community-submissions
