@@ -17,10 +17,13 @@ keywords:
   - speedcubing
   - WCA
   - machine learning
-repository-code: "https://github.com/"
+repository-code: "https://github.com/Maicarons/WCA-Bench"
+url: "https://github.com/Maicarons/WCA-Bench"
+license-url: "https://github.com/Maicarons/WCA-Bench/blob/main/LICENSE"
 preferred-citation:
   type: article
   title: "WCA-Bench: A Sports Analytics Benchmark from World Cube Association Competition Data"
   authors:
     - name: "WCA-Bench Project"
   year: 2026
+  url: "https://github.com/Maicarons/WCA-Bench"

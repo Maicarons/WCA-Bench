@@ -1,0 +1,10 @@
+task: dnf
+model: xgboost_dnf
+seed: 42
+params:
+  n_estimators: 120
+  max_depth: 4
+  n_jobs: 2
+  device: cpu
+  fallback: random_forest
+metrics: [auc_roc, auc_pr, f1, mcc, calibration]

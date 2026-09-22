@@ -302,7 +302,7 @@ WCA原始数据为TSV格式，660万行结果的加载和处理需要优化：
 
 **阶段三：基准发布与社区建设（第7-9月）**
 - 在HuggingFace Datasets上发布数据
-- 在GitHub上发布代码库（MIT许可证）
+- 在GitHub上发布代码库（Apache-2.0许可证）
 - 提交NeurIPS Evaluations & Datasets Track
 - 在WCA社区和体育数据分析社区推广
 

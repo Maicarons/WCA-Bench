@@ -1,0 +1,6 @@
+task: placement
+model: kde_simulation
+seed: 7
+params:
+  n_sim: 30
+metrics: [kendall_tau, top3_overlap, brier_podium]

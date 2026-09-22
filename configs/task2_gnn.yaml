@@ -1,0 +1,10 @@
+task: placement
+model: gnn
+seed: 42
+params:
+  rounds: 2
+  hidden_dim: 16
+  device: cpu
+  backend: gnn
+  fallback_backend: numpy_graph_propagation
+metrics: [kendall_tau, top3_overlap, brier_podium]

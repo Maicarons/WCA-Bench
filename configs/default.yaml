@@ -10,3 +10,8 @@ protocol:
   val_end: "2024-12-31"
   test_end: "2026-12-31"
   frozen_stats: true
+# Compute policy: CPU is the default (reproducible). Set device: auto / cuda to
+# opt into GPU for the torch / XGBoost baselines.
+compute:
+  device: cpu
+  report_cost: true

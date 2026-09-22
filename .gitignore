@@ -69,3 +69,7 @@ scripts/_run_*.py
 # Local-only CA bundle (certifi + Windows roots). Needed on machines whose
 # network intercepts TLS; regenerated locally, never committed.
 ca-bundle-tmp.pem
+
+# Compiled paper output (figures under paper/figures/ are sources, keep them)
+paper/main.pdf
+paper/zh/main.pdf

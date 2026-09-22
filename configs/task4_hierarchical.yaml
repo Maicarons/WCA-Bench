@@ -1,0 +1,7 @@
+task: limit
+model: hierarchical_shrinkage
+seed: 42
+params:
+  kappa: 4.0
+  horizon_years: 5.0
+metrics: [limit, year_converge, loo_std]

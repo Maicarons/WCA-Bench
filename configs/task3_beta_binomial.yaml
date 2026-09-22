@@ -1,0 +1,6 @@
+task: dnf
+model: beta_binomial
+seed: 42
+params:
+  prior_strength: 8.0
+metrics: [auc_roc, auc_pr, f1, mcc, calibration]

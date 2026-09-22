@@ -1,0 +1,7 @@
+task: limit
+model: gp_evt
+seed: 42
+params:
+  horizon_years: 6.0
+  evt_quantile: 0.99
+metrics: [limit, year_converge, loo_std]

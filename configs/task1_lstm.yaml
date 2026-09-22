@@ -1,0 +1,11 @@
+task: result_prediction
+model: lstm
+seed: 42
+params:
+  window: 8
+  cap: 20000
+  device: cpu
+  backend: lstm
+  fallback_backend: sliding_window_ridge
+metrics: [mae_log, rmse_log, coverage90]
+protocol: rolling_frozen

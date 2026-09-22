@@ -1,0 +1,7 @@
+task: transfer
+model: iv_2sls
+seed: 42
+params:
+  min_pairs: 12
+instrument: country_first_hosted_source_event
+metrics: [n_identified_pairs, matrix_stability]

@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "WCA-Bench：基于世界魔方协会数据库的体育数据分析标准化基准",
-  "license": "MIT",
+  "description": "WCA-Bench: a standardized sports-analytics benchmark built on World Cube Association competition data",
+  "license": "Apache-2.0",
   "scripts": {
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",

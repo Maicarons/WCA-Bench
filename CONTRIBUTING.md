@@ -1,17 +1,20 @@
-# 贡献指南
+# Contributing to WCA-Bench
 
-感谢你对 WCA-Bench 的关注。本项目定位为**标准化基准**，贡献须优先保障评估协议的一致性与可复现性。
+Thank you for your interest in WCA-Bench. This project is a **standardized benchmark**, so
+contributions must first protect the consistency and reproducibility of the evaluation protocol.
 
-## 开发环境
+Simplified Chinese version: [`CONTRIBUTING_zh.md`](CONTRIBUTING_zh.md).
+
+## Development environment
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-# source .venv/bin/activate   # macOS / Linux
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
 pip install -e ".[dev,fast,boost]"
 ```
 
-验证：
+Verify your setup:
 
 ```bash
 pytest
@@ -20,45 +23,48 @@ python scripts/build_dataset.py --source synthetic
 python scripts/run_all_baselines.py --mode small
 ```
 
-## 目录与依赖方向
+## Layout and dependency direction
 
 ```text
-tasks ──► data
-baselines ──► tasks ──► data
-evaluation ──► tasks + data
-leaderboard ──► evaluation
+tasks        ──► data
+baselines    ──► tasks ──► data
+evaluation   ──► tasks + data
+leaderboard  ──► evaluation
 ```
 
-`src/wca_bench/data` **不得** import `tasks` / `baselines` / `evaluation`。`tests/unit/test_import_policy.py` 会强制检查。
+`src/wca_bench/data` must **never** import `tasks`, `baselines`, `evaluation`, or `leaderboard`.
+This is enforced by `tests/unit/test_import_policy.py`.
 
-## 提交规范
+## Commit conventions
 
-- 分支：`<type>/<scope>-<desc>`，例如 `feat/dnf-xgboost`
-- 提交：Conventional Commits，例如 `feat(dnf): 添加 XGBoost 基线`
-- Issue：`<type>: <简述>`，例如 `bug: 多盲解码边界错误`
+- Branches: `<type>/<scope>-<desc>`, e.g. `feat/dnf-xgboost`
+- Commits: Conventional Commits, e.g. `feat(dnf): add XGBoost baseline`
+- Issues: `<type>: <short description>`, e.g. `bug: multi-blind decoding edge case`
 
-## PR 要求
+## Pull request requirements
 
-1. 代码评审：至少 1 人 approve
-2. 单元测试通过，核心模块覆盖率不下降
-3. 若修改任务定义 / 评估协议，**必须同步更新 `docs/`**
-4. 不得引入未来信息泄漏：特征函数必须强制传入 `as_of`
-5. 新基线必须产出完整 `report/` 结构
+1. Code review: at least one approval.
+2. Unit tests pass and core-module coverage does not decrease.
+3. Any change to a task definition or the evaluation protocol **must** update `docs/` in the same
+   pull request.
+4. No future information leakage: every feature function must take an explicit `as_of` argument.
+5. New baselines must produce a complete `report/` structure, including `significance`.
 
-## 任务定义变更
+## Changing a task definition
 
-| 变更类型 | 处理 |
+| Change type | Handling |
 | --- | --- |
-| 澄清性（不改语义） | 直接更新，patch 版本 |
-| 增补（新增指标/子集） | minor 版本，主指标不变 |
-| 破坏性（改输入输出） | major 版本，另立排行榜 |
+| Clarifying (semantics unchanged) | Update directly; patch version |
+| Additive (new metric or subset) | Minor version; primary metric unchanged |
+| Breaking (inputs or outputs change) | Major version; a separate leaderboard is created |
 
-## 行为准则
+## Code of conduct
 
-请阅读 [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)。
+Please read [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
-## 数据与伦理
+## Data and ethics
 
-- 仅使用 WCA 官方公开导出
-- 禁止用于赌博、个体歧视等场景（见 datacard.md）
-- 发布处理后数据时保留 WCA 署名说明
+- Use only the official public WCA export.
+- Do not use the data for gambling, individual discrimination, or similar purposes
+  (see [`datacard.md`](datacard.md)).
+- Preserve the WCA attribution statement when redistributing processed data.

@@ -1,32 +1,42 @@
-# 行为准则
+# Code of Conduct
 
-## 我们的承诺
+Simplified Chinese version: [`CODE_OF_CONDUCT_zh.md`](CODE_OF_CONDUCT_zh.md).
 
-为营造开放、友好的社区环境，WCA-Bench 贡献者承诺：不论年龄、体型、残疾、种族、性别特征、性别认同与表达、经验水平、教育程度、社会经济地位、国籍、外貌、种族、宗教或性取向，参与者均可免受骚扰。
+## Our pledge
 
-## 鼓励的行为
+In the interest of fostering an open and welcoming community, the WCA-Bench contributors pledge to
+make participation in our project and our community a harassment-free experience for everyone,
+regardless of age, body size, disability, ethnicity, sex characteristics, gender identity and
+expression, level of experience, education, socio-economic status, nationality, personal
+appearance, race, religion, or sexual identity and orientation.
 
-- 使用包容、友善的语言
-- 尊重不同观点与经验
-- 优雅地接受建设性批评
-- 以社区利益为先
-- 对其他社区成员表示同理心
+## Encouraged behaviour
 
-## 不可接受的行为
+- Using welcoming and inclusive language
+- Respecting differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Prioritizing what is best for the community
+- Showing empathy towards other community members
 
-- 性暗示语言或意象，以及任何不受欢迎的性关注
-- 挑衅、侮辱/贬损性评论，以及人身或政治攻击
-- 公开或私下骚扰
-- 未经明确许可发布他人隐私信息（住址、邮箱等）
-- 在专业场合中可能被合理认为不适当的其他行为
-- 以本项目数据用于赌博、博彩或歧视性用途的宣传
+## Unacceptable behaviour
 
-## 执行
+- Sexualized language or imagery, and unwelcome sexual attention
+- Trolling, insulting or derogatory comments, and personal or political attacks
+- Public or private harassment
+- Publishing others' private information without explicit permission
+- Other conduct which could reasonably be considered inappropriate in a professional setting
+- Advocating the use of this project's data for gambling, betting, or discriminatory purposes
 
-不当行为可联系项目维护者报告。维护者将审查并采取其认为适当的任何行动，包括警告、临时或永久封禁。
+## Enforcement
 
-维护者有权利和义务删除、编辑或拒绝不符合本准则的评论、提交、代码、wiki 编辑、议题和其他贡献，并在适当时说明处理原因。
+Instances of abusive, harassing, or otherwise unacceptable behaviour may be reported to the project
+maintainers. Maintainers will review and take any action they deem appropriate, including a
+warning, or temporary or permanent expulsion.
 
-## 归属
+Maintainers have the right and responsibility to remove, edit, or reject comments, commits, code,
+wiki edits, issues, and other contributions that are not aligned with this Code of Conduct, and
+will communicate reasons for moderation decisions when appropriate.
 
-本行为准则改编自 Contributor Covenant 2.1 版。
+## Attribution
+
+This Code of Conduct is adapted from the Contributor Covenant, version 2.1.

@@ -1,0 +1,8 @@
+task: transfer
+model: causal_forest
+seed: 42
+params:
+  min_pairs: 12
+  estimator: causal_forest_dml
+  fallback_estimator: honest_t_learner
+metrics: [n_identified_pairs, matrix_stability]

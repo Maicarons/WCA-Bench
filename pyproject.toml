@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "wca-bench"
 version = "0.1.0"
-description = "WCA-Bench：基于世界魔方协会数据库的体育数据分析标准化基准"
+description = "WCA-Bench: a standardized sports-analytics benchmark built on World Cube Association competition data"
 readme = "README.md"
 license = { text = "Apache-2.0" }
 requires-python = ">=3.10"
@@ -24,7 +24,7 @@ dependencies = [
 fast = ["polars>=0.20"]
 boost = ["xgboost>=2.0", "lightgbm>=4.0"]
 deep = ["torch>=2.0"]
-dev = ["pytest>=7.0", "ruff>=0.4"]
+dev = ["pytest>=7.0", "pytest-cov>=5.0", "ruff>=0.4"]
 all = ["wca-bench[fast,boost,deep,dev]"]
 
 [project.urls]
@@ -41,6 +41,9 @@ wca_bench = ["py.typed"]
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-q"
+
+[tool.coverage.run]
+source = ["src/wca_bench"]
 
 [tool.ruff]
 line-length = 100
