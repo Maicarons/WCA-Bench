@@ -1,30 +1,71 @@
-# Node / 文档构建
+# Node / documentation build
 node_modules/
 docs/.vitepress/dist/
 docs/.vitepress/cache/
+package-lock.json.bak
 *.log
 .DS_Store
 
-# Python / 数据与实验产物
+# Python / data and experiment artefacts
 __pycache__/
 *.py[cod]
 .venv/
 .venv*/
 .ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# Local data products
 data/raw/
 data/processed/
 data/splits/
 outputs/
+reports/
 wandb/
 mlruns/
 *.parquet
 *.arrow
 *.zip
-reports/
-scripts/_debug*.py
-scripts/_run_*.py
 
-# large local artifacts
+# Large raw WCA exports
 WCA_export_*.tsv
 WCA_export_*.zip
 
+# Release staging and archives (publish/)
+publish/_staging/
+publish/dist/
+
+# Local secrets / credentials — NEVER commit, never uploaded
+.env
+*.env
+
+# LaTeX build artefacts (paper/)
+paper/**/*.aux
+paper/**/*.bbl
+paper/**/*.blg
+paper/**/*.fdb_latexmk
+paper/**/*.fls
+paper/**/*.log
+paper/**/*.out
+paper/**/*.synctex.gz
+paper/**/*.toc
+paper/**/*.xdv
+paper/build/
+
+# Space runtime artefacts (space/)
+space/_submissions/
+space/**/__pycache__/
+# Local-only fallback copy of examples/leaderboard.csv (the Hub is the source of
+# truth); deployed with the Space but not duplicated into git.
+space/data/
+
+# Scratch / debug scripts
+scripts/_debug*.py
+scripts/_run_*.py
+
+# Local-only CA bundle (certifi + Windows roots). Needed on machines whose
+# network intercepts TLS; regenerated locally, never committed.
+ca-bundle-tmp.pem

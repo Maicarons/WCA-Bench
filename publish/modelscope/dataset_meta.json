@@ -1,0 +1,84 @@
+{
+  "name": "WCA-Bench",
+  "full_name": "WCA-Bench: A Sports Analytics Benchmark from World Cube Association Competition Data",
+  "version": "0.1.0",
+  "description": "WCA-Bench is the first comprehensive machine-learning benchmark built on public World Cube Association (WCA) competition data. It covers result prediction, placement prediction, DNF prediction, human-limit estimation, and skill-transfer analysis under a leakage-free temporal evaluation protocol. The release ships decoded Parquet tables, frozen training-time statistics, and train/val/test index splits.",
+  "description_zh": "WCA-Bench 是首个基于世界魔方协会（WCA）公开比赛数据的综合性机器学习基准，涵盖成绩预测、名次预测、DNF 预测、人类极限估计、技能迁移分析五类任务，并提供无泄漏的时间评估协议与冻结统计量。",
+  "tags": [
+    "benchmark",
+    "sports-analytics",
+    "speedcubing",
+    "wca",
+    "tabular-data",
+    "time-series",
+    "causal-inference",
+    "machine-learning"
+  ],
+  "license": "Apache-2.0",
+  "data_license": "World Cube Association public export terms",
+  "license_link": "https://www.worldcubeassociation.org/export/results",
+  "language": [
+    "en"
+  ],
+  "domain": [
+    "sports-analytics",
+    "tabular"
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "name": "result_prediction",
+      "type": "regression",
+      "primary_metric": "mae_log"
+    },
+    {
+      "id": "T2",
+      "name": "placement",
+      "type": "ranking",
+      "primary_metric": "kendall_tau"
+    },
+    {
+      "id": "T3",
+      "name": "dnf",
+      "type": "binary_classification",
+      "primary_metric": "auc_pr"
+    },
+    {
+      "id": "T4",
+      "name": "limit",
+      "type": "extreme_value_estimation",
+      "primary_metric": "mean_loo_std"
+    },
+    {
+      "id": "T5",
+      "name": "transfer",
+      "type": "causal_inference",
+      "primary_metric": "n_identified_pairs"
+    }
+  ],
+  "source": {
+    "name": "World Cube Association Results Database Export",
+    "version": "v2.0.2",
+    "url": "https://www.worldcubeassociation.org/export/results",
+    "api_metadata": "https://www.worldcubeassociation.org/api/v0/export/public"
+  },
+  "splits": {
+    "train": "2003-01-01..2022-12-31",
+    "val": "2023-01-01..2024-12-31",
+    "test": "2025-01-01..2026-12-31",
+    "test_a": "2025-01-01..2025-06-30",
+    "test_b": "2025-07-01..2025-12-31",
+    "test_c": "2026-01-01..2026-06-30"
+  },
+  "statistics": {
+    "n_results": 6909454,
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_events": 22,
+    "global_dnf_rate": 0.03180194518566082,
+    "frozen_person_event_stats": 612224
+  },
+  "attribution": "This information is based on competition results owned and maintained by the World Cube Association, published at https://worldcubeassociation.org/results",
+  "homepage": "https://github.com/Maicarons/WCA-Bench",
+  "repository": "https://github.com/Maicarons/WCA-Bench"
+}

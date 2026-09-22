@@ -1,0 +1,9 @@
+# Requirements for publishing the WCA-Bench dataset / baselines to ModelScope
+# (魔搭).
+#
+#   python -m pip install -r publish/modelscope/requirements.txt
+#
+# The modelscope SDK is imported lazily by publish/modelscope/upload.py, so the
+# dry-run mode still works (with a clear message) when it is not installed.
+modelscope>=1.14.0
+pyarrow>=12.0

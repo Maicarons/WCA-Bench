@@ -1,0 +1,9 @@
+# Requirements for publishing the WCA-Bench dataset / baselines to the
+# Hugging Face Hub.
+#
+#   python -m pip install -r publish/huggingface/requirements.txt
+#
+# huggingface_hub is imported lazily by the upload scripts, so the dry-run mode
+# still works (with a clear message) when it is not installed.
+huggingface_hub>=0.23.0
+pyarrow>=12.0

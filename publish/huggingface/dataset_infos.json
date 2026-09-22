@@ -1,0 +1,205 @@
+{
+  "results": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "pos", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "best", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "average", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "competition_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "round_type_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "event_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "person_name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "person_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "format_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "regional_single_record", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "regional_average_record", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "person_country_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "country_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "start_date", "type": {"_type": "Value", "dtype": "date32"}},
+      {"name": "date", "type": {"_type": "Value", "dtype": "date32"}},
+      {"name": "split", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "time_slice", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "results", "num_bytes": 113086062, "num_examples": 6909454}
+    }
+  },
+  "persons": {
+    "features": [
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "gender", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "wca_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "sub_id", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "country_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "continent_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "iso2", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "name_country", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "persons", "num_bytes": 7497080, "num_examples": 298551}
+    }
+  },
+  "competitions": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "information", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "external_website", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "venue", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "city_name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "country_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "venue_address", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "venue_details", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "cell_name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "cancelled", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "event_specs", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "delegates", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "organizers", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "year", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "month", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "day", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "end_year", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "end_month", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "end_day", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "latitude_microdegrees", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "longitude_microdegrees", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "start_date", "type": {"_type": "Value", "dtype": "date32"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "competitions", "num_bytes": 6994459, "num_examples": 18708}
+    }
+  },
+  "person_event_stats": {
+    "features": [
+      {"name": "person_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "event_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "mean_best", "type": {"_type": "Value", "dtype": "float64"}},
+      {"name": "std_best", "type": {"_type": "Value", "dtype": "float64"}},
+      {"name": "n_attempts", "type": {"_type": "Value", "dtype": "float64"}},
+      {"name": "best", "type": {"_type": "Value", "dtype": "float64"}},
+      {"name": "dnf_rate", "type": {"_type": "Value", "dtype": "float64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "person_event_stats", "num_bytes": 10209846, "num_examples": 612224}
+    }
+  },
+  "events": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "format", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "rank", "type": {"_type": "Value", "dtype": "int64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "events", "num_bytes": 3193, "num_examples": 22}
+    }
+  },
+  "formats": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "expected_solve_count", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "sort_by", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "sort_by_second", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "trim_fastest_n", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "trim_slowest_n", "type": {"_type": "Value", "dtype": "int64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "formats", "num_bytes": 4691, "num_examples": 7}
+    }
+  },
+  "round_types": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "final", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "rank", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "cell_name", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "round_types", "num_bytes": 3465, "num_examples": 11}
+    }
+  },
+  "countries": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "iso2", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "continent_id", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "countries", "num_bytes": 8378, "num_examples": 207}
+    }
+  },
+  "continents": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "name", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "record_name", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "continents", "num_bytes": 2357, "num_examples": 7}
+    }
+  },
+  "championships": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "competition_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "championship_type", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "championships", "num_bytes": 16816, "num_examples": 938}
+    }
+  },
+  "split_ids": {
+    "features": [
+      {"name": "id", "type": {"_type": "Value", "dtype": "int64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "split_ids", "num_bytes": 13812389, "num_examples": 3211294},
+      "validation": {"name": "validation", "dataset_name": "split_ids", "num_bytes": 8470737, "num_examples": 1978851},
+      "test": {"name": "test", "dataset_name": "split_ids", "num_bytes": 7430599, "num_examples": 1719290}
+    }
+  },
+  "person_history": {
+    "features": [
+      {"name": "person_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "event_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "competition_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "date", "type": {"_type": "Value", "dtype": "date32"}},
+      {"name": "best", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "average", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "split", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "time_slice", "type": {"_type": "Value", "dtype": "string"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "person_history", "num_bytes": 49326572, "num_examples": 6909454}
+    }
+  },
+  "attempts": {
+    "features": [
+      {"name": "value", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "attempt_number", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "result_id", "type": {"_type": "Value", "dtype": "int64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "attempts", "num_bytes": 143913699, "num_examples": 31847257}
+    }
+  },
+  "scrambles": {
+    "features": [
+      {"name": "scramble", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "id", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "competition_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "event_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "group_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "is_extra", "type": {"_type": "Value", "dtype": "int64"}},
+      {"name": "round_type_id", "type": {"_type": "Value", "dtype": "string"}},
+      {"name": "scramble_num", "type": {"_type": "Value", "dtype": "int64"}}
+    ],
+    "splits": {
+      "train": {"name": "train", "dataset_name": "scrambles", "num_bytes": 146894418, "num_examples": 3186380}
+    }
+  }
+}

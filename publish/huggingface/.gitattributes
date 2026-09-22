@@ -1,0 +1,21 @@
+# Git LFS tracking rules for the WCA-Bench Hugging Face dataset repository.
+#
+# Every Parquet table is uploaded through Git LFS: the repository is far too
+# large for plain Git objects (results.parquet ~108 MB, result_attempts.parquet
+# ~137 MB, scrambles.parquet ~140 MB).
+*.parquet filter=lfs diff=lfs merge=lfs -text
+
+# Large JSON artifacts also go through LFS. The frozen training-time statistics
+# files are ~9 MB each; the small metadata JSON files (manifest.json,
+# reconciliation.json, test_time_slices.json, dataset_infos.json) intentionally
+# stay in plain Git so that they remain diffable and reviewable.
+data/processed/frozen_stats.json filter=lfs diff=lfs merge=lfs -text
+data/splits/frozen_stats.json filter=lfs diff=lfs merge=lfs -text
+
+# Distributable archives (produced by publish/tools/make_archive.py) should never
+# be committed in practice, but if they ever are, keep them out of plain Git.
+*.tar.gz filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+
+# Marker that the repository requires Git LFS to be meaningful.
+*.parquet !text
