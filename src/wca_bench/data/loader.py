@@ -9,7 +9,6 @@ from typing import Any
 import pandas as pd
 
 from wca_bench.data.features import build_competition_features, build_result_features
-from wca_bench.data.schema import RAW_TABLE_FILES
 from wca_bench.data.splits import assign_split, freeze_stats, time_slice
 from wca_bench.utils.io import load_json, read_table, save_json, save_table
 from wca_bench.utils.logging import get_logger

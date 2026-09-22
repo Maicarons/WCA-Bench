@@ -8,7 +8,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from wca_bench.data.schema import DNF, DNS, EVENT_FORMATS, NO_RESULT
+from wca_bench.data.schema import DNF, EVENT_FORMATS
 
 TRAIN_START = date(2003, 1, 1)
 TRAIN_END = date(2022, 12, 31)

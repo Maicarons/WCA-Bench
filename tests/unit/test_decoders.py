@@ -11,8 +11,6 @@ import pytest
 
 from wca_bench.data.decoders import (
     DNF,
-    compute_average,
-    compute_best,
     decode_multi,
     decode_result_value,
     encode_multi,

@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import pandas as pd
 
-from wca_bench.evaluation.metrics import mae_log, matthews_corrcoef, f1, auc_roc, kendall_tau
-
+from wca_bench.evaluation.metrics import auc_roc, f1, kendall_tau, mae_log, matthews_corrcoef
 
 DEFAULT_METRICS: dict[str, Callable] = {
     "result_prediction": lambda df: {

@@ -11,8 +11,8 @@ Official multi-blind encoding (WCA Results Export v2):
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Iterable, Sequence
 
 from wca_bench.data.schema import DNF, DNS, EVENT_FORMATS, FORMATS, NO_RESULT
 
@@ -235,11 +235,7 @@ def compute_average(
         valid = [a for a in seq if not a.is_dnf and not a.is_dns and not a.is_missing]
         if len(valid) < 3:
             return DNF
-        # lower encoded value is better; drop best and worst
-        raws = sorted(a.raw for a in valid)
-        # with 1 DNF the DNF occupies worst among a full 5-set; we drop extremes of the 5
-        all_raw_flags = [(a.raw if not a.is_dnf else 10**12) for a in seq]
-        # reconstruct properly using DNFs
+        # reconstruct properly using DNFs (a single DNF occupies the worst slot)
         dnf_count = sum(1 for a in seq if a.is_dnf or a.is_dns or a.is_missing)
         if dnf_count >= 2:
             return DNF

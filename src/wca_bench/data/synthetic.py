@@ -9,7 +9,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, timedelta
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -294,7 +293,7 @@ def generate_synthetic_dataset(
                 performances.append((pid, attempts))
 
             # compute best/average
-            from wca_bench.data.decoders import decode_result_value, reconstruct_round
+            from wca_bench.data.decoders import reconstruct_round
 
             # rank by average if format has average else best
             scored = []

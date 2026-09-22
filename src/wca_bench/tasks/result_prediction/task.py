@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Hashable
 from typing import Any
 
 import numpy as np
 import pandas as pd
 
+from wca_bench.baselines.deep.lstm_result import lstm_result_predict
 from wca_bench.baselines.statistical.history_mean import history_mean_predict
 from wca_bench.baselines.statistical.kde import kde_predict_result
 from wca_bench.baselines.tree.ridge_result import ridge_result_predict
@@ -14,12 +16,15 @@ from wca_bench.baselines.tree.xgb_result import xgb_result_predict
 from wca_bench.data.features import build_competition_features, build_result_features
 from wca_bench.data.splits import time_slice
 from wca_bench.evaluation.metrics import coverage, mae_log, rmse_log
-from wca_bench.tasks.base import Baseline, BaseTask, Report
+from wca_bench.tasks.base import Baseline, BaseTask
 
 
 class ResultPredictionTask(BaseTask):
     name = "result_prediction"
     task_type = "regression"
+    significance_metric = "mae_log"
+    significance_higher_is_better = False
+    significance_unit = "competition_event_round"
 
     def metrics(self) -> list[str]:
         return ["mae_log", "rmse_log", "coverage90", "n"]
@@ -90,6 +95,12 @@ class ResultPredictionTask(BaseTask):
                 xgb_result_predict,
                 description="XGBoost on log(best)",
             ),
+            Baseline(
+                "lstm",
+                "method",
+                lstm_result_predict,
+                description="LSTM 序列模型（torch 可选，无 torch 回退滑动窗口 ridge）",
+            ),
         ]
 
     def _default_metric_fn(self, preds: pd.DataFrame) -> dict[str, Any]:
@@ -111,25 +122,17 @@ class ResultPredictionTask(BaseTask):
             return ratio >= thr
         return pd.Series(False, index=preds.index)
 
-    def run_all_baselines(self, mode: str = "small"):
-        if not hasattr(self, "_features") or self._features is None:
-            self.featurize()
-        reports = []
-        for b in self.baselines():
-            try:
-                preds = b.predict_fn(self)
-                if preds is None or not isinstance(preds, pd.DataFrame):
-                    raise TypeError(f"baseline {b.name} returned invalid predictions")
-                self._pred_cache[b.name] = preds
-                try:
-                    hard = self.hard_mask(preds)
-                except Exception:
-                    hard = None
-                rep = self.evaluate(b.name, preds, hard_subset_mask=hard)
-                rep.cost = {"mode": mode, "baseline_kind": b.kind}
-                reports.append(rep)
-            except Exception as exc:
-                reports.append(
-                    Report(self.name, b.name, overall={"error": str(exc)}, extras={"failed": True})
-                )
-        return reports
+    def unit_losses(self, preds: pd.DataFrame) -> dict[Hashable, float]:
+        gcols = [c for c in ["competition_id", "event_id", "round_type_id"] if c in preds.columns]
+        if not gcols or "y_true" not in preds.columns or "y_pred" not in preds.columns:
+            return {}
+        df = preds.copy()
+        yt = pd.to_numeric(df["y_true"], errors="coerce")
+        yp = pd.to_numeric(df["y_pred"], errors="coerce")
+        df["_loss"] = np.where((yt > 0) & (yp > 0), np.abs(np.log(yt) - np.log(yp)), np.nan)
+        out: dict[Hashable, float] = {}
+        for key, g in df.groupby(gcols, dropna=False):
+            val = g["_loss"].mean()
+            if np.isfinite(val):
+                out[key if isinstance(key, tuple) else (key,)] = float(val)
+        return out

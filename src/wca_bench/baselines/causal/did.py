@@ -51,8 +51,6 @@ def did_transfer_matrix(
                 if len(person_to) < 4:
                     continue
                 t0 = person_to["date"].min()
-                pre = person_to[person_to["date"] < t0]["best"]
-                post = person_to[person_to["date"] >= t0]["best"]
                 # actually first entry is t0; use later competitions as post
                 post = person_to[person_to["date"] > t0]["best"]
                 if len(post) < 2:
@@ -62,7 +60,6 @@ def did_transfer_matrix(
                 from_hist = from_hist[from_hist["date"] < t0]
                 if len(from_hist) < 2:
                     continue
-                pre_mu = float(from_hist["best"].mean())
                 post_to = float(post.iloc[: min(3, len(post))].mean())
                 pre_to = float(person_to["best"].iloc[0]) if len(person_to) else np.nan
                 if not np.isfinite(pre_to) or not np.isfinite(post_to):

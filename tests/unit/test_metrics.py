@@ -13,8 +13,8 @@ import pytest
 from wca_bench.evaluation.metrics import (
     auc_pr,
     auc_roc,
-    cohens_d,
     cliffs_delta,
+    cohens_d,
     f1,
     kendall_tau,
     mae,

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import numpy as np
 from scipy import stats
@@ -63,7 +64,7 @@ def paired_t_test(
         }
     stat, p = stats.ttest_rel(a, b)
     diff = a - b
-    from wca_bench.evaluation.metrics import cohens_d, cliffs_delta
+    from wca_bench.evaluation.metrics import cliffs_delta, cohens_d
     from wca_bench.evaluation.significance import bootstrap_ci as _bci
 
     ci = _bci(diff, lambda x: float(np.mean(x)), n_boot=1000, seed=42)

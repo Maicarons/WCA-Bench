@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import numpy as np
 import pandas as pd
 
-from wca_bench.baselines.tree.ridge_result import _prepare_matrix, FEATURE_COLS
+from wca_bench.baselines.tree.ridge_result import _prepare_matrix
 
 
 def logistic_dnf_predict(task) -> pd.DataFrame:

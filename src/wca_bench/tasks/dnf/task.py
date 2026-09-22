@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+from collections.abc import Hashable
 from typing import Any
 
 import numpy as np
 import pandas as pd
 
+from wca_bench.baselines.bayesian.beta_binomial_dnf import beta_binomial_dnf_predict
 from wca_bench.baselines.statistical.dnf_rate import historical_dnf_predict
 from wca_bench.baselines.tree.logistic_dnf import logistic_dnf_predict
+from wca_bench.baselines.tree.xgb_dnf import xgb_dnf_predict
 from wca_bench.data.features import build_competition_features, build_result_features
-from wca_bench.data.schema import DNF, FORMATS
+from wca_bench.data.schema import DNF
+from wca_bench.data.splits import time_slice
 from wca_bench.evaluation.metrics import (
     auc_pr,
     auc_roc,
@@ -24,6 +28,9 @@ from wca_bench.tasks.base import Baseline, BaseTask
 class DNFTask(BaseTask):
     name = "dnf"
     task_type = "classification"
+    significance_metric = "auc_pr"
+    significance_higher_is_better = True
+    significance_unit = "competition_event_round"
 
     def metrics(self) -> list[str]:
         return ["auc_roc", "auc_pr", "f1", "mcc", "calibration", "n", "positive_rate"]
@@ -108,6 +115,18 @@ class DNFTask(BaseTask):
                 logistic_dnf_predict,
                 description="Logistic 回归（上下文特征）",
             ),
+            Baseline(
+                "xgboost_dnf",
+                "method",
+                xgb_dnf_predict,
+                description="XGBoost/RandomForest DNF 概率（无 xgboost 回退 sklearn）",
+            ),
+            Baseline(
+                "beta_binomial",
+                "statistical",
+                beta_binomial_dnf_predict,
+                description="Beta-Binomial 收缩 DNF 率（闭式经验贝叶斯）",
+            ),
         ]
 
     def _default_metric_fn(self, preds: pd.DataFrame) -> dict[str, Any]:
@@ -133,27 +152,17 @@ class DNFTask(BaseTask):
             return (r >= 0.1) & (r <= 0.3)
         return pd.Series(False, index=preds.index)
 
-    def run_all_baselines(self, mode: str = "small"):
-        if not hasattr(self, "_features") or self._features is None:
-            self.featurize()
-        reports = []
-        from wca_bench.tasks.base import Report
-
-        for b in self.baselines():
-            try:
-                preds = b.predict_fn(self)
-                if preds is None or not isinstance(preds, pd.DataFrame):
-                    raise TypeError(f"baseline {b.name} returned invalid predictions")
-                self._pred_cache[b.name] = preds
-                try:
-                    hard = self.hard_mask(preds)
-                except Exception:
-                    hard = None
-                rep = self.evaluate(b.name, preds, hard_subset_mask=hard)
-                rep.cost = {"mode": mode, "baseline_kind": b.kind}
-                reports.append(rep)
-            except Exception as exc:
-                reports.append(
-                    Report(self.name, b.name, overall={"error": str(exc)}, extras={"failed": True})
-                )
-        return reports
+    def unit_losses(self, preds: pd.DataFrame) -> dict[Hashable, float]:
+        gcols = [c for c in ["competition_id", "event_id", "round_type_id"] if c in preds.columns]
+        if not gcols or "y_true" not in preds.columns or "y_pred" not in preds.columns:
+            return {}
+        df = preds.copy()
+        yt = pd.to_numeric(df["y_true"], errors="coerce")
+        yp = pd.to_numeric(df["y_pred"], errors="coerce")
+        df["_loss"] = (yt - yp).abs()
+        out: dict[Hashable, float] = {}
+        for key, g in df.groupby(gcols, dropna=False):
+            val = g["_loss"].mean()
+            if np.isfinite(val):
+                out[key if isinstance(key, tuple) else (key,)] = float(val)
+        return out

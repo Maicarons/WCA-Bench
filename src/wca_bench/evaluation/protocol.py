@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from datetime import date
-from typing import Any, Callable, Iterable
+from typing import Any
 
 import pandas as pd
 
 from wca_bench.data.features import build_result_features
-from wca_bench.data.splits import TRAIN_END
 
 
 def assert_no_leakage(feature_dates: Iterable, target_date) -> None:
@@ -54,7 +53,6 @@ class RollingWindowProtocol:
         all_preds = []
         for _, comp in comps.iterrows():
             as_of = comp["date"]
-            comp_rows = df[df["competition_id"] == comp["competition_id"]].copy()
             # features may use all history strictly before as_of, plus target rows
             feats = build_result_features(
                 df,

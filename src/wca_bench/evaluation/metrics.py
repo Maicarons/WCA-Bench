@@ -178,7 +178,6 @@ def auc_roc(y_true, y_score) -> float:
     if pos == 0 or neg == 0:
         return float("nan")
     # Mann-Whitney U / AUC
-    order = np.argsort(ys)
     ranks = _rankdata(ys)
     sum_pos = ranks[yt == 1].sum()
     auc = (sum_pos - pos * (pos + 1) / 2) / (pos * neg)
@@ -202,7 +201,7 @@ def auc_pr(y_true, y_score) -> float:
     # step-wise AP
     ap = 0.0
     prev_r = 0.0
-    for p, r in zip(precision, recall):
+    for p, r in zip(precision, recall, strict=False):
         ap += p * max(r - prev_r, 0)
         prev_r = r
     return float(ap)
