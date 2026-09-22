@@ -1,0 +1,226 @@
+{
+  "task": "result_prediction",
+  "model": "lstm",
+  "overall": {
+    "mae_log": 1.044039947679419,
+    "rmse_log": 1.4943877823752045,
+    "n": 2196
+  },
+  "stratified": {
+    "by_event": {
+      "222": {
+        "mae_log": 1.1849906250163287,
+        "rmse_log": 1.3541569664082214,
+        "n": 326
+      },
+      "333": {
+        "mae_log": 0.4562839541212118,
+        "rmse_log": 0.5762470425043359,
+        "n": 731
+      },
+      "333bf": {
+        "mae_log": 1.9022809034177093,
+        "rmse_log": 2.081562393303637,
+        "n": 59
+      },
+      "333fm": {
+        "mae_log": 3.674962053487075,
+        "rmse_log": 3.6860508457470917,
+        "n": 58
+      },
+      "333mbf": {
+        "mae_log": 13.064136165871338,
+        "rmse_log": 13.064300535981454,
+        "n": 6
+      },
+      "333oh": {
+        "mae_log": 0.6299462335098978,
+        "rmse_log": 0.7968676215593257,
+        "n": 128
+      },
+      "444": {
+        "mae_log": 1.3643961134219855,
+        "rmse_log": 1.4344898787626021,
+        "n": 111
+      },
+      "444bf": {
+        "mae_log": 2.74083212227376,
+        "rmse_log": 2.7814637646110545,
+        "n": 2
+      },
+      "555": {
+        "mae_log": 1.893694437957071,
+        "rmse_log": 1.9326269023520606,
+        "n": 135
+      },
+      "555bf": {
+        "mae_log": NaN,
+        "rmse_log": NaN,
+        "n": 0
+      },
+      "666": {
+        "mae_log": 2.517958123560651,
+        "rmse_log": 2.545808151285926,
+        "n": 34
+      },
+      "777": {
+        "mae_log": 2.9320896535381697,
+        "rmse_log": 2.952173538691981,
+        "n": 30
+      },
+      "clock": {
+        "mae_log": 0.6410270379912699,
+        "rmse_log": 0.7607157624942759,
+        "n": 206
+      },
+      "minx": {
+        "mae_log": 1.7844061777485767,
+        "rmse_log": 1.8729471835597062,
+        "n": 94
+      },
+      "pyram": {
+        "mae_log": 0.912898160602136,
+        "rmse_log": 1.099766071694476,
+        "n": 151
+      },
+      "skewb": {
+        "mae_log": 0.7831881403766235,
+        "rmse_log": 0.9337957034395212,
+        "n": 24
+      },
+      "sq1": {
+        "mae_log": 0.45425116512234004,
+        "rmse_log": 0.5636643747400407,
+        "n": 101
+      }
+    },
+    "by_skill_level": {
+      "advanced": {
+        "mae_log": 0.9727569775997456,
+        "rmse_log": 1.4453840065086587,
+        "n": 534
+      },
+      "elite": {
+        "mae_log": 1.2262577416407283,
+        "rmse_log": 1.4728799084361281,
+        "n": 300
+      },
+      "intermediate": {
+        "mae_log": 0.9014730887751493,
+        "rmse_log": 1.4000432509946934,
+        "n": 789
+      },
+      "novice": {
+        "mae_log": 1.2113785506630521,
+        "rmse_log": 1.6663959857329778,
+        "n": 573
+      }
+    },
+    "by_time_slice": {
+      "test_a": {
+        "mae_log": 1.0612101680488837,
+        "rmse_log": 1.784522494423375,
+        "n": 609
+      },
+      "test_b": {
+        "mae_log": 0.8597055241857045,
+        "rmse_log": 1.226988989651695,
+        "n": 433
+      },
+      "test_c": {
+        "mae_log": 1.1041440561436953,
+        "rmse_log": 1.4156957844236475,
+        "n": 1154
+      }
+    },
+    "by_continent": {
+      "_Asia": {
+        "mae_log": 1.2078395405099638,
+        "rmse_log": 2.457883728816911,
+        "n": 196
+      },
+      "_Europe": {
+        "mae_log": 1.091114010794122,
+        "rmse_log": 1.3771406557772712,
+        "n": 863
+      },
+      "_North America": {
+        "mae_log": 0.9816232850363834,
+        "rmse_log": 1.3554280939988077,
+        "n": 1131
+      },
+      "_Oceania": {
+        "mae_log": 0.8301339943737078,
+        "rmse_log": 1.1711585541831446,
+        "n": 3
+      },
+      "_South America": {
+        "mae_log": 0.5458154964844688,
+        "rmse_log": 0.672579565112128,
+        "n": 3
+      }
+    }
+  },
+  "hard_subset": {
+    "overall": {
+      "mae_log": 0.8618629173531273,
+      "rmse_log": 1.163468318738253,
+      "n": 508
+    },
+    "n": 509
+  },
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "method",
+    "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+    "wall_clock_sec": 31.385063900001114,
+    "cpu_hours": 0.008718073305555865,
+    "gpu_hours": 0.008718073305555865,
+    "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "extras": {
+    "cold_start": {
+      "overall": {
+        "mae_log": 1.1323727230401652,
+        "rmse_log": 1.416278428188625,
+        "n": 239
+      },
+      "n_cold": 248,
+      "n_warm": 2012
+    },
+    "n": 2260,
+    "backend": "lstm",
+    "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "significance": {
+    "metric": "mae_log",
+    "paired_unit": "competition_event_round",
+    "n_pairs": 79,
+    "mean_diff": 1.0866821623962903,
+    "ci95": [
+      0.8103956345544729,
+      1.5085842298752792
+    ],
+    "p_value": 5.187412475200431e-08,
+    "effect_size": {
+      "name": "cohens_d",
+      "value": 0.900690973043686,
+      "cliffs_delta": 0.7872135875660952
+    },
+    "test": "paired_t",
+    "seed": 42,
+    "t_stat": 6.027962218884761,
+    "reference": "xgboost_log"
+  },
+  "elapsed_sec": 80.60383486747742,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
+}

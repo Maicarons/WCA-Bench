@@ -1,0 +1,5 @@
+{
+  "task": "result_prediction",
+  "model": "placeholder_model",
+  "overall": {"mae_log": 0.0, "rmse_log": 0.0, "coverage90": 0.0, "n": 0}
+}

@@ -1,0 +1,233 @@
+[
+  {
+    "task": "dnf",
+    "model": "xgboost_dnf",
+    "primary_metric": "auc_pr",
+    "primary_value": 0.37305420320583965,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 1.0
+  },
+  {
+    "task": "dnf",
+    "model": "beta_binomial",
+    "primary_metric": "auc_pr",
+    "primary_value": 0.3724876339218829,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "dnf",
+    "model": "historical_dnf_rate",
+    "primary_metric": "auc_pr",
+    "primary_value": 0.3590637561741547,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 3.0
+  },
+  {
+    "task": "dnf",
+    "model": "logistic",
+    "primary_metric": "auc_pr",
+    "primary_value": 0.22895999087860608,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 4.0
+  },
+  {
+    "task": "limit",
+    "model": "gp_evt",
+    "primary_metric": "mean_loo_std",
+    "primary_value": 0.9836075126847903,
+    "direction": "lower",
+    "n": NaN,
+    "failed": false,
+    "error": null,
+    "_rank": 1.0
+  },
+  {
+    "task": "limit",
+    "model": "exponential_decay",
+    "primary_metric": "mean_loo_std",
+    "primary_value": 6485301.013726644,
+    "direction": "lower",
+    "n": NaN,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "limit",
+    "model": "hierarchical_shrinkage",
+    "primary_metric": "mean_loo_std",
+    "primary_value": 9260100.37457967,
+    "direction": "lower",
+    "n": NaN,
+    "failed": false,
+    "error": null,
+    "_rank": 3.0
+  },
+  {
+    "task": "limit",
+    "model": "changepoint",
+    "primary_metric": "mean_loo_std",
+    "primary_value": NaN,
+    "direction": "lower",
+    "n": NaN,
+    "failed": false,
+    "error": null,
+    "_rank": NaN
+  },
+  {
+    "task": "placement",
+    "model": "kde_simulation",
+    "primary_metric": "kendall_tau",
+    "primary_value": 0.7673476295148504,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "placement",
+    "model": "plackett_luce",
+    "primary_metric": "kendall_tau",
+    "primary_value": 0.7673476295148504,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "placement",
+    "model": "psych_sheet",
+    "primary_metric": "kendall_tau",
+    "primary_value": 0.7673476295148504,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "placement",
+    "model": "gnn",
+    "primary_metric": "kendall_tau",
+    "primary_value": 0.5670051979752496,
+    "direction": "higher",
+    "n": 2260.0,
+    "failed": false,
+    "error": null,
+    "_rank": 4.0
+  },
+  {
+    "task": "result_prediction",
+    "model": "xgboost_log",
+    "primary_metric": "mae_log",
+    "primary_value": 0.16385697572203922,
+    "direction": "lower",
+    "n": 2196.0,
+    "failed": false,
+    "error": null,
+    "_rank": 1.0
+  },
+  {
+    "task": "result_prediction",
+    "model": "history_mean",
+    "primary_metric": "mae_log",
+    "primary_value": 0.6657161932188251,
+    "direction": "lower",
+    "n": 2196.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.5
+  },
+  {
+    "task": "result_prediction",
+    "model": "kde",
+    "primary_metric": "mae_log",
+    "primary_value": 0.6657161932188251,
+    "direction": "lower",
+    "n": 2196.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.5
+  },
+  {
+    "task": "result_prediction",
+    "model": "ridge_log",
+    "primary_metric": "mae_log",
+    "primary_value": 1.006803993797732,
+    "direction": "lower",
+    "n": 2196.0,
+    "failed": false,
+    "error": null,
+    "_rank": 4.0
+  },
+  {
+    "task": "result_prediction",
+    "model": "lstm",
+    "primary_metric": "mae_log",
+    "primary_value": 1.044039947679419,
+    "direction": "lower",
+    "n": 2196.0,
+    "failed": false,
+    "error": null,
+    "_rank": 5.0
+  },
+  {
+    "task": "transfer",
+    "model": "spearman_correlation",
+    "primary_metric": "n_identified_pairs",
+    "primary_value": 413.0,
+    "direction": "higher",
+    "n": 80000.0,
+    "failed": false,
+    "error": null,
+    "_rank": 1.0
+  },
+  {
+    "task": "transfer",
+    "model": "causal_forest",
+    "primary_metric": "n_identified_pairs",
+    "primary_value": 312.0,
+    "direction": "higher",
+    "n": 80000.0,
+    "failed": false,
+    "error": null,
+    "_rank": 2.0
+  },
+  {
+    "task": "transfer",
+    "model": "iv_2sls",
+    "primary_metric": "n_identified_pairs",
+    "primary_value": 270.0,
+    "direction": "higher",
+    "n": 80000.0,
+    "failed": false,
+    "error": null,
+    "_rank": 3.0
+  },
+  {
+    "task": "transfer",
+    "model": "did_proxy",
+    "primary_metric": "n_identified_pairs",
+    "primary_value": 6.0,
+    "direction": "higher",
+    "n": 80000.0,
+    "failed": false,
+    "error": null,
+    "_rank": 4.0
+  }
+]

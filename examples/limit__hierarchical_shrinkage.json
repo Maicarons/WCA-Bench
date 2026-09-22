@@ -1,0 +1,283 @@
+{
+  "task": "limit",
+  "model": "hierarchical_shrinkage",
+  "overall": {
+    "events": [
+      {
+        "event_id": "222",
+        "limit": 19.79134365075934,
+        "year_converge": 2025.182046960767,
+        "n_points": 16,
+        "loo_std": 1.1750887000813,
+        "slope": -0.2126995079490015,
+        "ratio": 0.38060276251460273,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333",
+        "limit": 237.14649041229225,
+        "year_converge": 2033.619322153313,
+        "n_points": 26,
+        "loo_std": 4.064874383888832,
+        "slope": -0.07325547841330275,
+        "ratio": 0.5884528298071768,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333bf",
+        "limit": 586.4893260070594,
+        "year_converge": 2033.9038196198585,
+        "n_points": 28,
+        "loo_std": 20.7178345544861,
+        "slope": -0.1239521252589227,
+        "ratio": 0.4521891488103773,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333fm",
+        "limit": 13.118470114558423,
+        "year_converge": 2026.2582126739514,
+        "n_points": 9,
+        "loo_std": 0.27990613005791704,
+        "slope": -0.03783930364313444,
+        "ratio": 0.7716747126210838,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333ft",
+        "limit": 648.4940027989034,
+        "year_converge": 2028.3637274264172,
+        "n_points": 19,
+        "loo_std": 57.4643855374834,
+        "slope": -0.18829829077751636,
+        "ratio": 0.3823667469333157,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333mbf",
+        "limit": 413791821.7580389,
+        "year_converge": 2033.8895582228083,
+        "n_points": 14,
+        "loo_std": 9741956.121242767,
+        "slope": -0.0377772758605785,
+        "ratio": 0.7130126288560616,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333mbo",
+        "limit": 301600495.0306195,
+        "year_converge": 2018.5398836348231,
+        "n_points": 5,
+        "loo_std": 184718963.46083635,
+        "slope": -0.251788328380691,
+        "ratio": 0.3719243598824412,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "333oh",
+        "limit": 289.96936143637794,
+        "year_converge": 2035.3897286791766,
+        "n_points": 25,
+        "loo_std": 10.06474213608941,
+        "slope": -0.10233326786752955,
+        "ratio": 0.42331293640347145,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "444",
+        "limit": 830.7334721237511,
+        "year_converge": 2033.5103636377323,
+        "n_points": 33,
+        "loo_std": 27.457522568741616,
+        "slope": -0.1002780292080299,
+        "ratio": 0.48354684058425557,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "444bf",
+        "limit": 2152.776566238962,
+        "year_converge": 2029.0081570483746,
+        "n_points": 15,
+        "loo_std": 163.1005625169346,
+        "slope": -0.23745088451297816,
+        "ratio": 0.32207907932958735,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "555",
+        "limit": 1632.1015031828629,
+        "year_converge": 2035.2017148140717,
+        "n_points": 28,
+        "loo_std": 62.86982599717168,
+        "slope": -0.09186917444416554,
+        "ratio": 0.4628762062345045,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "555bf",
+        "limit": 5740.080513044775,
+        "year_converge": 2030.2492147404228,
+        "n_points": 12,
+        "loo_std": 480.40360704198804,
+        "slope": -0.23198501239695202,
+        "ratio": 0.3077791159809531,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "666",
+        "limit": 3857.219014919085,
+        "year_converge": 2032.3958938957485,
+        "n_points": 19,
+        "loo_std": 169.39136884134487,
+        "slope": -0.0778258494265372,
+        "ratio": 0.6456677293135396,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "777",
+        "limit": 6632.666032854578,
+        "year_converge": 2033.8404211794261,
+        "n_points": 18,
+        "loo_std": 131.677798423569,
+        "slope": -0.07095030341834592,
+        "ratio": 0.5982920830646381,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "clock",
+        "limit": 180.56248341518562,
+        "year_converge": 2033.2790490773396,
+        "n_points": 24,
+        "loo_std": 6.845979050875514,
+        "slope": -0.08599743577417701,
+        "ratio": 0.5768769438184844,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "magic",
+        "limit": 24.12230357595845,
+        "year_converge": 2020.142642003669,
+        "n_points": 13,
+        "loo_std": 3.5171749803581247,
+        "slope": -0.23088184579077167,
+        "ratio": 0.3092603022558776,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "minx",
+        "limit": 1537.8321274797354,
+        "year_converge": 2033.6185799278094,
+        "n_points": 18,
+        "loo_std": 32.173880669898814,
+        "slope": -0.0744415313270959,
+        "ratio": 0.5914738951845137,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "mmagic",
+        "limit": 100.46962235056613,
+        "year_converge": 2023.1293451489748,
+        "n_points": 11,
+        "loo_std": 2.6006711136277696,
+        "slope": -0.08586776300865041,
+        "ratio": 0.5741121277175207,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "pyram",
+        "limit": 55.10387392625492,
+        "year_converge": 2028.6639116888023,
+        "n_points": 15,
+        "loo_std": 2.9944693695055657,
+        "slope": -0.13467031633075796,
+        "ratio": 0.5247987992976659,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "skewb",
+        "limit": 20.133142447140354,
+        "year_converge": 2034.4816340781747,
+        "n_points": 17,
+        "loo_std": 1.4598095630043695,
+        "slope": -0.23604302777310307,
+        "ratio": 0.2485573141622266,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      },
+      {
+        "event_id": "sq1",
+        "limit": 209.3345744416852,
+        "year_converge": 2033.2917351847616,
+        "n_points": 24,
+        "loo_std": 10.024592371869726,
+        "slope": -0.12060499859516186,
+        "ratio": 0.47041477402625886,
+        "pooled_ratio": 0.4847362759045753,
+        "method": "hierarchical_shrinkage"
+      }
+    ],
+    "n_events": 21,
+    "mean_loo_std": 9260100.37457967,
+    "limit_333": 237.14649041229225,
+    "year_333": 2033.619322153313
+  },
+  "stratified": {},
+  "hard_subset": {},
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "method",
+    "device": "cpu",
+    "wall_clock_sec": 0.2970509000006132,
+    "cpu_hours": 8.251413888905922e-05
+  },
+  "extras": {},
+  "significance": {
+    "metric": "mean_loo_std",
+    "paired_unit": "event",
+    "n_pairs": 21,
+    "mean_diff": 9260099.390972158,
+    "ci95": [
+      47.58870594365729,
+      27316284.686421018
+    ],
+    "p_value": 0.3044234448171811,
+    "effect_size": {
+      "name": "cohens_d",
+      "value": 0.325290119543101,
+      "cliffs_delta": 0.9047619047619048
+    },
+    "test": "paired_t",
+    "seed": 42,
+    "t_stat": 1.0540604583600615,
+    "reference": "gp_evt"
+  },
+  "elapsed_sec": 0.6018190383911133,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
+}

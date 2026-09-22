@@ -1,0 +1,5 @@
+{
+  "task": "result_prediction",
+  "dimension": "continent",
+  "strata": {}
+}

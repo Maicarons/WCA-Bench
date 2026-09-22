@@ -1,10 +1,10 @@
 {
   "task": "placement",
-  "model": "psych_sheet",
+  "model": "kde_simulation",
   "overall": {
     "kendall_tau": 0.7673476295148504,
     "top3_overlap": 0.7594936708860759,
-    "brier_podium": NaN,
+    "brier_podium": 0.07638975602473139,
     "n": 2260
   },
   "stratified": {
@@ -12,103 +12,103 @@
       "222": {
         "kendall_tau": 0.7319105227494662,
         "top3_overlap": 0.7142857142857143,
-        "brier_podium": NaN,
+        "brier_podium": 0.05588373624465331,
         "n": 327
       },
       "333": {
         "kendall_tau": 0.7962396649498289,
         "top3_overlap": 0.7222222222222221,
-        "brier_podium": NaN,
+        "brier_podium": 0.041888178842394014,
         "n": 732
       },
       "333bf": {
         "kendall_tau": 0.8267099700329513,
         "top3_overlap": 0.9047619047619048,
-        "brier_podium": NaN,
+        "brier_podium": 0.1128860028860029,
         "n": 91
       },
       "333fm": {
         "kendall_tau": 0.9229638952191942,
         "top3_overlap": 0.8333333333333333,
-        "brier_podium": NaN,
+        "brier_podium": 0.03762698412698413,
         "n": 67
       },
       "333mbf": {
         "kendall_tau": 0.9999999999999999,
         "top3_overlap": 1.0,
-        "brier_podium": NaN,
+        "brier_podium": 0.2857142857142857,
         "n": 7
       },
       "333oh": {
         "kendall_tau": 0.7654032076883012,
         "top3_overlap": 0.7222222222222222,
-        "brier_podium": NaN,
+        "brier_podium": 0.06993428799169539,
         "n": 129
       },
       "444": {
         "kendall_tau": 0.665370888185146,
         "top3_overlap": 0.6666666666666666,
-        "brier_podium": NaN,
+        "brier_podium": 0.05514424424424425,
         "n": 111
       },
       "444bf": {
         "kendall_tau": 1.0,
         "top3_overlap": 0.6666666666666666,
-        "brier_podium": NaN,
+        "brier_podium": 0.36177777777777786,
         "n": 5
       },
       "555": {
         "kendall_tau": 0.7134283161705295,
         "top3_overlap": 0.75,
-        "brier_podium": NaN,
+        "brier_podium": 0.06148822911980807,
         "n": 138
       },
       "555bf": {
         "kendall_tau": NaN,
         "top3_overlap": NaN,
-        "brier_podium": NaN,
+        "brier_podium": 0.5872222222222222,
         "n": 4
       },
       "666": {
         "kendall_tau": 0.23273875808757555,
         "top3_overlap": 0.5,
-        "brier_podium": NaN,
+        "brier_podium": 0.2115873015873016,
         "n": 34
       },
       "777": {
         "kendall_tau": 0.23273875808757555,
         "top3_overlap": 0.6666666666666666,
-        "brier_podium": NaN,
+        "brier_podium": 0.17857142857142858,
         "n": 31
       },
       "clock": {
         "kendall_tau": 0.9138386906908722,
         "top3_overlap": 0.9259259259259258,
-        "brier_podium": NaN,
+        "brier_podium": 0.011391038035677413,
         "n": 212
       },
       "minx": {
         "kendall_tau": 0.6144592273876366,
         "top3_overlap": 0.75,
-        "brier_podium": NaN,
+        "brier_podium": 0.07377777777777779,
         "n": 95
       },
       "pyram": {
         "kendall_tau": 0.7989761437173205,
         "top3_overlap": 0.7333333333333333,
-        "brier_podium": NaN,
+        "brier_podium": 0.06956223699214442,
         "n": 151
       },
       "skewb": {
         "kendall_tau": 0.1729658471057519,
         "top3_overlap": 0.0,
-        "brier_podium": NaN,
+        "brier_podium": 0.2350925925925926,
         "n": 24
       },
       "sq1": {
         "kendall_tau": 0.8925035666088299,
         "top3_overlap": 0.8,
-        "brier_podium": NaN,
+        "brier_podium": 0.039747959642696486,
         "n": 102
       }
     },
@@ -116,25 +116,25 @@
       "advanced": {
         "kendall_tau": 0.676713046609603,
         "top3_overlap": 0.838235294117647,
-        "brier_podium": NaN,
+        "brier_podium": 0.09355120909410125,
         "n": 537
       },
       "elite": {
         "kendall_tau": 0.6410396278481408,
         "top3_overlap": 0.8958333333333334,
-        "brier_podium": NaN,
+        "brier_podium": 0.06697049863716531,
         "n": 300
       },
       "intermediate": {
         "kendall_tau": 0.6978801382799699,
         "top3_overlap": 0.82183908045977,
-        "brier_podium": NaN,
+        "brier_podium": 0.050150983416703494,
         "n": 798
       },
       "novice": {
         "kendall_tau": 0.6559880505459715,
         "top3_overlap": 0.7083333333333334,
-        "brier_podium": NaN,
+        "brier_podium": 0.07524390245327592,
         "n": 625
       }
     },
@@ -142,19 +142,19 @@
       "test_a": {
         "kendall_tau": 0.8984766007983929,
         "top3_overlap": 0.8571428571428571,
-        "brier_podium": NaN,
+        "brier_podium": 0.05952023237390167,
         "n": 636
       },
       "test_b": {
         "kendall_tau": 0.9035804012912295,
         "top3_overlap": 0.8627450980392156,
-        "brier_podium": NaN,
+        "brier_podium": 0.02667074193600067,
         "n": 445
       },
       "test_c": {
         "kendall_tau": 0.643697251047708,
         "top3_overlap": 0.6666666666666667,
-        "brier_podium": NaN,
+        "brier_podium": 0.10494888069558488,
         "n": 1179
       }
     },
@@ -162,19 +162,19 @@
       "_Asia": {
         "kendall_tau": 0.9572650659651568,
         "top3_overlap": 0.9444444444444443,
-        "brier_podium": NaN,
+        "brier_podium": 0.036282930107526874,
         "n": 210
       },
       "_Europe": {
         "kendall_tau": 0.6008558283854876,
         "top3_overlap": 0.6470588235294117,
-        "brier_podium": NaN,
+        "brier_podium": 0.11502317584808766,
         "n": 884
       },
       "_North America": {
         "kendall_tau": 0.8901490517336594,
         "top3_overlap": 0.8333333333333334,
-        "brier_podium": NaN,
+        "brier_podium": 0.03025378550040681,
         "n": 1160
       },
       "_Oceania": {
@@ -195,24 +195,24 @@
     "overall": {
       "kendall_tau": 0.771488789981638,
       "top3_overlap": 0.8587570621468926,
-      "brier_podium": NaN,
+      "brier_podium": 0.10203631829379588,
       "n": 509
     },
     "n": 509
   },
   "cost": {
     "mode": "small",
-    "baseline_kind": "domain",
+    "baseline_kind": "statistical",
     "device": "cpu",
-    "wall_clock_sec": 0.7611801000002743,
-    "cpu_hours": 0.00021143891666674285
+    "wall_clock_sec": 0.7881414999992558,
+    "cpu_hours": 0.00021892819444423772
   },
   "extras": {
     "cold_start": {
       "overall": {
         "kendall_tau": 0.12991311623664822,
         "top3_overlap": 0.3095238095238095,
-        "brier_podium": NaN,
+        "brier_podium": 0.2554804756714961,
         "n": 248
       },
       "n_cold": 248,
@@ -221,7 +221,6 @@
     "n": 2260
   },
   "significance": {
-    "reference": "psych_sheet",
     "metric": "kendall_tau",
     "paired_unit": "competition_event_round",
     "n_pairs": 79,
@@ -230,14 +229,16 @@
       0.0,
       0.0
     ],
-    "p_value": 1.0,
+    "p_value": NaN,
     "effect_size": {
       "name": "cohens_d",
-      "value": 0.0
+      "value": 0.0,
+      "cliffs_delta": 0.0
     },
     "test": "paired_t",
     "seed": 42,
-    "is_reference": true
+    "t_stat": NaN,
+    "reference": "psych_sheet"
   },
   "elapsed_sec": 76.90890216827393,
   "seed": 42,

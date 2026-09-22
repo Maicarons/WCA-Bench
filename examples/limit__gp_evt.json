@@ -1,0 +1,261 @@
+{
+  "task": "limit",
+  "model": "gp_evt",
+  "overall": {
+    "events": [
+      {
+        "event_id": "222",
+        "limit": 31.713562413959334,
+        "gp_limit": 1.0000336456216772,
+        "evt_limit": 31.713562413959334,
+        "year_converge": 2022.0,
+        "n_points": 16,
+        "loo_std": 0.9999999997488411,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333",
+        "limit": 329.3844502832278,
+        "gp_limit": 1.000580192519608,
+        "evt_limit": 329.3844502832278,
+        "year_converge": 2028.0,
+        "n_points": 26,
+        "loo_std": 0.9999999831735965,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333bf",
+        "limit": 755.7775982017603,
+        "gp_limit": 1.0000118576915258,
+        "evt_limit": 755.7775982017603,
+        "year_converge": 2028.0,
+        "n_points": 28,
+        "loo_std": 0.9999999999761249,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333fm",
+        "limit": 14.42246988465187,
+        "gp_limit": 5.863983708759149,
+        "evt_limit": 14.42246988465187,
+        "year_converge": 2025.0,
+        "n_points": 9,
+        "loo_std": 0.6790720577529601,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333ft",
+        "limit": 772.5701212934529,
+        "gp_limit": 1.0000000036331584,
+        "evt_limit": 772.5701212934529,
+        "year_converge": 2024.0,
+        "n_points": 19,
+        "loo_std": 1.0,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333mbf",
+        "limit": 480784412.18400884,
+        "gp_limit": 1.1911558743888009,
+        "evt_limit": 480784412.18400884,
+        "year_converge": 2028.0,
+        "n_points": 14,
+        "loo_std": 0.9998083903771239,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333mbo",
+        "limit": 1.000002180798295,
+        "gp_limit": 1.000002180798295,
+        "evt_limit": NaN,
+        "year_converge": 2014.0,
+        "n_points": 5,
+        "loo_std": 0.9999999999999631,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "333oh",
+        "limit": 466.7380633978757,
+        "gp_limit": 1.0003592785165627,
+        "evt_limit": 466.7380633978757,
+        "year_converge": 2028.0,
+        "n_points": 25,
+        "loo_std": 0.9999999976831435,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "444",
+        "limit": 1017.8970929910313,
+        "gp_limit": 1.0000000001823162,
+        "evt_limit": 1017.8970929910313,
+        "year_converge": 2027.0,
+        "n_points": 33,
+        "loo_std": 1.0,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "444bf",
+        "limit": 3068.1131122675524,
+        "gp_limit": 1.0010329019068673,
+        "evt_limit": 3068.1131122675524,
+        "year_converge": 2025.0,
+        "n_points": 15,
+        "loo_std": 0.9999999789916886,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "555",
+        "limit": 2694.9309300679133,
+        "gp_limit": 1.0000746319817002,
+        "evt_limit": 2694.9309300679133,
+        "year_converge": 2028.0,
+        "n_points": 28,
+        "loo_std": 0.9999999999579693,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "555bf",
+        "limit": 3275.0486891504447,
+        "gp_limit": 3.8777061472300867,
+        "evt_limit": 3275.0486891504447,
+        "year_converge": 2025.0,
+        "n_points": 12,
+        "loo_std": 0.9769316519002491,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "666",
+        "limit": 4572.636420494336,
+        "gp_limit": 1.0000076273927676,
+        "evt_limit": 4572.636420494336,
+        "year_converge": 2028.0,
+        "n_points": 19,
+        "loo_std": 0.9999999999978162,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "777",
+        "limit": 7873.074055597497,
+        "gp_limit": 1.0001647628233277,
+        "evt_limit": 7873.074055597497,
+        "year_converge": 2028.0,
+        "n_points": 18,
+        "loo_std": 0.999999999483277,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "clock",
+        "limit": 156.32471757878685,
+        "gp_limit": 1.00441064145706,
+        "evt_limit": 156.32471757878685,
+        "year_converge": 2028.0,
+        "n_points": 24,
+        "loo_std": 0.9999992715144819,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "magic",
+        "limit": 27.113728780742036,
+        "gp_limit": 1.0000009422851925,
+        "evt_limit": 27.113728780742036,
+        "year_converge": 2015.0,
+        "n_points": 13,
+        "loo_std": 0.999999999999671,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "minx",
+        "limit": 1965.081779831804,
+        "gp_limit": 1.0383940657556079,
+        "evt_limit": 1965.081779831804,
+        "year_converge": 2028.0,
+        "n_points": 18,
+        "loo_std": 0.9999471491382275,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "mmagic",
+        "limit": 137.48534702735847,
+        "gp_limit": 1.0002223355933493,
+        "evt_limit": 137.48534702735847,
+        "year_converge": 2018.0,
+        "n_points": 11,
+        "loo_std": 0.9999999972978779,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "pyram",
+        "limit": 40.34169485312081,
+        "gp_limit": 1.0052613361446108,
+        "evt_limit": 40.34169485312081,
+        "year_converge": 2025.0,
+        "n_points": 15,
+        "loo_std": 0.9999992900894857,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "skewb",
+        "limit": 44.80447765340345,
+        "gp_limit": 1.0,
+        "evt_limit": 44.80447765340345,
+        "year_converge": 2028.0,
+        "n_points": 17,
+        "loo_std": 1.0,
+        "method": "gp_evt"
+      },
+      {
+        "event_id": "sq1",
+        "limit": 208.36005909216257,
+        "gp_limit": 1.0000470121504221,
+        "evt_limit": 208.36005909216257,
+        "year_converge": 2028.0,
+        "n_points": 24,
+        "loo_std": 0.999999999298102,
+        "method": "gp_evt"
+      }
+    ],
+    "n_events": 21,
+    "mean_loo_std": 0.9836075126847903,
+    "limit_333": 329.3844502832278,
+    "year_333": 2028.0
+  },
+  "stratified": {},
+  "hard_subset": {},
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "method",
+    "device": "cpu",
+    "wall_clock_sec": 0.025755800001206808,
+    "cpu_hours": 7.154388889224113e-06
+  },
+  "extras": {},
+  "significance": {
+    "reference": "gp_evt",
+    "metric": "mean_loo_std",
+    "paired_unit": "event",
+    "n_pairs": 21,
+    "mean_diff": 0.0,
+    "ci95": [
+      0.0,
+      0.0
+    ],
+    "p_value": 1.0,
+    "effect_size": {
+      "name": "cohens_d",
+      "value": 0.0
+    },
+    "test": "paired_t",
+    "seed": 42,
+    "is_reference": true
+  },
+  "elapsed_sec": 0.6018190383911133,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
+}

@@ -4,50 +4,50 @@
   "overall": {
     "events": [
       {
-        "limit": 39.75,
-        "slope_last_half": -12.665817713503102,
+        "limit": 39.0,
+        "slope_last_half": -18.483829311686428,
         "year_converge": NaN,
-        "n_points": 18,
+        "n_points": 16,
         "method": "changepoint",
         "event_id": "222"
       },
       {
-        "limit": 354.0,
-        "slope_last_half": -46.20586317405447,
+        "limit": 302.25,
+        "slope_last_half": -30.452787514853775,
         "year_converge": NaN,
-        "n_points": 21,
+        "n_points": 26,
         "method": "changepoint",
         "event_id": "333"
       },
       {
-        "limit": 1106.25,
-        "slope_last_half": -142.4303499847908,
+        "limit": 972.75,
+        "slope_last_half": -133.50110709363832,
         "year_converge": NaN,
-        "n_points": 10,
+        "n_points": 28,
         "method": "changepoint",
         "event_id": "333bf"
       },
       {
-        "limit": 14.25,
-        "slope_last_half": -1.014371973796968,
+        "limit": 13.568449269147532,
+        "slope_last_half": -0.6863101461704937,
         "year_converge": NaN,
-        "n_points": 6,
+        "n_points": 9,
         "method": "changepoint",
         "event_id": "333fm"
       },
       {
         "limit": 1272.0,
-        "slope_last_half": -259.775088455525,
+        "slope_last_half": -238.90206609153512,
         "year_converge": NaN,
-        "n_points": 11,
+        "n_points": 19,
         "method": "changepoint",
         "event_id": "333ft"
       },
       {
-        "limit": 472744501.5,
-        "slope_last_half": -32218998.14507554,
+        "limit": 484685766.5792787,
+        "slope_last_half": -19131428.084144257,
         "year_converge": NaN,
-        "n_points": 12,
+        "n_points": 14,
         "method": "changepoint",
         "event_id": "333mbf"
       },
@@ -60,129 +60,148 @@
         "event_id": "333mbo"
       },
       {
-        "limit": 602.25,
-        "slope_last_half": -60.85279586927981,
+        "limit": 513.75,
+        "slope_last_half": -57.08119461557176,
         "year_converge": NaN,
-        "n_points": 16,
+        "n_points": 25,
         "method": "changepoint",
         "event_id": "333oh"
       },
       {
         "limit": 1288.5,
-        "slope_last_half": -152.06245251214395,
+        "slope_last_half": -129.6966440509358,
         "year_converge": NaN,
-        "n_points": 20,
+        "n_points": 33,
         "method": "changepoint",
         "event_id": "444"
       },
       {
-        "limit": NaN,
-        "slope_last_half": NaN,
+        "limit": 5013.0,
+        "slope_last_half": -1930.527819188807,
         "year_converge": NaN,
-        "n_points": 0,
-        "method": NaN,
+        "n_points": 15,
+        "method": "changepoint",
         "event_id": "444bf"
       },
       {
-        "limit": 2799.0,
-        "slope_last_half": -248.15877207608452,
+        "limit": 2644.5,
+        "slope_last_half": -322.67942449881537,
         "year_converge": NaN,
-        "n_points": 19,
+        "n_points": 28,
         "method": "changepoint",
         "event_id": "555"
       },
       {
-        "limit": 16578.75,
-        "slope_last_half": -1776.1480984618045,
+        "limit": 13987.5,
+        "slope_last_half": -3362.881478013245,
         "year_converge": NaN,
-        "n_points": 8,
+        "n_points": 12,
         "method": "changepoint",
         "event_id": "555bf"
       },
       {
-        "limit": 5686.046513990306,
-        "slope_last_half": -312.19069720193886,
+        "limit": 4480.5,
+        "slope_last_half": -419.23362251972543,
         "year_converge": NaN,
-        "n_points": 15,
+        "n_points": 19,
         "method": "changepoint",
         "event_id": "666"
       },
       {
-        "limit": 9911.246042811734,
-        "slope_last_half": -290.95079143765344,
+        "limit": 8314.5,
+        "slope_last_half": -647.9436753041092,
         "year_converge": NaN,
-        "n_points": 12,
+        "n_points": 18,
         "method": "changepoint",
         "event_id": "777"
       },
       {
-        "limit": 270.0,
-        "slope_last_half": -34.77007970738194,
+        "limit": 234.75,
+        "slope_last_half": -31.63190269531803,
         "year_converge": NaN,
-        "n_points": 17,
+        "n_points": 24,
         "method": "changepoint",
         "event_id": "clock"
       },
       {
-        "limit": 69.57180874412501,
-        "slope_last_half": -4.085638251174998,
+        "limit": 58.5,
+        "slope_last_half": -9.424257741165151,
         "year_converge": NaN,
-        "n_points": 8,
+        "n_points": 13,
         "method": "changepoint",
         "event_id": "magic"
       },
       {
-        "limit": 1999.5,
-        "slope_last_half": -191.55651241189196,
+        "limit": 1950.0,
+        "slope_last_half": -197.9227460289954,
         "year_converge": NaN,
-        "n_points": 13,
+        "n_points": 18,
         "method": "changepoint",
         "event_id": "minx"
       },
       {
-        "limit": NaN,
-        "slope_last_half": NaN,
+        "limit": 131.25,
+        "slope_last_half": -10.50220259795639,
         "year_converge": NaN,
-        "n_points": 0,
-        "method": NaN,
+        "n_points": 11,
+        "method": "changepoint",
         "event_id": "mmagic"
       },
       {
-        "limit": 92.25,
-        "slope_last_half": -19.19895657164348,
+        "limit": 78.75,
+        "slope_last_half": -35.74742833401223,
         "year_converge": NaN,
-        "n_points": 19,
+        "n_points": 15,
         "method": "changepoint",
         "event_id": "pyram"
       },
       {
-        "limit": 96.75,
-        "slope_last_half": -16.268167466546885,
+        "limit": 60.75,
+        "slope_last_half": -18.529076286535133,
         "year_converge": NaN,
-        "n_points": 13,
+        "n_points": 17,
         "method": "changepoint",
         "event_id": "skewb"
       },
       {
-        "limit": 384.0,
-        "slope_last_half": -72.17103601403694,
+        "limit": 333.75,
+        "slope_last_half": -55.151560628117046,
         "year_converge": NaN,
-        "n_points": 16,
+        "n_points": 24,
         "method": "changepoint",
         "event_id": "sq1"
       }
     ],
     "n_events": 21,
     "mean_loo_std": NaN,
-    "limit_333": 354.0,
+    "limit_333": 302.25,
     "year_333": NaN
   },
   "stratified": {},
   "hard_subset": {},
   "cost": {
     "mode": "small",
-    "baseline_kind": "method"
+    "baseline_kind": "method",
+    "device": "cpu",
+    "wall_clock_sec": 0.023436800000126823,
+    "cpu_hours": 6.510222222257451e-06
   },
   "extras": {},
-  "elapsed_sec": 0.339508056640625
+  "significance": {
+    "reference": "gp_evt",
+    "metric": "mean_loo_std",
+    "paired_unit": "event",
+    "n_pairs": 0,
+    "note": "insufficient paired units"
+  },
+  "elapsed_sec": 0.6018190383911133,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
 }

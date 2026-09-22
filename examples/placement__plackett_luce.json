@@ -1,6 +1,6 @@
 {
   "task": "placement",
-  "model": "psych_sheet",
+  "model": "plackett_luce",
   "overall": {
     "kendall_tau": 0.7673476295148504,
     "top3_overlap": 0.7594936708860759,
@@ -202,10 +202,10 @@
   },
   "cost": {
     "mode": "small",
-    "baseline_kind": "domain",
+    "baseline_kind": "statistical",
     "device": "cpu",
-    "wall_clock_sec": 0.7611801000002743,
-    "cpu_hours": 0.00021143891666674285
+    "wall_clock_sec": 0.8672461999994994,
+    "cpu_hours": 0.00024090172222208315
   },
   "extras": {
     "cold_start": {
@@ -221,7 +221,6 @@
     "n": 2260
   },
   "significance": {
-    "reference": "psych_sheet",
     "metric": "kendall_tau",
     "paired_unit": "competition_event_round",
     "n_pairs": 79,
@@ -230,14 +229,16 @@
       0.0,
       0.0
     ],
-    "p_value": 1.0,
+    "p_value": NaN,
     "effect_size": {
       "name": "cohens_d",
-      "value": 0.0
+      "value": 0.0,
+      "cliffs_delta": 0.0
     },
     "test": "paired_t",
     "seed": 42,
-    "is_reference": true
+    "t_stat": NaN,
+    "reference": "psych_sheet"
   },
   "elapsed_sec": 76.90890216827393,
   "seed": 42,

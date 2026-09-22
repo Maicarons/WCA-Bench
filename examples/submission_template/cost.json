@@ -1,0 +1,6 @@
+{
+  "task": "result_prediction",
+  "training": {"hardware": "CPU-8core", "gpu_hours": 0.0, "wall_clock_hours": 0.5},
+  "inference": {"hardware": "CPU-8core", "gpu_hours": 0.0, "per_sample_ms": 0.4},
+  "total": {"gpu_hours": 0.0, "cpu_hours": 0.5}
+}

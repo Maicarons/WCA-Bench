@@ -1,0 +1,258 @@
+{
+  "task": "placement",
+  "model": "gnn",
+  "overall": {
+    "kendall_tau": 0.5670051979752496,
+    "top3_overlap": 0.5021097046413503,
+    "brier_podium": 0.17836955999805784,
+    "n": 2260
+  },
+  "stratified": {
+    "by_event": {
+      "222": {
+        "kendall_tau": 0.39275940447549174,
+        "top3_overlap": 0.19047619047619047,
+        "brier_podium": 0.2025816125120948,
+        "n": 327
+      },
+      "333": {
+        "kendall_tau": 0.46215487563805596,
+        "top3_overlap": 0.4259259259259259,
+        "brier_podium": 0.16432593384519187,
+        "n": 732
+      },
+      "333bf": {
+        "kendall_tau": 0.7595499738356881,
+        "top3_overlap": 0.8095238095238095,
+        "brier_podium": 0.1779163818637503,
+        "n": 91
+      },
+      "333fm": {
+        "kendall_tau": 0.8728215218032638,
+        "top3_overlap": 0.8333333333333333,
+        "brier_podium": 0.04285714285714286,
+        "n": 67
+      },
+      "333mbf": {
+        "kendall_tau": 0.9999999999999999,
+        "top3_overlap": 1.0,
+        "brier_podium": 0.2857142857142857,
+        "n": 7
+      },
+      "333oh": {
+        "kendall_tau": 0.3164504266258652,
+        "top3_overlap": 0.16666666666666666,
+        "brier_podium": 0.2907307307307307,
+        "n": 129
+      },
+      "444": {
+        "kendall_tau": 0.5814402690179087,
+        "top3_overlap": 0.4444444444444444,
+        "brier_podium": 0.11468468468468469,
+        "n": 111
+      },
+      "444bf": {
+        "kendall_tau": 1.0,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": 0.2,
+        "n": 5
+      },
+      "555": {
+        "kendall_tau": 0.7322120538998941,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": 0.09176788124156544,
+        "n": 138
+      },
+      "555bf": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": 0.75,
+        "n": 4
+      },
+      "666": {
+        "kendall_tau": 0.42857142857142855,
+        "top3_overlap": 0.6666666666666666,
+        "brier_podium": 0.2857142857142857,
+        "n": 34
+      },
+      "777": {
+        "kendall_tau": 0.7142857142857143,
+        "top3_overlap": 0.8333333333333333,
+        "brier_podium": 0.1845238095238095,
+        "n": 31
+      },
+      "clock": {
+        "kendall_tau": 0.6242479661983314,
+        "top3_overlap": 0.4444444444444444,
+        "brier_podium": 0.16942129345638116,
+        "n": 212
+      },
+      "minx": {
+        "kendall_tau": 0.8207070707070705,
+        "top3_overlap": 0.8333333333333334,
+        "brier_podium": 0.1,
+        "n": 95
+      },
+      "pyram": {
+        "kendall_tau": 0.4623337491828945,
+        "top3_overlap": 0.39999999999999997,
+        "brier_podium": 0.18865630911921782,
+        "n": 151
+      },
+      "skewb": {
+        "kendall_tau": 0.12318840579710144,
+        "top3_overlap": 0.0,
+        "brier_podium": 0.25,
+        "n": 24
+      },
+      "sq1": {
+        "kendall_tau": 0.5447336289441553,
+        "top3_overlap": 0.5333333333333333,
+        "brier_podium": 0.14540196645459802,
+        "n": 102
+      }
+    },
+    "by_skill_level": {
+      "advanced": {
+        "kendall_tau": 0.423545022002321,
+        "top3_overlap": 0.7254901960784313,
+        "brier_podium": 0.16240707821590172,
+        "n": 537
+      },
+      "elite": {
+        "kendall_tau": 0.20703821203725917,
+        "top3_overlap": 0.7708333333333334,
+        "brier_podium": 0.34052203583453583,
+        "n": 300
+      },
+      "intermediate": {
+        "kendall_tau": 0.5094726829207596,
+        "top3_overlap": 0.6839080459770115,
+        "brier_podium": 0.12214809046588136,
+        "n": 798
+      },
+      "novice": {
+        "kendall_tau": 0.676632085048697,
+        "top3_overlap": 0.7222222222222223,
+        "brier_podium": 0.105317996930573,
+        "n": 625
+      }
+    },
+    "by_time_slice": {
+      "test_a": {
+        "kendall_tau": 0.6262626236726563,
+        "top3_overlap": 0.5555555555555556,
+        "brier_podium": 0.18672645279868413,
+        "n": 636
+      },
+      "test_b": {
+        "kendall_tau": 0.591333659656503,
+        "top3_overlap": 0.4901960784313725,
+        "brier_podium": 0.14670581151120735,
+        "n": 445
+      },
+      "test_c": {
+        "kendall_tau": 0.5265664226526435,
+        "top3_overlap": 0.4796747967479674,
+        "brier_podium": 0.1870073927471842,
+        "n": 1179
+      }
+    },
+    "by_continent": {
+      "_Asia": {
+        "kendall_tau": 0.815182360777067,
+        "top3_overlap": 0.7777777777777777,
+        "brier_podium": 0.14530689964157706,
+        "n": 210
+      },
+      "_Europe": {
+        "kendall_tau": 0.5395770628071352,
+        "top3_overlap": 0.5098039215686274,
+        "brier_podium": 0.1787911088056209,
+        "n": 884
+      },
+      "_North America": {
+        "kendall_tau": 0.6060161950820732,
+        "top3_overlap": 0.5263157894736841,
+        "brier_podium": 0.1428027278513798,
+        "n": 1160
+      },
+      "_Oceania": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": NaN,
+        "n": 3
+      },
+      "_South America": {
+        "kendall_tau": NaN,
+        "top3_overlap": NaN,
+        "brier_podium": NaN,
+        "n": 3
+      }
+    }
+  },
+  "hard_subset": {
+    "overall": {
+      "kendall_tau": 0.30164543715628966,
+      "top3_overlap": 0.6101694915254239,
+      "brier_podium": 0.3399294180949215,
+      "n": 509
+    },
+    "n": 509
+  },
+  "cost": {
+    "mode": "small",
+    "baseline_kind": "method",
+    "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+    "wall_clock_sec": 1.170491500000935,
+    "cpu_hours": 0.00032513652777803754,
+    "gpu_hours": 0.00032513652777803754,
+    "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "extras": {
+    "cold_start": {
+      "overall": {
+        "kendall_tau": 0.2249852678809499,
+        "top3_overlap": 0.3095238095238095,
+        "brier_podium": 0.3225515032853927,
+        "n": 248
+      },
+      "n_cold": 248,
+      "n_warm": 2012
+    },
+    "n": 2260,
+    "backend": "gnn",
+    "device": "cuda:NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_model": "NVIDIA GeForce RTX 4060 Laptop GPU"
+  },
+  "significance": {
+    "metric": "kendall_tau",
+    "paired_unit": "competition_event_round",
+    "n_pairs": 79,
+    "mean_diff": 0.20034243153960088,
+    "ci95": [
+      0.12231127411756787,
+      0.2680737365154924
+    ],
+    "p_value": 3.1910609568114115e-07,
+    "effect_size": {
+      "name": "cohens_d",
+      "value": 0.5553331833750025,
+      "cliffs_delta": 0.30219516103188593
+    },
+    "test": "paired_t",
+    "seed": 42,
+    "t_stat": 5.5918260832776046,
+    "reference": "psych_sheet"
+  },
+  "elapsed_sec": 76.90890216827393,
+  "seed": 42,
+  "data_summary": {
+    "n_persons": 298551,
+    "n_competitions": 18708,
+    "n_results": 502260,
+    "n_attempts": 31847257,
+    "n_events": 21,
+    "n_frozen_person_event": 612224
+  }
+}
