@@ -1,147 +1,147 @@
-# 阶段一：数据基础设施（第 1–3 月）
+# Phase 1: Data Infrastructure (Months 1–3)
 
-> **目标**：构建可复现、高性能、规则正确解析的数据基础设施。
-> **出口里程碑**：[M1 数据管线完成](/plan/roadmap#m1-·-数据管线完成-第-3-月)
+> **Objective**: Build a reproducible, high-performance data infrastructure that parses the domain rules correctly.
+> **Exit milestone**: [M1 Data Pipeline Complete](/plan/roadmap#m1-·-data-pipeline-complete-month-3)
 
-## 1. 阶段目标
+## 1. Phase Objectives
 
-- 下载并解析 WCA 官方数据库导出
-- 实现数据预处理管线（成绩解码、时间分割、特征工程）
-- 构建数据加载器和缓存系统
-- 编写数据卡（Data Card）和文档
+- Download and parse the official WCA database export
+- Implement the data preprocessing pipeline (result decoding, temporal splitting, feature engineering)
+- Build the data loader and caching system
+- Write the Data Card and documentation
 
-## 2. 任务分解（WBS）
+## 2. Work Breakdown (WBS)
 
-| 任务 ID | 任务名称 | 周次 | 前置依赖 | 交付物 | 负责角色 |
+| Task ID | Task name | Weeks | Prerequisites | Deliverables | Role |
 | --- | --- | --- | --- | --- | --- |
-| P1-T1 | 环境与仓库脚手架 | W1 | — | `pyproject.toml`、目录结构、CI 骨架 | 工程师 |
-| P1-T2 | 数据获取与原始校验 | W1–W2 | P1-T1 | `scripts/download_data.sh`、校验报告 | 数据工程师 |
-| P1-T3 | 成绩值解码模块 | W2–W3 | P1-T2 | `data/decoders.py`（time/number/multi） | 数据工程师 |
-| P1-T4 | 打乱序列规范化 | W3 | P1-T2 | `333mbf` 多行还原逻辑 | 数据工程师 |
-| P1-T5 | 轮次格式归一化 | W3–W4 | P1-T3 | average 重建 + 一致性校验 | 数据工程师 |
-| P1-T6 | 特征工程 | W4–W6 | P1-T5 | `data/features.py`（选手/项目/对抗/时间） | ML 工程师 |
-| P1-T7 | 时间分割与冻结统计量 | W6–W7 | P1-T6 | `data/splits.py`、`data/splits/*` | 数据工程师 |
-| P1-T8 | Parquet 导出与性能优化 | W7–W8 | P1-T7 | 列式产物、基准性能报告 | 数据工程师 |
-| P1-T9 | 数据加载器与流式支持 | W8–W9 | P1-T8 | `data/loader.py`、缓存系统 | ML 工程师 |
-| P1-T10 | 数据卡与文档 | W9–W10 | P1-T8 | `datacard.md`、文档页 | 文档维护者 |
-| P1-T11 | 质量检查与测试 | W10–W12 | P1-T3~T9 | 测试套件、QA 报告 | 全员 |
+| P1-T1 | Environment and repository scaffolding | W1 | — | `pyproject.toml`, directory structure, CI skeleton | Engineer |
+| P1-T2 | Data acquisition and raw validation | W1–W2 | P1-T1 | `scripts/download_data.sh`, validation report | Data engineer |
+| P1-T3 | Result value decoding module | W2–W3 | P1-T2 | `data/decoders.py` (time/number/multi) | Data engineer |
+| P1-T4 | Scramble sequence normalization | W3 | P1-T2 | `333mbf` multi-line restoration logic | Data engineer |
+| P1-T5 | Round format normalization | W3–W4 | P1-T3 | average reconstruction + consistency checks | Data engineer |
+| P1-T6 | Feature engineering | W4–W6 | P1-T5 | `data/features.py` (competitor/event/head-to-head/time) | ML engineer |
+| P1-T7 | Temporal splitting and frozen statistics | W6–W7 | P1-T6 | `data/splits.py`, `data/splits/*` | Data engineer |
+| P1-T8 | Parquet export and performance optimization | W7–W8 | P1-T7 | Columnar artifacts, performance benchmark report | Data engineer |
+| P1-T9 | Data loader and streaming support | W8–W9 | P1-T8 | `data/loader.py`, caching system | ML engineer |
+| P1-T10 | Data card and documentation | W9–W10 | P1-T8 | `datacard.md`, documentation pages | Documentation maintainer |
+| P1-T11 | Quality checks and testing | W10–W12 | P1-T3~T9 | Test suite, QA report | Everyone |
 
-> 周次为**相对周**（W1 = 项目第 1 周），阶段共 12 周。
+> Weeks are **relative weeks** (W1 = the project's 1st week); the phase lasts 12 weeks in total.
 
-## 3. 任务详细说明
+## 3. Detailed Task Descriptions
 
-### P1-T1 · 环境与仓库脚手架
+### P1-T1 · Environment and Repository Scaffolding
 
-- 初始化 `pyproject.toml`（Python 版本、依赖组、工具配置）
-- 建立 `src/wca_bench/` 包布局与 `tests/` 结构
-- 配置 GitHub Actions（`ci.yml`、`lint.yml`、`docs.yml`）
-- **交付物**：可运行的仓库骨架 + 绿色 CI
+- Initialize `pyproject.toml` (Python version, dependency groups, tool configuration)
+- Set up the `src/wca_bench/` package layout and the `tests/` structure
+- Configure GitHub Actions (`ci.yml`, `lint.yml`, `docs.yml`)
+- **Deliverable**: a runnable repository skeleton + green CI
 
-### P1-T2 · 数据获取与原始校验
+### P1-T2 · Data Acquisition and Raw Validation
 
-- 下载 WCA 官方导出（记录快照版本，如 v2.0.2）
-- 校验表存在性、列头、编码、行数
-- 生成校验报告（各表行数、字段、异常计数）
-- **交付物**：`scripts/download_data.sh`、`reports/data_ingest.md`
+- Download the official WCA export (recording the snapshot version, e.g. v2.0.2)
+- Validate table existence, headers, encoding, and row counts
+- Produce a validation report (row counts, fields, and anomaly counts per table)
+- **Deliverables**: `scripts/download_data.sh`, `reports/data_ingest.md`
 
-### P1-T3 · 成绩值解码模块
+### P1-T3 · Result Value Decoding Module
 
-- 实现 `time`（百分之一秒）、`number`（步数）、`multi`（多盲）解码
-- 处理特殊值：`-1` DNF、`-2` DNS、`0` 无成绩
-- 多盲双向可逆性测试（`encode(decode(v)) == v`）
-- **交付物**：`data/decoders.py` + 单元测试
+- Implement decoding for `time` (hundredths of a second), `number` (move count), and `multi` (multi-blind)
+- Handle special values: `-1` DNF, `-2` DNS, `0` no result
+- Bi-directional reversibility tests for multi-blind (`encode(decode(v)) == v`)
+- **Deliverables**: `data/decoders.py` + unit tests
 
-### P1-T4 · 打乱序列规范化
+### P1-T4 · Scramble Sequence Normalization
 
-- `333mbf` 打乱：按 `|` 切分并还原多行
-- 空白与转义规范化，长度校验
-- **交付物**：打乱规范化函数 + 覆盖率测试
+- `333mbf` scrambles: split on `|` and restore the multiple lines
+- Normalize whitespace and escaping, and validate lengths
+- **Deliverables**: scramble normalization functions + coverage tests
 
-### P1-T5 · 轮次格式归一化
+### P1-T5 · Round Format Normalization
 
-- 从 `result_attempts` 重建尝试序列
-- 按 `format_id` 计算标准化 average（best of 3 / ao5 / mo3）
-- 与官方 `results.average` 做一致性校验并记录告警
-- **交付物**：轮次归一化模块 + 一致率报告
+- Reconstruct the attempt sequence from `result_attempts`
+- Compute the standardized average according to `format_id` (best of 3 / ao5 / mo3)
+- Cross-check against the official `results.average` and log warnings
+- **Deliverables**: round normalization module + agreement-rate report
 
-### P1-T6 · 特征工程
+### P1-T6 · Feature Engineering
 
-| 特征族 | 示例 |
+| Feature family | Examples |
 | --- | --- |
-| 选手静态 | 年龄、性别、国籍、参赛总次数 |
-| 序列特征 | 最近 N 次尝试、滑动均值/方差、趋势斜率 |
-| 项目上下文 | 项目 ID、轮次类型、格式 |
-| 对抗特征 | 同轮选手数量、对手历史强度分布 |
-| 时间上下文 | 距上次参赛天数、赛季、赛事等级 |
-| DNF 相关 | 历史 DNF 率、近期 DNF 次数 |
+| Competitor static | Age, gender, nationality, total number of competitions |
+| Sequence features | Last N attempts, rolling mean/variance, trend slope |
+| Event context | Event ID, round type, format |
+| Head-to-head features | Number of competitors in the round, distribution of opponents' historical strength |
+| Temporal context | Days since the last competition, season, competition tier |
+| DNF-related | Historical DNF rate, recent DNF count |
 
-- **关键约束**：所有特征函数签名强制传入 `as_of`
-- **交付物**：`data/features.py` + 特征字典文档
+- **Key constraint**: all feature function signatures must accept `as_of`
+- **Deliverables**: `data/features.py` + feature dictionary documentation
 
-### P1-T7 · 时间分割与冻结统计量
+### P1-T7 · Temporal Splitting and Frozen Statistics
 
-- 生成 train（2003–2022）/ val（2023–2024）/ test（2025–2026）索引
-- 生成测试时间子集 Test-A/B/C 边界
-- 计算并冻结基准统计量（选手历史均值、世界纪录、水平分位阈值）
-- 生成选手纵向序列
-- **交付物**：`data/splits/*`、`data/splits.py`
+- Generate train (2003–2022) / val (2023–2024) / test (2025–2026) indices
+- Generate the boundaries of the test time subsets Test-A/B/C
+- Compute and freeze benchmark statistics (competitor historical means, world records, skill percentile thresholds)
+- Generate per-competitor longitudinal sequences
+- **Deliverables**: `data/splits/*`, `data/splits.py`
 
-### P1-T8 · Parquet 导出与性能优化
+### P1-T8 · Parquet Export and Performance Optimization
 
-- Polars 加载 + Parquet 导出
-- 列裁剪、谓词下推配置
-- 基准测试：加载耗时、内存占用（对比 Pandas）
-- **交付物**：Parquet 产物、性能报告
+- Polars loading + Parquet export
+- Column pruning and predicate pushdown configuration
+- Benchmarking: loading time and memory footprint (against Pandas)
+- **Deliverables**: Parquet artifacts, performance report
 
-### P1-T9 · 数据加载器与流式支持
+### P1-T9 · Data Loader and Streaming Support
 
-- 统一 `Dataset` 接口
-- 高频选手特征缓存
-- 流式加载器（内存受限环境）
-- **交付物**：`data/loader.py` + 使用示例
+- A unified `Dataset` interface
+- Caching of frequently accessed competitor features
+- A streaming loader (for memory-constrained environments)
+- **Deliverables**: `data/loader.py` + usage examples
 
-### P1-T10 · 数据卡与文档
+### P1-T10 · Data Card and Documentation
 
-- 数据卡包含：来源、规模、字段语义、划分、已知偏差、允许/禁止用途
-- 同步更新文档站点 `docs/data/`
-- **交付物**：`datacard.md`、文档页
+- The data card covers: sources, scale, field semantics, splits, known biases, permitted/prohibited uses
+- Update the documentation site pages under `docs/data/` accordingly
+- **Deliverables**: `datacard.md`, documentation pages
 
-### P1-T11 · 质量检查与测试
+### P1-T11 · Quality Checks and Testing
 
-- 执行[数据质量检查清单](/data/pipeline#_7-数据质量检查清单)
-- 核心模块单测覆盖率 ≥ 80%
-- 端到端小样本测试（CI 中运行）
-- **交付物**：测试套件、QA 报告
+- Run the [Data Quality Checklist](/data/pipeline#_7-data-quality-checklist)
+- Unit test coverage of core modules ≥ 80%
+- Small-sample end-to-end tests (run in CI)
+- **Deliverables**: test suite, QA report
 
-## 4. 阶段交付物清单
+## 4. Phase Deliverables
 
-| 编号 | 交付物 | 对应任务 |
+| ID | Deliverable | Corresponding tasks |
 | --- | --- | --- |
-| D2 | 预处理管线与数据加载器 | P1-T3 ~ P1-T9 |
-| D3 | 数据卡（Data Card） | P1-T10 |
-| — | Parquet 数据产物 + 划分索引 | P1-T7、P1-T8 |
-| — | 测试套件与 QA 报告 | P1-T11 |
+| D2 | Preprocessing pipeline and data loader | P1-T3 ~ P1-T9 |
+| D3 | Data Card | P1-T10 |
+| — | Parquet data artifacts + split indices | P1-T7, P1-T8 |
+| — | Test suite and QA report | P1-T11 |
 
-## 5. 阶段验收标准
+## 5. Phase Acceptance Criteria
 
-- [ ] `scripts/build_dataset.py` 单命令可从原始数据产出全部 Parquet
-- [ ] 产物校验和（SHA256）在重复运行下一致
-- [ ] 多盲解码往返一致性 100%
-- [ ] average 重建与官方值一致率达阈值
-- [ ] 分割索引与原始表行数精确对账
-- [ ] 无未来信息泄漏（`assert_no_leakage` 全测试通过）
-- [ ] 核心模块单测覆盖率 ≥ 80%
-- [ ] 数据卡完成并通过评审
+- [ ] `scripts/build_dataset.py` produces all Parquet artifacts from raw data with a single command
+- [ ] Artifact checksums (SHA256) are identical across repeated runs
+- [ ] Multi-blind decoding round-trip consistency is 100%
+- [ ] The agreement rate between reconstructed average and the official value reaches the threshold
+- [ ] Split indices reconcile exactly with raw table row counts
+- [ ] No future information leakage (all `assert_no_leakage` tests pass)
+- [ ] Unit test coverage of core modules ≥ 80%
+- [ ] The data card is complete and has passed review
 
-## 6. 风险提示
+## 6. Risks
 
-| 风险 | 影响 | 缓解 |
+| Risk | Impact | Mitigation |
 | --- | --- | --- |
-| 多盲编码边界情形 | 解码错误污染全任务 | 往返测试 + 人工抽样校验 |
-| 导出快照更新 | 结果不可比 | 固定快照版本号，记录在数据卡 |
-| 内存不足（660 万行） | 管线无法运行 | Polars + 流式加载器 |
+| Edge cases in multi-blind encoding | Decoding errors contaminate all tasks | Round-trip tests + manual sampling checks |
+| Export snapshot updates | Results become incomparable | Pin the snapshot version and record it in the data card |
+| Insufficient memory (6.6M rows) | The pipeline cannot run | Polars + streaming loader |
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [阶段二：任务定义与基线 →](/plan/phase-2)
-- [依赖关系 →](/plan/dependencies)
+- [Phase 2: Task Definition and Baselines →](/plan/phase-2)
+- [Dependencies →](/plan/dependencies)

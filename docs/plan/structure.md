@@ -1,108 +1,220 @@
-# 目录组织与文档分层
+# Directory Organization and Documentation Layering
 
-本章定义 WCA-Bench 在 GitHub 上的完整项目结构，包括代码模块职责与文档分层体系。
+This chapter defines the WCA-Bench project structure: the **layout as it exists today** (§1), how it relates to the layout targeted by the plan (§2), module responsibilities (§3), the documentation layering system (§4), naming conventions (§5), and build notes (§6).
 
-## 1. 完整仓库结构（目标态）
+## 1. Current Repository Layout
+
+The tree below reflects the repository as of the **2026-09-21 audit snapshot** (see [Conformance Audit](/plan/audit)).
 
 ```text
 wca-bench/
 ├── .github/
 │   ├── workflows/
-│   │   ├── ci.yml                # 单元测试 + 小样本端到端
-│   │   ├── docs.yml              # VitePress 文档构建与部署
-│   │   └── lint.yml             # 代码风格与类型检查
+│   │   ├── ci.yml                     # unit tests (+ coverage), synthetic small end-to-end, submission validation
+│   │   ├── docs.yml                   # VitePress build and deploy
+│   │   └── lint.yml                   # ruff
 │   ├── ISSUE_TEMPLATE/
 │   │   ├── bug_report.md
 │   │   └── feature_request.md
 │   └── PULL_REQUEST_TEMPLATE.md
 │
-├── data/                         # 数据产物（不入库，见 .gitignore）
-│   ├── raw/                      # 原始 WCA 导出文件
-│   ├── processed/                # 预处理后的 Parquet 文件
-│   └── splits/                   # 时间分割的 train/val/test 索引
+├── configs/                           # 22 experiment configs (21 baselines + default.yaml)
 │
-├── src/wca_bench/                # 主 Python 包
-│   ├── data/
-│   │   ├── loader.py             # 数据加载与预处理
-│   │   ├── decoders.py           # 多盲编码、成绩值解码
-│   │   ├── features.py           # 特征工程
-│   │   ├── splits.py             # 时间分割与冻结统计量
-│   │   └── schema.py             # 表结构与类型定义
-│   ├── tasks/
-│   │   ├── base.py               # 统一 Task 接口
-│   │   ├── result_prediction/    # 任务一
-│   │   ├── placement/            # 任务二
-│   │   ├── dnf/                  # 任务三
-│   │   ├── limit/                # 任务四
-│   │   └── transfer/             # 任务五
-│   ├── baselines/                # 基线模型实现
-│   │   ├── statistical/          # 统计基线（KDE、Plackett-Luce）
-│   │   ├── tree/                 # 树模型（RF、XGBoost、LightGBM）
-│   │   ├── deep/                 # 深度学习（LSTM、Transformer）
-│   │   ├── graph/                # 图学习（GNN）
-│   │   ├── bayesian/             # 贝叶斯（PyMC / NumPyro）
-│   │   └── causal/               # 因果（DID、IV、因果森林）
-│   ├── evaluation/               # 评估指标与协议
-│   │   ├── metrics.py            # 指标实现
-│   │   ├── protocol.py           # 滚动窗口协议
-│   │   ├── stratified.py         # 分层评估
-│   │   └── significance.py       # 统计检验与效应量
-│   ├── leaderboard/              # 排行榜与提交校验
-│   └── utils/                    # 通用工具（种子、日志、IO）
+├── data/                              # generated artefacts, not committed (see .gitignore)
+│   ├── raw/                           # WCA TSV export v2.0.2 + metadata.json
+│   ├── processed/                     # Parquet tables + manifest.json + reconciliation.json
+│   └── splits/                        # {train,val,test}_ids.parquet, person_history.parquet,
+│                                      # person_event_stats.parquet, test_time_slices.json, frozen_stats.json
 │
-├── configs/                      # 实验配置文件
-│   ├── task1_*.yaml
-│   ├── task2_*.yaml
-│   └── ...
+├── docs/                              # VitePress documentation site (English = root locale)
+│   ├── .vitepress/
+│   │   ├── config.mts                 # locales: root (en-US) + zh (zh-CN)
+│   │   └── theme/                     # default theme + custom.css
+│   ├── index.md
+│   ├── guide/                         # project proposal (5 pages)
+│   ├── data/                          # data infrastructure (4 pages)
+│   ├── tasks/                         # task suite (6 pages)
+│   ├── evaluation/                    # evaluation framework (5 pages, incl. compute)
+│   ├── plan/                          # development plan (12 pages, incl. audit)
+│   └── zh/                            # Simplified Chinese locale — mirror of the five sections
 │
-├── notebooks/                    # 探索性分析
+├── examples/                          # baseline reports on the sampled test set
+│   ├── README.md
+│   ├── leaderboard.md
+│   ├── leaderboard.csv
+│   ├── leaderboard.json
+│   ├── multi_seed.md                  # primary metric as mean ± std over seeds 42 / 43 / 44
+│   ├── result_prediction__*.json      # T1 × 5: xgboost_log, history_mean, kde, ridge_log, lstm
+│   ├── placement__*.json              # T2 × 4: psych_sheet, plackett_luce, kde_simulation, gnn
+│   ├── dnf__*.json                    # T3 × 4: xgboost_dnf, beta_binomial, historical_dnf_rate, logistic
+│   ├── limit__*.json                  # T4 × 4: exponential_decay, changepoint, gp_evt, hierarchical_shrinkage
+│   ├── transfer__*.json               # T5 × 4: spearman_correlation, did_proxy, iv_2sls, causal_forest
+│   └── submission_template/           # leaderboard submission skeleton
+│       ├── README.md
+│       ├── config.yaml
+│       ├── environment.yml
+│       ├── seeds.json
+│       ├── cost.json
+│       ├── predictions.parquet
+│       └── report/                    # overall, by_event, by_skill_level, by_time_slice,
+│                                      # by_continent, calibration, significance, cost
+│
+├── notebooks/
 │   ├── 01_data_exploration.ipynb
 │   ├── 02_domain_rules.ipynb
 │   └── 03_baseline_analysis.ipynb
 │
-├── tests/                        # 单元测试与集成测试
-│   ├── unit/
-│   └── integration/
+├── paper/                             # arXiv-ready XeLaTeX paper
+│   ├── main.tex
+│   ├── preamble.tex
+│   ├── references.bib
+│   ├── main.pdf
+│   ├── Makefile
+│   ├── .latexmkrc
+│   ├── README.md
+│   ├── check_bib.py
+│   ├── sections/                      # 00_abstract … 10_appendix (11 files)
+│   └── figures/                       # fig1_task_overview.pdf … fig4_transfer_pairs.pdf + make_figures.py
 │
-├── docs/                         # 文档（VitePress 站点）
-│   ├── .vitepress/
-│   │   ├── config.mts
-│   │   └── theme/
-│   ├── index.md
-│   ├── guide/                    # 项目计划书
-│   ├── data/                     # 数据基础设施
-│   ├── tasks/                    # 任务套件
-│   ├── evaluation/               # 评估框架
-│   └── plan/                     # 开发计划
+├── publish/                           # dataset / model release material (prepared, not yet uploaded)
+│   ├── README.md
+│   ├── DATASET_LAYOUT.md
+│   ├── huggingface/
+│   │   ├── README.md                  # dataset card (English, YAML front matter)
+│   │   ├── .gitattributes             # Git LFS rules
+│   │   ├── dataset_infos.json
+│   │   ├── upload_dataset.py
+│   │   ├── upload_models.py
+│   │   └── requirements.txt
+│   ├── modelscope/
+│   │   ├── README.md                  # dataset card (English + 中文摘要)
+│   │   ├── configuration.json
+│   │   ├── dataset_meta.json
+│   │   ├── upload.py
+│   │   └── requirements.txt
+│   ├── tools/
+│   │   ├── stage_release.py           # assemble data/processed + data/splits + examples
+│   │   └── make_archive.py            # tar.gz / zip archives + SHA256 manifests
+│   └── _staging/                      # generated by stage_release.py
+│       └── dataset/                   # data/, examples/, dataset_infos.json, RELEASE_MANIFEST.json
 │
-├── scripts/                      # 自动化脚本
-│   ├── download_data.sh          # 下载 WCA 导出
-│   ├── build_dataset.py          # 一键构建数据集
-│   ├── run_all_baselines.py      # 运行全部基线
-│   └── build_leaderboard.py      # 生成排行榜
+├── scripts/                           # 8 executables — see §1.1
 │
-├── datacard.md                   # 数据卡（Data Card）
-├── CONTRIBUTING.md               # 贡献指南
-├── CODE_OF_CONDUCT.md            # 行为准则
-├── LICENSE                       # Apache-2.0 许可证
-├── README.md                     # 项目主页
-├── CITATION.cff                  # 引用信息
-├── pyproject.toml                # Python 包配置
-└── package.json                  # 文档工程配置（VitePress 脚本与依赖）
+├── src/wca_bench/                     # Python package
+│   ├── data/
+│   │   ├── loader.py                  # data loading and preprocessing
+│   │   ├── decoders.py                # result values, multi-blind encoding, scramble normalisation
+│   │   ├── features.py                # feature engineering (mandatory keyword-only `as_of`)
+│   │   ├── splits.py                  # temporal splits, frozen statistics, `assert_no_leakage`
+│   │   ├── schema.py                  # table schemas and type definitions
+│   │   └── synthetic.py               # synthetic data generator for offline / CI runs
+│   ├── tasks/
+│   │   ├── base.py                    # unified `Task` protocol + `BaseTask`
+│   │   ├── result_prediction/         # T1
+│   │   ├── placement/                 # T2
+│   │   ├── dnf/                       # T3
+│   │   ├── limit/                     # T4
+│   │   └── transfer/                  # T5
+│   ├── baselines/
+│   │   ├── statistical/               # history_mean, kde, kde_placement, plackett_luce,
+│   │   │                              # dnf_rate, world_record, gp_evt_limit
+│   │   ├── tree/                      # ridge_result, xgb_result, logistic_dnf, xgb_dnf
+│   │   ├── bayesian/                  # beta_binomial_dnf, hierarchical_limit
+│   │   ├── deep/                      # lstm_result
+│   │   ├── graph/                     # gnn_placement
+│   │   └── causal/                    # did, iv, causal_forest
+│   ├── evaluation/
+│   │   ├── metrics.py                 # metric implementations
+│   │   ├── protocol.py                # rolling-window protocol
+│   │   ├── stratified.py              # four-way stratified evaluation
+│   │   └── significance.py            # paired tests, bootstrap CI, Friedman/Nemenyi, effect sizes
+│   ├── leaderboard/
+│   │   └── builder.py                 # leaderboard aggregation + primary metrics
+│   ├── utils/
+│   │   ├── device.py                  # CPU-first device resolution (`cpu` / `auto` / `cuda`)
+│   │   ├── io.py                      # JSON / Parquet helpers
+│   │   ├── logging.py
+│   │   └── seed.py                    # reproducible seeds
+│   └── py.typed
+│
+├── tests/
+│   ├── unit/                          # decoders, splits, metrics, significance, new baselines,
+│   │                                  # import policy, submission validator
+│   └── integration/                   # end-to-end (synthetic small)
+│
+├── AUDIT.md                           # conformance audit against this plan (full version)
+├── CITATION.cff
+├── CODE_OF_CONDUCT.md / CODE_OF_CONDUCT_zh.md
+├── CONTRIBUTING.md / CONTRIBUTING_zh.md
+├── LICENSE                            # Apache-2.0
+├── README.md / README_zh.md
+├── datacard.md / datacard_zh.md
+├── package.json / package-lock.json   # documentation toolchain (VitePress)
+├── pyproject.toml
+└── plan.md                            # original project proposal supplied by the user (see AUDIT.md H4)
 ```
 
-## 2. 模块职责
+### 1.1 Scripts
 
-| 模块 | 职责 | 不负责 |
+| Script | Purpose |
+| --- | --- |
+| `build_dataset.py` | One-command build: `--source raw\|synthetic` → `data/processed/` + `data/splits/` |
+| `download_data.py` | Fetch the official WCA TSV export |
+| `download_data.sh` | Convenience wrapper for the download step |
+| `generate_synthetic.py` | Synthetic dataset for offline / CI runs (`--small`) |
+| `run_all_baselines.py` | Run the registered baselines (`--mode small\|full`) |
+| `run_multi_seed.py` | Aggregate primary metrics across seeds (mean ± std), writing `outputs/multi_seed/multi_seed.json` and `examples/multi_seed.md` |
+| `build_leaderboard.py` | Aggregate reports into `examples/leaderboard.{md,csv}` |
+| `validate_submission.py` | Validate a submission directory against the leaderboard submission spec |
+
+> The earlier scratch scripts (`_debug_*.py`, `_run_limit_transfer.py`, `_run_remaining.py`) have been removed; nothing in this repository should reference them.
+
+## 2. Target Layout and Deviations from the Plan
+
+The plan targeted a smaller repository. The comparison below records where reality now goes beyond the original target and where the target is still unmet.
+
+```text
+Target skeleton (from the original plan)
+wca-bench/
+├── .github/workflows/            ci.yml · docs.yml · lint.yml
+├── data/                         raw · processed · splits
+├── src/wca_bench/                data · tasks · baselines · evaluation · leaderboard · utils
+├── configs/                      task<index>_<model>.yaml
+├── notebooks/                    01_data_exploration · 02_domain_rules · 03_baseline_analysis
+├── tests/                        unit · integration
+├── docs/                         guide · data · tasks · evaluation · plan
+├── scripts/                      download · build · baselines · leaderboard
+└── datacard.md · CONTRIBUTING.md · CODE_OF_CONDUCT.md · LICENSE · README.md ·
+    CITATION.cff · pyproject.toml · package.json
+```
+
+| Target item | Status in the current repository |
+| --- | --- |
+| `src/wca_bench/` layout | **Realized** — all six subpackages populated, including `deep/`, `graph/`, `bayesian/` |
+| `notebooks/01…03` | **Realized** — three executable notebooks (was a single `00_readme.py`) |
+| `configs/*.yaml` | **Realized and extended** — 22 configs covering all 21 baselines |
+| Governance files | **Realized** — plus Chinese counterparts (`README_zh.md`, `datacard_zh.md`, `CONTRIBUTING_zh.md`, `CODE_OF_CONDUCT_zh.md`) |
+| `docs/` | **Extended** — English root locale plus a full `docs/zh/` Chinese locale |
+| `docs/zh/` | **Added** — not in the original plan |
+| `publish/` | **Added** — HuggingFace + ModelScope release material and staging tooling |
+| `paper/` | **Added** — arXiv-ready XeLaTeX paper with figures and a bibliography checker |
+| `AUDIT.md` | **Added** — conformance audit against this plan |
+| `scripts/` | **Reorganized** — 8 scripts instead of 4; `download_data` split into `.py` + `.sh`; multi-seed and submission-validation runners added |
+| Streaming data loader (`P1-T9`) | **Still open** — `WCABenchData` / `load_dataset` exist, but no dedicated streaming loader |
+| Parquet performance benchmark (`A1.9`) | **Still open** — no benchmark script and no reported measurement |
+
+## 3. Module Responsibilities
+
+| Module | Responsibility | Not responsible for |
 | --- | --- | --- |
-| `src/wca_bench/data` | 加载、解码、特征、分割 | 模型与评估逻辑 |
-| `src/wca_bench/tasks` | 任务定义与适配 | 具体模型实现 |
-| `src/wca_bench/baselines` | 模型实现（可替换） | 评估协议 |
-| `src/wca_bench/evaluation` | 指标、协议、分层、检验 | 数据加载 |
-| `src/wca_bench/leaderboard` | 提交校验与排名 | 模型训练 |
-| `scripts` | 编排与自动化 | 核心算法 |
+| `src/wca_bench/data` | Loading, decoding, features, splitting | Models and evaluation logic |
+| `src/wca_bench/tasks` | Task definitions and adaptation | Concrete model implementations |
+| `src/wca_bench/baselines` | Model implementations (swappable) | Evaluation protocols |
+| `src/wca_bench/evaluation` | Metrics, protocols, stratification, testing | Data loading |
+| `src/wca_bench/leaderboard` | Submission validation and ranking | Model training |
+| `scripts` | Orchestration and automation | Core algorithms |
 
-**依赖方向（单向）：**
+**Dependency direction (one-way):**
 
 ```text
 tasks ──► data
@@ -111,53 +223,81 @@ evaluation ──► tasks + data
 leaderboard ──► evaluation
 ```
 
-禁止反向依赖（如 `data` 不得 import `tasks`），以 `tests/unit/test_import_policy.py` 强制校验。
+Reverse dependencies are forbidden (for example, `data` must not import `tasks`), enforced by `tests/unit/test_import_policy.py`.
 
-## 3. 文档分层体系
+## 4. Documentation Layering
 
-文档按**读者意图**分层，三层递进：
+Documentation is layered by **reader intent**, in three progressive tiers:
 
 ```text
-第一层：项目计划书（guide/）      —— 给决策者/审阅者
-    目标 · 范围 · 方案概述 · 预期成果
+Tier 1: Project Proposal (guide/)        —— for decision makers / reviewers
+    Objectives · Scope · Approach overview · Expected outcomes
 
-第二层：技术方案（data / tasks / evaluation）
-    —— 给方法研究者/实现者
-    数据契约 · 任务定义 · 评估协议
+Tier 2: Technical Design (data / tasks / evaluation)
+    —— for methodology researchers / implementers
+    Data contracts · Task definitions · Evaluation protocol
 
-第三层：开发计划（plan/）         —— 给执行者/贡献者
-    目录结构 · 阶段任务 · 依赖 · 验收 · 风险
+Tier 3: Development Plan (plan/)         —— for executors / contributors
+    Directory structure · Phase tasks · Dependencies · Acceptance · Risks · Audit
 ```
 
-### 3.1 文档清单
+### 4.1 Documentation Inventory
 
-| 层级 | 目录 | 页面 |
+| Tier | Directory | Pages |
 | --- | --- | --- |
-| 计划书 | `docs/guide/` | 执行摘要、项目概述、范围、技术方案概述、预期成果 |
-| 数据 | `docs/data/` | 总览、数据来源、预处理、划分 |
-| 任务 | `docs/tasks/` | 总览 + 五任务 |
-| 评估 | `docs/evaluation/` | 总览、协议、统计、复现性 |
-| 开发 | `docs/plan/` | 总览、结构、路线图、四阶段、依赖、验收、风险、发表 |
+| Proposal | `docs/guide/` | Executive summary, overview, scope, technical approach overview, expected outcomes |
+| Data | `docs/data/` | Overview, sources, preprocessing, splits |
+| Tasks | `docs/tasks/` | Overview + five tasks |
+| Evaluation | `docs/evaluation/` | Overview, protocol, statistics, reproducibility, compute |
+| Development | `docs/plan/` | Overview, structure, roadmap, four phases, dependencies, acceptance, risks, publication, audit |
 
-### 3.2 文档维护约定
+### 4.2 Documentation Maintenance Conventions
 
-- 每个代码模块在 `docs/` 中有对应页面
-- PR 修改任务定义/评估协议时**必须同步更新文档**
-- 文档站点通过 GitHub Actions 自动部署（`docs.yml`）
-- 文档与代码同仓库、同版本发布
+- Every code module has a corresponding page in `docs/`
+- A PR that modifies task definitions or the evaluation protocol **must update the documentation in the same change**
+- **Both locales must stay in sync**: a change under `docs/` needs its counterpart under `docs/zh/` (and vice versa)
+- The documentation site is deployed automatically via GitHub Actions (`docs.yml`)
+- Documentation and code live in the same repository and are released under the same version
 
-## 4. 命名与规范
+## 5. Naming and Conventions
 
-| 类型 | 规范 | 示例 |
+| Type | Convention | Example |
 | --- | --- | --- |
-| Python 模块 | 蛇形命名 | `result_prediction` |
-| 类 | 大驼峰 | `ResultPredictionTask` |
-| 配置 | `task<编号>_<模型>.yaml` | `task1_kde.yaml` |
-| 分支 | `<type>/<scope>-<desc>` | `feat/dnf-xgboost` |
-| 提交 | Conventional Commits | `feat(dnf): 添加 XGBoost 基线` |
-| Issue | `<type>: <简述>` | `bug: 多盲解码边界错误` |
+| Python module | snake_case | `result_prediction` |
+| Class | PascalCase | `ResultPredictionTask` |
+| Config | `task<index>_<model>.yaml` | `task1_kde.yaml` |
+| Branch | `<type>/<scope>-<desc>` | `feat/dnf-xgboost` |
+| Commit | Conventional Commits | `feat(dnf): add XGBoost baseline` |
+| Issue | `<type>: <summary>` | `bug: multi-blind decoding boundary error` |
 
-## 5. 后续阅读
+## 6. Build Notes
 
-- [阶段划分与里程碑 →](/plan/roadmap)
-- [依赖关系 →](/plan/dependencies)
+### 6.1 Documentation site
+
+```bash
+npm install            # install the VitePress toolchain
+npm run docs:dev       # local preview at http://localhost:5173
+npm run docs:build     # build the static site into docs/.vitepress/dist
+npm run docs:preview   # preview the built site
+```
+
+### 6.2 Windows: drive-letter casing in `vitepress build`
+
+On Windows, `vitepress build docs` resolves `srcDir` from the current working directory. If the shell's working directory uses a **lower-case drive letter** (for example `f:\workspace\WCA-Bench`), `path.resolve()` produces `f:/...`, whereas Rollup records page chunk ids with the real file-system casing (`F:/...`). VitePress looks these paths up by exact string equality, so **every** page fails to match its chunk and the build aborts with:
+
+```text
+TypeError: Cannot read properties of undefined (reading 'imports')
+    at resolvePageImports (...)
+```
+
+**Fix (applied):** `docs/.vitepress/config.mts` sets `srcDir` explicitly and upper-cases the Windows drive letter, which makes the two path forms agree. No absolute path is hard-coded, so the configuration stays portable.
+
+### 6.3 Locked build directory
+
+If a `docs:dev` server is still running, VitePress cannot empty `docs/.vitepress/dist` and the build fails on `emptyDir`. Stop the dev server, or delete `docs/.vitepress/dist` and `docs/.vitepress/cache` before rebuilding.
+
+## 7. Further Reading
+
+- [Conformance Audit →](/plan/audit)
+- [Phase Breakdown and Milestones →](/plan/roadmap)
+- [Dependencies →](/plan/dependencies)

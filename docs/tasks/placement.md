@@ -1,89 +1,89 @@
-# 任务二：名次预测（Placement Prediction）
+# Task 2: Placement Prediction
 
-## 任务定义
+## Task Definition
 
-给定一场比赛中**所有参赛选手**的历史成绩，预测每个选手在该轮次中的排名。
+Given the historical results of **all participating competitors** in a competition, predict each competitor's ranking in that round.
 
-## 输入
+## Inputs
 
-| 类别 | 字段 |
+| Category | Field |
 | --- | --- |
-| 比赛上下文 | 比赛 ID、项目 ID、轮次类型 |
-| 选手集合 | 所有参赛选手的历史成绩特征 |
-| 时间约束 | 决策时刻 `as_of`（强制） |
+| Competition context | Competition ID, event ID, round type |
+| Competitor set | Historical result features of all participating competitors |
+| Time constraint | Decision time `as_of` (mandatory) |
 
-## 输出
+## Outputs
 
-| 输出 | 类型 |
+| Output | Type |
 | --- | --- |
-| 每个选手的预测排名 | 整数 |
-| 排名概率分布 | P(rank = k) |
-| 领奖台概率 | P(rank ≤ 3) |
+| Predicted placement of each competitor | Integer |
+| Placement probability distribution | P(rank = k) |
+| Podium probability | P(rank ≤ 3) |
 
-## 评估指标
+## Evaluation Metrics
 
-- **Kendall's τ**（排名相关系数）
-- **前 3 名准确率**（预测的领奖台与实际领奖台的交集大小）
-- **排名概率的 Brier 分数**
-- **与 WCA Psych Sheet 的对比**
+- **Kendall's τ** (rank correlation coefficient)
+- **Top-3 accuracy** (size of the intersection between the predicted podium and the actual podium)
+- **Brier score of placement probabilities**
+- **Comparison against the WCA Psych Sheet**
 
-::: tip 为什么要对比 Psych Sheet
-WCA 官方当前使用的排名系统（Psych Sheet）**仅基于选手的最佳 Ao5**，不考虑方差和一致性。这是一个天然的强领域基线，能揭示「引入分布信息」的真实价值。
+::: tip Why compare against the Psych Sheet
+The ranking system currently used officially by the WCA (the Psych Sheet) is **based only on a competitor's best Ao5**, ignoring variance and consistency. It is a natural strong domain baseline that reveals the true value of "introducing distributional information".
 :::
 
-## 基线方法
+## Baseline Methods
 
-### 领域基线
+### Domain Baseline
 
-- **Psych Sheet 基线**：按选手历史最佳 Ao5 排序
+- **Psych Sheet baseline**: rank by competitors' historical best Ao5
 
-### 统计基线
+### Statistical Baselines
 
-- **核密度估计模拟**：对每个选手构建 KDE，通过蒙特卡洛模拟轮次成绩，统计排名分布
-- **Plackett-Luce 模型**：将排名建模为选手「实力」参数的排序概率
+- **Kernel density estimation simulation**: build a KDE for each competitor, simulate round results via Monte Carlo, and derive the placement distribution
+- **Plackett-Luce model**: models the ranking as a probability over "strength" parameters of competitors
 
-### 方法论基线
+### Methodological Baselines
 
-- **图神经网络（GNN）**：构建选手–比赛异构图，学习选手间的对抗关系
+- **Graph neural network (GNN)**: builds a competitor–competition heterogeneous graph to learn the adversarial relationships among competitors
 
-## 领域挑战
+## Domain Challenges
 
-### 选手间的交互效应
+### Interaction Effects Between Competitors
 
-名次预测的核心困难在于**选手间的交互效应**——同一个选手在不同对手面前的表现可能不同。这要求模型不只估计「绝对实力」，还要建模**相对竞争关系**。
+The core difficulty of placement prediction lies in **interaction effects between competitors** — the same competitor may perform differently against different opponents. This requires the model not only to estimate "absolute strength" but also to model **relative competitive relationships**.
 
-### 规则效应
+### Rule Effects
 
-轮次格式（如 ao5 的去极值机制）使得**单次 DNF 对最终排名的影响被放大**，需要模型显式建模这种规则效应。
+Round formats (such as the ao5 trimming mechanism) mean that **the impact of a single DNF on the final placement is amplified**, requiring the model to explicitly model this rule effect.
 
-| 情形 | 对 ao5 的影响 |
+| Case | Impact on ao5 |
 | --- | --- |
-| 1 次 DNF | 通常被作为最差尝试去除，影响有限 |
-| 2 次 DNF | 整轮 DNF，排名崩塌 |
-| 0 次 DNF 但含一次失误 | 失误被去除，平均成绩可能优于实际水平 |
+| 1 DNF | Usually discarded as the worst attempt, with limited impact |
+| 2 DNFs | A DNF for the whole round; the placement collapses |
+| 0 DNFs but one mistake | The mistake is discarded, and the average may look better than the competitor's real level |
 
-### 比赛规模差异
+### Competition Size Variation
 
-不同比赛同一项目的参赛人数差异极大（从数人到数百人），需要处理**可变规模排序**问题。
+The number of participants in the same event varies enormously across competitions (from a handful to several hundred), requiring the handling of **variable-size ranking**.
 
-## 方法与数据结构
+## Method and Data Structures
 
 ```text
-选手 ──参赛──► 比赛 ──轮次──► 该轮选手集合
+Competitor ──participates in──► Competition ──round──► set of competitors in that round
   │
-  └─ 历史成绩序列（as_of 之前）
+  └─ historical result sequence (before as_of)
 ```
 
-GNN 基线将 `(选手, 比赛, 轮次)` 建模为异构图节点，边表示「同轮同项目对抗」。
+The GNN baseline models `(competitor, competition, round)` as heterogeneous graph nodes, with edges representing "competition in the same round of the same event".
 
-## 交付与验收
+## Deliverables and Acceptance
 
-- 定义文档（五要素齐全）
-- ≥ 4 个可运行基线（含 Psych Sheet）
-- Kendall's τ 与 Brier 分层报告
-- 与官方 Psych Sheet 的显著性对比结论
+- Definition document (all five elements present)
+- ≥ 4 runnable baselines (including the Psych Sheet)
+- Stratified report on Kendall's τ and Brier
+- A significance comparison conclusion against the official Psych Sheet
 
-## 后续阅读
+## Further Reading
 
-- [任务三：DNF 预测 →](/tasks/dnf)
-- [评估框架 · 统计显著性检验 →](/evaluation/statistics)
+- [Task 3: DNF Prediction →](/tasks/dnf)
+- [Evaluation Framework · Statistical Significance Testing →](/evaluation/statistics)

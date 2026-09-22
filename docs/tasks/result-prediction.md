@@ -1,89 +1,89 @@
-# 任务一：成绩预测（Result Prediction）
+# Task 1: Result Prediction
 
-## 任务定义
+## Task Definition
 
-给定选手在比赛前的历史成绩序列、参赛频率、项目转换经历、年龄、国籍等信息，预测该选手在**某场比赛某项目某轮次**中的 best 和 average 成绩。
+Given a competitor's pre-competition history of results, participation frequency, cross-event experience, age, nationality, and similar information, predict the competitor's best and average results in **a given round of a given event at a given competition**.
 
-## 输入
+## Inputs
 
-| 类别 | 字段 |
+| Category | Field |
 | --- | --- |
-| 标识 | 选手 ID、比赛 ID、项目 ID、轮次类型 |
-| 序列 | 历史成绩序列（最近 N 次尝试） |
-| 静态特征 | 年龄、性别、国籍、参赛总次数 |
-| 时间约束 | 决策时刻 `as_of`（强制） |
+| Identifiers | Competitor ID, competition ID, event ID, round type |
+| Sequence | Historical result sequence (the most recent N attempts) |
+| Static features | Age, gender, nationality, total number of competitions |
+| Time constraint | Decision time `as_of` (mandatory) |
 
-## 输出
+## Outputs
 
-| 输出 | 类型 |
+| Output | Type |
 | --- | --- |
-| best 成绩 | 连续值 |
-| average 成绩 | 连续值（若轮次格式为 ao5 或 mo3） |
-| 成绩分布参数 | 均值和方差 |
+| best result | Continuous value |
+| average result | Continuous value (if the round format is ao5 or mo3) |
+| Result distribution parameters | Mean and variance |
 
-## 评估指标
+## Evaluation Metrics
 
-- **MAE 和 RMSE**（对成绩值进行对数变换后计算）
-- **校准误差**（预测区间覆盖率）
-- **按选手水平分层评估**（新手、中级、高级、精英）
+- **MAE and RMSE** (computed after a logarithmic transform of the result values)
+- **Calibration error** (coverage of prediction intervals)
+- **Stratified evaluation by competitor skill level** (novice, intermediate, advanced, elite)
 
-| 指标 | 说明 |
+| Metric | Description |
 | --- | --- |
-| MAE（log） | 主指标，对数域避免大数值项目主导 |
-| RMSE（log） | 对大误差更敏感 |
-| 区间覆盖率 | 检验预测区间是否可信（如 90% 区间实际覆盖接近 90%） |
+| MAE (log) | Primary metric; the log domain prevents large-value events from dominating |
+| RMSE (log) | More sensitive to large errors |
+| Interval coverage | Checks whether prediction intervals are trustworthy (e.g. a 90% interval actually covers close to 90%) |
 
-## 基线方法
+## Baseline Methods
 
-### 平凡基线
+### Trivial Baseline
 
-- **历史均值**：使用选手最近 25 次尝试的均值
+- **Historical mean**: the mean of the competitor's most recent 25 attempts
 
-### 领域 / 统计基线
+### Domain and Statistical Baselines
 
-- **线性回归**：使用最近成绩的线性外推
-- **核密度估计（KDE）**：对选手成绩分布建模，通过 bootstrap 模拟轮次成绩
+- **Linear regression**: linear extrapolation from recent results
+- **Kernel density estimation (KDE)**: models the competitor's result distribution and simulates round results via bootstrap
 
-### 方法论基线
+### Methodological Baselines
 
-- **LSTM / Transformer**：序列到序列的编码器–解码器架构
+- **LSTM / Transformer**: sequence-to-sequence encoder–decoder architectures
 
-## 领域挑战
+## Domain Challenges
 
-### 表现的非平稳性
+### Non-Stationarity of Performance
 
-成绩预测需要处理选手表现的**非平稳性**——选手可能因以下原因出现成绩跃变：
+Result prediction must handle the **non-stationarity** of a competitor's performance — a competitor may experience step changes in results due to:
 
-- 训练方法改进
-- 伤病
-- 设备更换（如新型魔方）
+- Improvements in training methods
+- Injury
+- Equipment changes (e.g. a new cube)
 
-### 项目间方差差异
+### Variance Differences Across Events
 
-不同项目的成绩分布差异极大（三阶与七阶的方差不同），需要**项目特定的归一化策略**。
+Result distributions differ drastically across events (3x3 and 7x7 have different variances), requiring **event-specific normalization strategies**.
 
-| 项目 | 成绩量级 | 方差特征 |
+| Event | Order of magnitude | Variance characteristics |
 | --- | --- | --- |
-| 三阶 | 秒级 | 相对方差大（新手到精英跨度大） |
-| 七阶 | 分钟级 | 相对方差小（参赛门槛高） |
-| 最少步 | 步数 | 离散、分布偏斜 |
+| 3x3 | Seconds | Relatively large variance (wide span from novice to elite) |
+| 7x7 | Minutes | Relatively small variance (high barrier to entry) |
+| Fewest moves | Move count | Discrete, skewed distribution |
 
-## 防泄漏要点
+## Leakage-Free Requirements
 
 ```text
-特征构造允许：所有 competition_date < as_of 的记录
-禁止：目标比赛及之后的所有记录，包括该轮次的其他选手成绩
-基准统计量：选手历史均值从训练期计算后冻结
+Allowed for feature construction: all records with competition_date < as_of
+Forbidden: all records at or after the target competition, including other competitors' results in that round
+Benchmark statistics: competitor historical means are computed on the training period and then frozen
 ```
 
-## 交付与验收
+## Deliverables and Acceptance
 
-- 定义文档（输入/输出/指标/基线/挑战五要素齐全）
-- ≥ 4 个可运行基线
-- 主指标 + 分层评估报告
-- 防泄漏断言测试通过
+- Definition document (all five elements present: inputs/outputs/metrics/baselines/challenges)
+- ≥ 4 runnable baselines
+- Primary metric + stratified evaluation report
+- Leakage-prevention assertion tests pass
 
-## 后续阅读
+## Further Reading
 
-- [任务二：名次预测 →](/tasks/placement)
-- [评估协议与分层 →](/evaluation/protocol)
+- [Task 2: Placement Prediction →](/tasks/placement)
+- [Evaluation Protocol and Stratification →](/evaluation/protocol)

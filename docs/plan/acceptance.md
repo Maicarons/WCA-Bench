@@ -1,116 +1,118 @@
-# 验收标准
+# Acceptance Criteria
 
-本章定义各阶段与最终交付的**可判定**验收标准。
+This chapter defines **decidable** acceptance criteria for each phase and for the final delivery.
 
-## 1. 验收原则
+## 1. Acceptance Principles
 
-| 原则 | 说明 |
+| Principle | Description |
 | --- | --- |
-| 可判定 | 每条标准可用「是/否」或数值阈值判定 |
-| 可复现 | 验收过程本身可重复，不依赖主观印象 |
-| 可追溯 | 每条标准对应具体任务与交付物 |
-| 分层 | 阶段验收 → 里程碑验收 → 项目终验收 |
+| Decidable | Every criterion can be judged with yes/no or a numeric threshold |
+| Reproducible | The acceptance process itself is repeatable and does not rely on subjective impressions |
+| Traceable | Every criterion maps to a specific task and deliverable |
+| Layered | Phase acceptance → milestone acceptance → final project acceptance |
 
-## 2. 阶段验收标准
+## 2. Phase Acceptance Criteria
 
-### A1 数据管线
+> **Status as of 2026-09-21.** Markers: `[x]` complete · `[~]` partial · `[ ]` not met. The evidence behind each marker is summarised in the [Conformance Audit](/plan/audit), and cited criterion by criterion in the repository's `AUDIT.md`.
 
-**对应**：阶段一 / M1
+### A1 Data Pipeline
 
-- [ ] `scripts/build_dataset.py` 单命令从原始数据产出全部 Parquet
-- [ ] 重复运行的产物 SHA256 校验和一致
-- [ ] 多盲解码往返一致性 100%
-- [ ] average 重建与官方值一致率 ≥ 99.5%
-- [ ] 分割索引与原始表行数精确对账（差值为 0）
-- [ ] `assert_no_leakage` 在所有特征函数测试中通过
-- [ ] `src/wca_bench/data` 单测覆盖率 ≥ 80%
-- [ ] 数据卡完成，含允许/禁止用途章节
-- [ ] Parquet 加载性能优于 Pandas（内存或耗时至少一项提升 ≥ 2×）
+**Corresponds to**: Phase 1 / M1
 
-### A2 任务定义
+- [x] **Complete** — `scripts/build_dataset.py --source raw|synthetic` produces all Parquet artifacts from raw data in one command
+- [~] **Partial** — `data/processed/manifest.json` records counts, but there is no checksum manifest and no reproducibility test
+- [x] **Complete** — `decoders.py::decode_multi` / `encode_multi` (both `1SSAATTTTT` and `0DDTTTTTMM`), covered by `tests/unit/test_decoders.py`
+- [~] **Partial** — `data/processed/reconciliation.json` holds a summary only; the rate is not asserted in a test
+- [x] **Complete** — `data/splits/{train,val,test}_ids.parquet` reconciled in `reconciliation.json`
+- [x] **Complete** — `splits.py::assert_no_leakage`, forwarded by `evaluation/protocol.py`; `features.py` enforces a keyword-only `as_of`
+- [~] **Partial** — `pytest-cov` and `[tool.coverage.run]` are in place and CI runs `--cov=wca_bench`; a numeric ≥ 80 % threshold is not enforced yet
+- [x] **Complete** — `datacard.md` (EN) + `datacard_zh.md` (ZH), including allowed and prohibited uses
+- [ ] **Not met** — no benchmark script and no reported measurement
 
-**对应**：阶段二 / M2
+### A2 Task Definition
 
-- [ ] 五个任务均有定义文档，含**五要素**（定义 / 输入输出 / 指标 / 基线 / 挑战）
-- [ ] 每个任务的指标、配对单位、分层维度明确
-- [ ] 硬样本子集定义明确且可自动抽取
-- [ ] 冷启动处理规则明确
-- [ ] 定义文档通过 ≥ 2 人评审并标记冻结版本
+**Corresponds to**: Phase 2 / M2
 
-### A3 基线实现
+- [x] **Complete** — `docs/tasks/*`: each page carries definition, inputs/outputs, metrics, baselines and domain challenges
+- [~] **Partial** — metrics and stratification are specified; pairing units are documented centrally in `docs/evaluation/statistics` rather than on each task page
+- [x] **Complete** — `configs/task3_dnf_rate.yaml` (`hard_subset.historical_dnf_rate: [0.1, 0.3]`); `evaluation/stratified.py` accepts a hard-subset mask
+- [x] **Complete** — `Report.extras["cold_start"]`, present in the `examples/` reports
+- [ ] **Not met** — no review record and no explicit frozen-version marker
 
-**对应**：阶段二 / M3
+### A3 Baseline Implementation
 
-- [ ] 每任务 ≥ 3 个可运行基线，合计 ≥ 18 个
-- [ ] 全部基线在 CI 小样本模式下端到端跑通（HTTP 级别绿色）
-- [ ] 每个基线产出完整 `report/`（overall + 四维分层 + 校准 + 显著性 + 成本）
-- [ ] 排行榜可由 `scripts/build_leaderboard.py` 一键重建
-- [ ] 所有实验由 `configs/*.yaml` 驱动，可单命令复现
-- [ ] 随机种子固定，报告 ≥ 3 个种子的均值 ± 标准差
-- [ ] 统计检验输出符合 `significance.json` 规范
+**Corresponds to**: Phase 2 / M3
 
-### A4 发布
+- [x] **Complete** — 21 baselines, 4–5 per task (target was ≥ 18); see [Task Suite · Baseline Inventory](/tasks/#_5-baseline-inventory)
+- [x] **Complete** — `.github/workflows/ci.yml` runs `run_all_baselines.py --mode small`; `tests/integration/test_end_to_end.py` iterates the task registry
+- [x] **Complete** — every report carries `overall` + four-way stratification + `significance` + `cost`
+- [x] **Complete** — `scripts/build_leaderboard.py` → `examples/leaderboard.{md,csv}`
+- [x] **Complete** — 22 `configs/*.yaml` files cover all 21 baselines
+- [x] **Complete** — seeds 42 / 43 / 44 aggregated by `scripts/run_multi_seed.py` into `examples/multi_seed.md`, covering all 21 baselines
+- [x] **Complete** — `evaluation/significance.py` is invoked by the task runner and persisted in each report
 
-**对应**：阶段三 / M4、M5
+### A4 Release
 
-- [ ] 论文在截止日期前完成投稿（M4）
-- [ ] 论文含 Limitations 与伦理章节
-- [ ] GitHub 仓库公开，含 `README` / `LICENSE`(Apache-2.0) / `CONTRIBUTING` / `CODE_OF_CONDUCT` / `CITATION.cff`
-- [ ] HuggingFace 数据集可通过 `load_dataset` 直接加载，卡片信息完整
-- [ ] 模型权重可下载并复现指标（指标差异在预设容差内）
-- [ ] 文档站点公开可访问，导航覆盖三大板块
-- [ ] 提交校验脚本可自动检查提交材料完整性
-- [ ] 至少 2 个有效社区渠道建立（M5）
-- [ ] 独立第三人按复现材料成功复现主结果（L3 复现等级）
+**Corresponds to**: Phase 3 / M4, M5
 
-### A5 迭代与扩展
+- [ ] **Not met** — external submission step
+- [x] **Complete** — `paper/sections/08_limitations_ethics.tex`
+- [x] **Complete** — `README` / `LICENSE` (Apache-2.0) / `CONTRIBUTING` / `CODE_OF_CONDUCT` / `CITATION.cff`, with Chinese counterparts; the `CITATION.cff` placeholder URL has been fixed
+- [x] **Complete** — `publish/huggingface/`: dataset card, `dataset_infos.json`, LFS attributes, dry-run uploader
+- [x] **Complete** — `publish/huggingface/upload_models.py` publishes the baseline reports as a model repository
+- [x] **Complete** — bilingual site (`/` + `/zh/`) builds and passes the link/anchor check; deployment runs through `docs.yml`
+- [x] **Complete** — `scripts/validate_submission.py`, exercised in CI against `examples/submission_template/`
+- [ ] **Not met** — external
+- [ ] **Not met** — external
 
-**对应**：阶段四 / M6
+### A5 Iteration and Expansion
 
-- [ ] 社区高优先级反馈完成率 ≥ 80%
-- [ ] 任务定义迭代遵循版本化原则（澄清/增补/破坏性分级处理）
-- [ ] 扩展测试集可通过统一接口加载并单独报告
-- [ ] 新增 ≥ 3 类方法基线（图 / 因果 / 贝叶斯）并纳入排行榜
-- [ ] 挑战赛上线并有实际参赛队伍（M6）
-- [ ] 赛后分析报告发布
-- [ ] 维护者手册与路线图 v2 发布
+**Corresponds to**: Phase 4 / M6
 
-## 3. 最终交付验收
+- [ ] **Not met** — no community feedback collected yet
+- [ ] **Not met** — no v1.1 and no changelog
+- [ ] **Not met** — depends on a post-window data release
+- [x] **Complete** — graph (`gnn`), Bayesian (`beta_binomial`, `hierarchical_shrinkage`) and causal (`iv_2sls`, `causal_forest`) baselines added to the leaderboard
+- [ ] **Not met** — external
+- [ ] **Not met** — external
+- [ ] **Not met** — maintainer handbook and roadmap v2 not written
 
-| 编号 | 交付物 | 验收判据 |
+## 3. Final Delivery Acceptance
+
+| ID | Deliverable | Acceptance criterion |
 | --- | --- | --- |
-| D1 | WCA-Bench 数据集 | 可加载、卡片完整、覆盖 17 个现役项目 |
-| D2 | 预处理管线与加载器 | 单命令可复现，测试覆盖率达标 |
-| D3 | 数据卡 | 含来源/规模/字段/划分/偏差/用途约束 |
-| D4 | 五任务定义与评估协议 | 五要素齐全，通过评审并冻结 |
-| D5 | 基线实现与结果 | ≥ 18 基线，Report 结构完整 |
-| D6 | 排行榜与提交规范 | 可一键重建，提交校验可用 |
-| D7 | 主论文 | 已投稿 NeurIPS E&D |
-| D8 | 公开代码仓库 | 公开、CI 绿、治理文件齐全 |
-| D9 | 挑战赛与结果分析 | 竞赛上线 + 分析报告 |
+| D1 | WCA-Bench dataset | Loadable, complete card, covering the 17 active events |
+| D2 | Preprocessing pipeline and loader | Reproducible with a single command, test coverage meets the target |
+| D3 | Data card | Includes sources/scale/fields/splits/biases/usage constraints |
+| D4 | Five task definitions and evaluation protocol | All five elements present, reviewed and frozen |
+| D5 | Baseline implementations and results | ≥ 18 baselines, complete Report structure |
+| D6 | Leaderboard and submission specification | Rebuildable with one command, submission validation usable |
+| D7 | Main paper | Submitted to NeurIPS E&D |
+| D8 | Public code repository | Public, CI green, complete governance files |
+| D9 | Challenge and results analysis | Competition live + analysis report |
 
-## 4. 质量门禁（Quality Gates）
+## 4. Quality Gates
 
-每个 PR / 发布必须通过：
+Every PR / release must pass:
 
 ```text
-Gate 1  Lint & 类型检查通过
-Gate 2  单元测试全通过，覆盖率不下降
-Gate 3  小样本端到端测试通过
-Gate 4  文档站构建成功
-Gate 5  无未来信息泄漏断言通过
-Gate 6  （发布时）复现等级 ≥ L2，主排行榜 ≥ L3
+Gate 1  Lint and type checks pass
+Gate 2  All unit tests pass, coverage does not decrease
+Gate 3  Small-sample end-to-end tests pass
+Gate 4  The documentation site builds successfully
+Gate 5  No future-information-leakage assertions fail
+Gate 6  (At release) reproduction level ≥ L2; main leaderboard ≥ L3
 ```
 
-## 5. 判定与豁免
+## 5. Adjudication and Exemptions
 
-| 情形 | 处理 |
+| Case | Handling |
 | --- | --- |
-| 某项标准因外部原因不可达 | 项目负责人书面记录并调整，纳入变更日志 |
-| 破坏性变更导致既有标准失效 | 通过版本化机制另立标准，不追溯旧榜 |
-| 指标阈值需要调整 | 需 ≥ 2 人评审并记录理由 |
+| A criterion is unattainable for external reasons | The PI records it in writing, adjusts it, and adds it to the changelog |
+| A breaking change invalidates an existing criterion | Establish a new criterion through the versioning mechanism; do not retroactively change the old leaderboard |
+| A metric threshold needs adjustment | Requires review by ≥ 2 people and a recorded justification |
 
-## 6. 后续阅读
+## 6. Further Reading
 
-- [风险与缓解 →](/plan/risks)
-- [里程碑](/plan/roadmap#_2-关键里程碑)
+- [Risks and Mitigation →](/plan/risks)
+- [Milestones](/plan/roadmap#_2-key-milestones)

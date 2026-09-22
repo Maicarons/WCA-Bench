@@ -1,132 +1,132 @@
-# 阶段三：基准发布与社区建设（第 7–9 月）
+# Phase 3: Benchmark Release and Community Building (Months 7–9)
 
-> **目标**：完成论文投稿，公开发布代码、数据与排行榜，启动社区建设。
-> **出口里程碑**：[M4 NeurIPS 投稿](/plan/roadmap#m4-·-neurips-投稿-第-7-月)、[M5 公开发布](/plan/roadmap#m5-·-公开发布-第-9-月)
+> **Objective**: Complete the paper submission, publicly release the code, data, and leaderboard, and start community building.
+> **Exit milestones**: [M4 NeurIPS Submission](/plan/roadmap#m4-·-neurips-submission-month-7), [M5 Public Release](/plan/roadmap#m5-·-public-release-month-9)
 
-## 1. 阶段目标
+## 1. Phase Objectives
 
-- 在 HuggingFace Datasets 上发布数据
-- 在 GitHub 上发布代码库（Apache-2.0 许可证）
-- 提交 NeurIPS Evaluations & Datasets Track
-- 在 WCA 社区和体育数据分析社区推广
+- Publish the data on HuggingFace Datasets
+- Release the code repository on GitHub (Apache-2.0 License)
+- Submit to the NeurIPS Evaluations & Datasets Track
+- Promote the benchmark in the WCA community and the sports data analysis community
 
-## 2. 任务分解（WBS）
+## 2. Work Breakdown (WBS)
 
-| 任务 ID | 任务名称 | 周次 | 前置依赖 | 交付物 |
+| Task ID | Task name | Weeks | Prerequisites | Deliverables |
 | --- | --- | --- | --- | --- |
-| P3-T1 | 论文框架与图表 | W25–W26 | M3 | 论文大纲、结果图表 |
-| P3-T2 | 论文初稿撰写 | W25–W28 | P3-T1 | 论文初稿全文 |
-| P3-T3 | 复现性材料打包 | W26–W27 | M3 | `submission/` 完整包 |
-| P3-T4 | 内部评审与修改 | W27–W28 | P3-T2 | 评审意见与修订稿 |
-| P3-T5 | NeurIPS 投稿（M4） | W28 | P3-T2、P3-T3 | 投稿确认 |
-| P3-T6 | GitHub 仓库公开化 | W29–W30 | P3-T3 | 公开仓库（Apache-2.0） |
-| P3-T7 | HuggingFace 数据集发布 | W29–W31 | P3-T6 | 数据集 + 数据卡页面 |
-| P3-T8 | 模型权重托管 | W30–W31 | P3-T6 | HuggingFace Models |
-| P3-T9 | 文档站点上线 | W30–W32 | P3-T6 | 在线文档（VitePress） |
-| P3-T10 | 提交规范与评测服务 | W31–W33 | P3-T7 | 提交模板 + 校验脚本 |
-| P3-T11 | 社区推广启动（M5） | W32–W36 | P3-T6 | WCA 论坛/社区帖、渠道对接 |
-| P3-T12 | 发布后监控与响应 | W34–W36 | P3-T11 | Issue 响应、FAQ |
+| P3-T1 | Paper framework and figures | W25–W26 | M3 | Paper outline, results figures |
+| P3-T2 | Paper draft writing | W25–W28 | P3-T1 | Full paper draft |
+| P3-T3 | Reproducibility package | W26–W27 | M3 | Complete `submission/` package |
+| P3-T4 | Internal review and revision | W27–W28 | P3-T2 | Review comments and revised draft |
+| P3-T5 | NeurIPS submission (M4) | W28 | P3-T2, P3-T3 | Submission confirmation |
+| P3-T6 | GitHub repository made public | W29–W30 | P3-T3 | Public repository (Apache-2.0) |
+| P3-T7 | HuggingFace dataset release | W29–W31 | P3-T6 | Dataset + data card page |
+| P3-T8 | Model weight hosting | W30–W31 | P3-T6 | HuggingFace Models |
+| P3-T9 | Documentation site online | W30–W32 | P3-T6 | Online documentation (VitePress) |
+| P3-T10 | Submission specification and evaluation service | W31–W33 | P3-T7 | Submission template + validation scripts |
+| P3-T11 | Community outreach kickoff (M5) | W32–W36 | P3-T6 | WCA forum/community posts, channel liaison |
+| P3-T12 | Post-release monitoring and response | W34–W36 | P3-T11 | Issue responses, FAQ |
 
-> 周次接续阶段二（W25 = 项目第 25 周），阶段共 12 周（W25–W36）。
+> Weeks continue from Phase 2 (W25 = the project's 25th week); the phase lasts 12 weeks (W25–W36).
 
-## 3. 任务详细说明
+## 3. Detailed Task Descriptions
 
-### P3-T1 · 论文框架与图表
+### P3-T1 · Paper Framework and Figures
 
-- 按 NeurIPS E&D Track 结构组织：Motivation / Dataset / Tasks / Protocol / Baselines / Results / Limitations
-- 产出核心图表：数据分布、任务示意、基线对比、分层热力图
-- **验收**：图表可直接嵌入论文（矢量格式）
+- Organize according to the NeurIPS E&D Track structure: Motivation / Dataset / Tasks / Protocol / Baselines / Results / Limitations
+- Produce the core figures: data distributions, task illustrations, baseline comparisons, stratified heatmaps
+- **Acceptance**: figures can be embedded directly into the paper (vector format)
 
-### P3-T2 · 论文初稿撰写
+### P3-T2 · Paper Draft Writing
 
-- 核心贡献声明：
- 1. 提出首个基于 WCA 真实比赛数据的体育数据分析标准化基准
- 2. 定义了五个具有领域特定挑战的评估任务
- 3. 提供了严格的防泄漏评估协议和分层评估框架
- 4. 发布了完整的基线实现和可复现的实验代码
-- 显式撰写 Limitations 与伦理章节
-- **验收**：完整草稿 + 内部可读
+- Core contribution claims:
+ 1. The first standardized benchmark for sports data analysis built on real WCA competition data
+ 2. Five evaluation tasks defined with domain-specific challenges
+ 3. A strict leakage-free evaluation protocol and a stratified evaluation framework
+ 4. Complete baseline implementations and reproducible experimental code
+- Write the Limitations and ethics sections explicitly
+- **Acceptance**: a complete draft that is internally readable
 
-### P3-T3 · 复现性材料打包
+### P3-T3 · Reproducibility Package
 
-- 按[排行榜提交格式](/evaluation/reproducibility#_7-排行榜提交格式)打包
-- 环境锁定、种子、算力报告齐全
-- **验收**：第三方可依据材料复现主结果（L3）
+- Package according to the [leaderboard submission format](/evaluation/reproducibility#_7-leaderboard-submission-format)
+- Environment lock, seeds, and compute report all complete
+- **Acceptance**: a third party can reproduce the main results from the material (L3)
 
-### P3-T5 · NeurIPS 投稿（M4）
+### P3-T5 · NeurIPS Submission (M4)
 
-- 严格遵守摘要与全文截止日期
-- 提前 1 周完成所有材料冻结
-- **验收**：收到投稿确认
+- Strictly observe the abstract and full-text deadlines
+- Freeze all material one week in advance
+- **Acceptance**: submission confirmation received
 
-### P3-T6 · GitHub 仓库公开化
+### P3-T6 · GitHub Repository Made Public
 
-- 补充 `README.md`、`CONTRIBUTING.md`、`CODE_OF_CONDUCT.md`、`LICENSE`、`CITATION.cff`
-- 清理敏感/临时文件，确认 `.gitignore` 正确
-- 开启 Issues、Discussions
-- **验收**：仓库公开，CI 绿，README 可引导新用户跑通
+- Add `README.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, `LICENSE`, `CITATION.cff`
+- Clean up sensitive/temporary files and confirm `.gitignore` is correct
+- Enable Issues and Discussions
+- **Acceptance**: the repository is public, CI is green, and the README guides new users to a successful run
 
-### P3-T7 · HuggingFace 数据集发布
+### P3-T7 · HuggingFace Dataset Release
 
-- 上传预处理产物与划分索引
-- 编写数据集卡片（沿用 `datacard.md`，含允许/禁止用途）
-- **验收**：可通过 `datasets.load_dataset` 加载
+- Upload the preprocessed artifacts and split indices
+- Write the dataset card (reusing `datacard.md`, including permitted/prohibited uses)
+- **Acceptance**: loadable via `datasets.load_dataset`
 
-### P3-T8 · 模型权重托管
+### P3-T8 · Model Weight Hosting
 
-- 各基线模型权重上传 HuggingFace Models
-- 附训练配置与算力报告
-- **验收**：权重可下载并复现指标
+- Upload each baseline model's weights to HuggingFace Models
+- Attach the training configuration and compute report
+- **Acceptance**: weights are downloadable and reproduce the metrics
 
-### P3-T9 · 文档站点上线
+### P3-T9 · Documentation Site Online
 
-- VitePress 站点构建并部署（GitHub Pages / 自托管）
-- 内容与代码版本同步
-- **验收**：站点可公开访问，导航完整
+- Build and deploy the VitePress site (GitHub Pages / self-hosted)
+- Keep content in sync with the code version
+- **Acceptance**: the site is publicly accessible with complete navigation
 
-### P3-T10 · 提交规范与评测服务
+### P3-T10 · Submission Specification and Evaluation Service
 
-- 提供提交模板、校验脚本、排行榜提交入口
-- 明确收录标准（复现等级 ≥ L3）
-- **验收**：提交校验脚本可自动检查材料完整性
+- Provide the submission template, validation scripts, and leaderboard submission entry point
+- State the inclusion criteria clearly (reproduction level ≥ L3)
+- **Acceptance**: the submission validation script can automatically check the completeness of the material
 
-### P3-T11 · 社区推广启动（M5）
+### P3-T11 · Community Outreach Kickoff (M5)
 
-- 对接 WCA Results Team，建立正式沟通渠道
-- 在 SpeedSolving 论坛、Reddit r/Cubers、ML 社区发布
-- 定位为「服务于社区」的工具（选手分析表现、组织者优化轮次）
-- **验收**：至少建立 2 个有效社区渠道并获得反馈
+- Engage with the WCA Results Team and establish a formal communication channel
+- Post on the SpeedSolving forum, Reddit r/Cubers, and ML communities
+- Position it as a tool that "serves the community" (competitors analyzing their performance, organizers optimizing rounds)
+- **Acceptance**: at least 2 effective community channels established and feedback received
 
-## 4. 阶段交付物清单
+## 4. Phase Deliverables
 
-| 编号 | 交付物 | 对应任务 |
+| ID | Deliverable | Corresponding tasks |
 | --- | --- | --- |
-| D1 | WCA-Bench 数据集（HuggingFace） | P3-T7 |
-| D7 | 主论文（NeurIPS E&D） | P3-T2、P3-T5 |
-| D8 | 公开代码仓库 | P3-T6 |
-| — | 提交规范与评测脚本 | P3-T10 |
-| — | 在线文档站点 | P3-T9 |
+| D1 | WCA-Bench dataset (HuggingFace) | P3-T7 |
+| D7 | Main paper (NeurIPS E&D) | P3-T2, P3-T5 |
+| D8 | Public code repository | P3-T6 |
+| — | Submission specification and evaluation scripts | P3-T10 |
+| — | Online documentation site | P3-T9 |
 
-## 5. 阶段验收标准
+## 5. Phase Acceptance Criteria
 
-- [ ] 论文在截止日期前完成投稿（M4）
-- [ ] 仓库公开且含完整治理文件（LICENSE / CONTRIBUTING / CODE_OF_CONDUCT / CITATION）
-- [ ] 数据集可在 HuggingFace 直接加载，卡片信息完整
-- [ ] 模型权重可下载并复现指标（差异在容差内）
-- [ ] 文档站点公开可访问且导航完整
-- [ ] 提交校验脚本可自动检查提交材料
-- [ ] 至少建立 2 个有效社区渠道（M5）
+- [ ] The paper is submitted before the deadline (M4)
+- [ ] The repository is public and contains the complete governance files (LICENSE / CONTRIBUTING / CODE_OF_CONDUCT / CITATION)
+- [ ] The dataset can be loaded directly from HuggingFace, with a complete card
+- [ ] Model weights are downloadable and reproduce the metrics (within tolerance)
+- [ ] The documentation site is publicly accessible with complete navigation
+- [ ] The submission validation script can automatically check submission material
+- [ ] At least 2 effective community channels established (M5)
 
-## 6. 风险提示
+## 6. Risks
 
-| 风险 | 影响 | 缓解 |
+| Risk | Impact | Mitigation |
 | --- | --- | --- |
-| 投稿截止硬约束 | 错过窗口 | 提前 1 周冻结材料，预留缓冲 |
-| 复现性问题在评审暴露 | 影响接收 | P3-T3 独立第三人复现验证 |
-| 数据发布许可争议 | 发布受阻 | 提前确认 WCA 数据使用条款 |
-| 社区反应冷淡 | 影响力受限 | 提前对接 WCA Results Team |
+| Hard submission deadline | Missing the window | Freeze material one week early and reserve buffer |
+| Reproducibility problems exposed during review | Affects acceptance | An independent third party reproduces the results in P3-T3 |
+| Disputes over the data release license | Release blocked | Confirm the WCA data use terms in advance |
+| Lukewarm community response | Limited impact | Engage the WCA Results Team in advance |
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [阶段四：迭代与扩展 →](/plan/phase-4)
-- [发表策略 →](/plan/publication)
+- [Phase 4: Iteration and Expansion →](/plan/phase-4)
+- [Publication Strategy →](/plan/publication)

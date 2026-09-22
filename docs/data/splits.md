@@ -1,81 +1,81 @@
-# 数据划分策略
+# Data Splitting Strategy
 
-## 1. 原则：时间分割而非随机分割
+## 1. Principle: Temporal Splitting, Not Random Splitting
 
-WCA-Bench 采用**时间分割**而非随机分割，这是体育数据分析的基本原则：
+WCA-Bench adopts **temporal splitting** rather than random splitting, which is a basic principle of sports data analysis:
 
-- 随机分割会泄露未来信息（同一选手的相邻比赛高度相关）
-- 时间分割模拟真实部署场景（用过去预测未来）
-- 时间分割确保模型的泛化能力评估不受未来信息泄漏的影响
+- Random splitting leaks future information (adjacent competitions of the same competitor are highly correlated)
+- Temporal splitting simulates the real deployment scenario (using the past to predict the future)
+- Temporal splitting ensures that the assessment of a model's generalization ability is not affected by future information leakage
 
-## 2. 划分方案
+## 2. Splitting Scheme
 
-| 集合 | 时间范围 | 用途 |
+| Set | Time range | Purpose |
 | --- | --- | --- |
-| **训练集** | 2003 年 – 2022 年 | 模型训练与特征统计量估计 |
-| **验证集** | 2023 年 – 2024 年 | 超参调优与模型选择 |
-| **测试集** | 2025 年 – 2026 年 | 最终评估（固定窗口） |
+| **Training set** | 2003 – 2022 | Model training and estimation of feature statistics |
+| **Validation set** | 2023 – 2024 | Hyperparameter tuning and model selection |
+| **Test set** | 2025 – 2026 | Final evaluation (fixed window) |
 
-同时，为每个选手保留其**完整的参赛历史序列**，支持纵向追踪分析。
+At the same time, each competitor's **complete sequence of competition history** is preserved to support longitudinal analysis.
 
-## 3. 时间分层子集
+## 3. Temporal Strata
 
-测试集进一步切分为三个子集，评估模型的时间鲁棒性：
+The test set is further divided into three subsets to evaluate the temporal robustness of models:
 
-| 子集 | 时间窗口 |
+| Subset | Time window |
 | --- | --- |
-| Test-A | 2025 年上半年 |
-| Test-B | 2025 年下半年 |
-| Test-C | 2026 年上半年 |
+| Test-A | First half of 2025 |
+| Test-B | Second half of 2025 |
+| Test-C | First half of 2026 |
 
-## 4. 滚动窗口评估
+## 4. Rolling Window Evaluation
 
-WCA-Bench 采用**滚动窗口评估**协议，模拟真实部署场景：
+WCA-Bench adopts a **rolling window evaluation** protocol that simulates the real deployment scenario:
 
 ```text
-对测试集中每一场比赛 c：
-    可用数据 = { 所有 competition_date < c.date 的记录 }
-    冻结统计量 = 从训练期计算的历史均值 / 世界纪录 / 项目基准
-    预测目标 = c 中选手在该轮次的 best / average / rank / DNF
+For every competition c in the test set:
+    Available data = { all records with competition_date < c.date }
+    Frozen statistics = historical means / world records / event baselines computed on the training period
+    Prediction targets = the competitor's best / average / rank / DNF in that round of c
 ```
 
-关键约束：
+Key constraints:
 
-- **不进行任何形式的未来信息泄漏**
-- 基准统计量在测试窗口期间**冻结**，不随测试集推进而更新
-- 参考了体育数据分析中防泄漏的最佳实践
+- **No form of future information leakage**
+- Benchmark statistics are **frozen** during the test window and do not update as the test set advances
+- Follows best practice for leakage prevention in sports data analysis
 
-## 5. 划分产物
+## 5. Split Artifacts
 
 ```text
 data/splits/
-├── train_ids.parquet      # 训练集结果行 ID
-├── val_ids.parquet        # 验证集结果行 ID
-├── test_ids.parquet       # 测试集结果行 ID
-├── test_time_slices.json  # Test-A / B / C 的时间边界
-├── person_history.parquet # 每名选手按时间排序的参赛序列
-└── frozen_stats.parquet   # 冻结的基准统计量（训练期计算）
+├── train_ids.parquet      # Result row IDs of the training set
+├── val_ids.parquet        # Result row IDs of the validation set
+├── test_ids.parquet       # Result row IDs of the test set
+├── test_time_slices.json  # Temporal boundaries of Test-A / B / C
+├── person_history.parquet # Each competitor's time-ordered sequence of participations
+└── frozen_stats.parquet   # Frozen benchmark statistics (computed on the training period)
 ```
 
-## 6. 划分的边界情形
+## 6. Boundary Cases
 
-| 情形 | 处理 |
+| Case | Handling |
 | --- | --- |
-| 选手首次参赛落在测试期 | 标记为「冷启动」，单独报告（无历史可依） |
-| 项目首次举办落在测试期 | 从项目分层的可比样本中剔除，单独说明 |
-| 比赛跨年（如 2024-12-31 ~ 2025-01-02） | 以开始日期归类 |
-| 数据中存在未来修正（results 被更新） | 使用导出快照版本号固定，记录在数据卡中 |
+| A competitor's first appearance falls in the test period | Marked as "cold start" and reported separately (no history to rely on) |
+| An event's first edition falls in the test period | Removed from the comparable samples of the per-event stratum and described separately |
+| A competition spans the new year (e.g. 2024-12-31 ~ 2025-01-02) | Categorized by its start date |
+| Future revisions in the data (results are updated) | Pinned to the export snapshot version and recorded in the data card |
 
-## 7. 冻结测试集与扩展测试集
+## 7. Frozen Test Set and Extended Test Set
 
-由于 WCA 数据库持续更新，2026 年之后的比赛数据会不断加入：
+Because the WCA database keeps being updated, competition data from 2026 onward is continuously added:
 
-- **主排行榜**始终基于固定的 2025–2026 测试窗口
-- 新增数据作为「**扩展测试集（Extended Test Set）**」单独发布，另行报告
-- 这符合时间序列基准的惯例，保证排行榜的历史可比性
+- The **main leaderboard** is always based on the fixed 2025–2026 test window
+- Newly added data is released separately as an "**Extended Test Set**" and reported separately
+- This follows the convention of time-series benchmarks and preserves the historical comparability of the leaderboard
 
-## 8. 后续阅读
+## 8. Further Reading
 
-- [评估协议与分层 →](/evaluation/protocol)
-- [复现性要求 →](/evaluation/reproducibility)
-- [风险与缓解 · 数据风险 →](/plan/risks)
+- [Evaluation Protocol and Stratification →](/evaluation/protocol)
+- [Reproducibility Requirements →](/evaluation/reproducibility)
+- [Risks and Mitigation · Data Risks →](/plan/risks)

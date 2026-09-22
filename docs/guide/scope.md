@@ -1,76 +1,76 @@
-# 项目范围界定
+# Project Scope
 
-清晰的边界是基准可信度的前提。本章明确 WCA-Bench **做什么**与**不做什么**。
+Clear boundaries are a prerequisite for the credibility of a benchmark. This chapter specifies what WCA-Bench **does** and **does not** do.
 
-## 1. 范围内（In Scope）
+## 1. In Scope
 
-### 1.1 数据资产
+### 1.1 Data Assets
 
-- WCA 官方公开数据库导出的全部核心表（persons、competitions、results、result_attempts、scrambles、events、formats、round_types、countries、continents、championships）
-- 预处理后的列式存储产物（Parquet）
-- 时间分割索引（train / val / test）与选手纵向序列
+- All core tables from the official public WCA database export (persons, competitions, results, result_attempts, scrambles, events, formats, round_types, countries, continents, championships)
+- Preprocessed columnar artifacts (Parquet)
+- Temporal split indices (train / val / test) and per-competitor longitudinal sequences
 
-### 1.2 任务套件
+### 1.2 Task Suite
 
-五个核心任务，覆盖从基础预测到高级推断的连续难度谱：
+Five core tasks spanning a continuous difficulty spectrum from basic prediction to advanced inference:
 
-| 编号 | 任务 | 类型 |
+| ID | Task | Type |
 | --- | --- | --- |
-| T1 | 成绩预测 | 回归 |
-| T2 | 名次预测 | 排序 |
-| T3 | DNF 预测 | 分类（不平衡） |
-| T4 | 人类极限估计 | 极值 / 外推 |
-| T5 | 技能迁移分析 | 因果推断 |
+| T1 | Result Prediction | Regression |
+| T2 | Placement Prediction | Ranking |
+| T3 | DNF Prediction | Classification (imbalanced) |
+| T4 | Human Limit Estimation | Extreme value / extrapolation |
+| T5 | Skill Transfer Analysis | Causal inference |
 
-### 1.3 评估与工程
+### 1.3 Evaluation and Engineering
 
-- 防泄漏评估协议（时间分割 + 滚动窗口）
-- 四维分层评估（项目 / 选手水平 / 时间 / 地区）
-- 统计显著性检验与效应量报告
-- 基线模型实现与统一实验配置管理
-- 数据卡、任务说明文档、复现性清单
+- A leakage-free evaluation protocol (temporal splitting + rolling window)
+- Four-dimensional stratified evaluation (event / competitor skill level / time / region)
+- Statistical significance testing and effect size reporting
+- Baseline implementations and unified experiment configuration management
+- Data card, task documentation, and reproducibility checklist
 
-## 2. 范围外（Out of Scope）
+## 2. Out of Scope
 
-| 事项 | 原因 |
+| Item | Reason |
 | --- | --- |
-| 魔方求解 / 步数优化 | 属于 CubeBench 系列范畴，与本基准目标不同 |
-| LLM 智能体空间推理评测 | 同上，评估对象为统计/ML/DL 模型 |
-| 提出新的 SOTA 预测模型 | 本项目定位为基准，不追求模型领先 |
-| 实时比赛直播预测系统 | 属于工程产品，非基准范畴 |
-| 选手个人隐私数据的推断 | 涉及伦理风险，明确禁止 |
-| 赌博 / 博彩用途的预测服务 | 在数据卡中明令禁止 |
-| 自建数据采集（爬虫抓取非公开数据） | 仅使用 WCA 官方公开导出 |
+| Cube solving / move-count optimization | Belongs to the CubeBench family and has objectives different from this benchmark |
+| Spatial reasoning evaluation of LLM agents | See above; the evaluated subjects here are statistical/ML/DL models |
+| Proposing a new state-of-the-art prediction model | This project is positioned as a benchmark and does not chase model leadership |
+| Real-time live-competition prediction systems | An engineering product, outside the benchmark's remit |
+| Inference about competitors' personal private data | Involves ethical risk and is explicitly prohibited |
+| Prediction services for gambling / betting | Explicitly prohibited in the data card |
+| Self-built data collection (crawling non-public data) | Only the official public WCA export is used |
 
-## 3. 边界假设
+## 3. Boundary Assumptions
 
-1. **WCA 数据持续更新。** 测试集固定在 2025–2026 年，主排行榜始终基于该固定窗口；后续新增数据作为「扩展测试集」单独发布。
-2. **规则稳定性。** 假定 WCA 竞赛规则在评估窗口内不发生破坏性变更；若发生变更，在版本说明中记录并单独标注。
-3. **语言与地区。** 基准以英文为主发布，文档提供中英双语；国家/地区信息以 WCA 官方字段为准。
-4. **法律与许可。** 代码以 Apache-2.0 许可证发布；数据遵循 WCA 数据的允许使用条款，仅做聚合与统计用途。
+1. **WCA data keeps being updated.** The test set is fixed to 2025–2026, and the main leaderboard is always based on that fixed window; data added later is released separately as an "Extended Test Set".
+2. **Rule stability.** WCA competition regulations are assumed not to undergo breaking changes within the evaluation window; if they do, the change is recorded in the release notes and flagged separately.
+3. **Language and regions.** The benchmark is released primarily in English, with bilingual (English/Chinese) documentation; country/region information follows the official WCA fields.
+4. **Legal and licensing.** The code is released under the Apache-2.0 License; the data follows the WCA's acceptable use terms and is used for aggregate and statistical purposes only.
 
-## 4. 明确禁止的使用场景
+## 4. Forbidden Use Cases
 
-> 以下用途**违反**本项目的数据卡约定：
+> The following uses **violate** this project's data card terms:
 
-- 以任何形式用于赌博、博彩或投注预测
-- 用于对选手个体的歧视性筛选、画像或排名羞辱
-- 训练用于冒充官方机构或伪造赛事结果的内容
-- 在未去除个人标识的前提下进行个体级数据的二次分发
+- Any form of use for gambling, betting, or wager prediction
+- Use for discriminatory screening, profiling, or ranking shaming of individual competitors
+- Training content intended to impersonate official institutions or forge competition results
+- Redistribution of individual-level data without removing personal identifiers
 
-## 5. 交付边界
+## 5. Delivery Boundaries
 
-| 类别 | 交付形态 |
+| Category | Delivery form |
 | --- | --- |
-| 代码 | GitHub 公开仓库（Apache-2.0） |
-| 数据 | HuggingFace Datasets（预处理产物 + 划分索引） |
-| 权重 | HuggingFace Models（基线模型权重） |
-| 文档 | 本 VitePress 站点（计划书 + 技术方案 + 开发计划） |
-| 论文 | NeurIPS 2026 Evaluations & Datasets Track 投稿 |
-| 社区 | 挑战赛与排行榜 |
+| Code | Public GitHub repository (Apache-2.0) |
+| Data | HuggingFace Datasets (preprocessed artifacts + split indices) |
+| Weights | HuggingFace Models (baseline model weights) |
+| Documentation | This VitePress site (proposal + technical design + development plan) |
+| Paper | Submission to the NeurIPS 2026 Evaluations & Datasets Track |
+| Community | Challenge and leaderboard |
 
-## 6. 相关章节
+## 6. Related Sections
 
-- [技术方案概述 →](/guide/architecture)
-- [数据来源与表结构 →](/data/sources)
-- [评估协议与分层 →](/evaluation/protocol)
+- [Technical Approach Overview →](/guide/architecture)
+- [Data Sources and Table Schemas →](/data/sources)
+- [Evaluation Protocol and Stratification →](/evaluation/protocol)

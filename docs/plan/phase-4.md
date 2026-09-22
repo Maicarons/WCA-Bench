@@ -1,124 +1,124 @@
-# 阶段四：迭代与扩展（第 10–12 月）
+# Phase 4: Iteration and Expansion (Months 10–12)
 
-> **目标**：基于社区反馈迭代基准，扩展方法覆盖，组织挑战赛，规划期刊版本。
-> **出口里程碑**：[M6 社区挑战赛](/plan/roadmap#m6-·-社区挑战赛-第-12-月)
+> **Objective**: Iterate on the benchmark based on community feedback, expand method coverage, organize a challenge, and plan a journal version.
+> **Exit milestone**: [M6 Community Challenge](/plan/roadmap#m6-·-community-challenge-month-12)
 
-## 1. 阶段目标
+## 1. Phase Objectives
 
-- 根据社区反馈优化任务定义
-- 添加更多基线方法（图神经网络、因果推断方法）
-- 组织 WCA-Bench 挑战赛
-- 准备期刊扩展版本
+- Refine the task definitions based on community feedback
+- Add more baseline methods (graph neural networks, causal inference methods)
+- Organize the WCA-Bench challenge
+- Prepare a journal extension
 
-## 2. 任务分解（WBS）
+## 2. Work Breakdown (WBS)
 
-| 任务 ID | 任务名称 | 周次 | 前置依赖 | 交付物 |
+| Task ID | Task name | Weeks | Prerequisites | Deliverables |
 | --- | --- | --- | --- | --- |
-| P4-T1 | 社区反馈收集与归并 | W37–W38 | M5 | 反馈清单与优先级 |
-| P4-T2 | 任务定义迭代（版本化） | W38–W40 | P4-T1 | v1.1 任务定义与变更日志 |
-| P4-T3 | 扩展测试集发布 | W38–W39 | P4-T1 | Extended Test Set（2026H2+） |
-| P4-T4 | GNN 基线增强 | W39–W42 | P4-T2 | 图模型基线与结果 |
-| P4-T5 | 因果方法基线增强 | W40–W43 | P4-T2 | IV / 因果森林完整实现 |
-| P4-T6 | 贝叶斯方法基线增强 | W40–W43 | P4-T2 | 分层贝叶斯 / EVT 基线 |
-| P4-T7 | 挑战赛平台搭建（M6） | W43–W46 | P4-T2、P4-T3 | Kaggle 竞赛页 |
-| P4-T8 | 挑战赛运营与结果分析 | W46–W48 | P4-T7 | 结果分析报告 |
-| P4-T9 | 期刊扩展版本规划 | W45–W48 | P4-T8 | 期刊论文提案 |
-| P4-T10 | 长期维护机制 | W47–W48 | M6 | 维护者手册、路线图 v2 |
+| P4-T1 | Community feedback collection and triage | W37–W38 | M5 | Feedback list with priorities |
+| P4-T2 | Task definition iteration (versioned) | W38–W40 | P4-T1 | v1.1 task definitions and changelog |
+| P4-T3 | Extended test set release | W38–W39 | P4-T1 | Extended Test Set (2026 H2 and later) |
+| P4-T4 | GNN baseline enhancement | W39–W42 | P4-T2 | Graph model baselines and results |
+| P4-T5 | Causal method baseline enhancement | W40–W43 | P4-T2 | Complete IV / causal forest implementations |
+| P4-T6 | Bayesian method baseline enhancement | W40–W43 | P4-T2 | Hierarchical Bayesian / EVT baselines |
+| P4-T7 | Challenge platform setup (M6) | W43–W46 | P4-T2, P4-T3 | Kaggle competition page |
+| P4-T8 | Challenge operation and results analysis | W46–W48 | P4-T7 | Results analysis report |
+| P4-T9 | Journal extension planning | W45–W48 | P4-T8 | Journal paper proposal |
+| P4-T10 | Long-term maintenance mechanism | W47–W48 | M6 | Maintainer handbook, roadmap v2 |
 
-> 周次接续阶段三（W37 = 项目第 37 周），阶段共 12 周（W37–W48）。
+> Weeks continue from Phase 3 (W37 = the project's 37th week); the phase lasts 12 weeks (W37–W48).
 
-## 3. 任务详细说明
+## 3. Detailed Task Descriptions
 
-### P4-T1 · 社区反馈收集与归并
+### P4-T1 · Community Feedback Collection and Triage
 
-- 汇总 GitHub Issues、讨论区、社区渠道反馈
-- 分类：任务定义 / 评估协议 / 数据质量 / 工具易用性
-- 排定优先级（影响面 × 实现成本）
-- **验收**：形成可执行的反馈清单
+- Aggregate feedback from GitHub Issues, discussions, and community channels
+- Classify: task definitions / evaluation protocol / data quality / tooling usability
+- Prioritize (impact × implementation cost)
+- **Acceptance**: an actionable feedback list is produced
 
-### P4-T2 · 任务定义迭代（版本化）
+### P4-T2 · Task Definition Iteration (Versioned)
 
-- 遵循**版本化变更**原则：不破坏既有排行榜可比性
-- 变更类型：
- | 类型 | 处理 |
+- Follow the principle of **versioned changes**: do not break the comparability of the existing leaderboard
+- Change types:
+ | Type | Handling |
  | --- | --- |
- | 澄清性（不改语义） | 直接更新，patch 版本 |
- | 增补（新增指标/子集） | minor 版本，主指标不变 |
- | 破坏性（改输入输出） | major 版本，另立排行榜 |
-- **验收**：v1.1 定义 + 变更日志发布
+ | Clarifying (no semantic change) | Update directly, patch version |
+ | Additive (new metrics/subsets) | Minor version; primary metrics unchanged |
+ | Breaking (changes inputs/outputs) | Major version; a separate leaderboard |
+- **Acceptance**: v1.1 definitions + changelog published
 
-### P4-T3 · 扩展测试集发布
+### P4-T3 · Extended Test Set Release
 
-- 将 2026 下半年及之后数据作为 **Extended Test Set**
-- 主排行榜仍基于固定测试窗口，扩展集单独报告
-- **验收**：扩展集可通过同一接口加载
+- Treat data from the second half of 2026 onward as the **Extended Test Set**
+- The main leaderboard remains based on the fixed test window; the extended set is reported separately
+- **Acceptance**: the extended set is loadable through the same interface
 
-### P4-T4 ~ P4-T6 · 方法基线增强
+### P4-T4 ~ P4-T6 · Method Baseline Enhancement
 
-| 任务 | 新增基线 | 目标 |
+| Task | New baselines | Goal |
 | --- | --- | --- |
-| P4-T4 | 选手–比赛异构图 GNN | 提升 T2 名次预测的交互建模 |
-| P4-T5 | 工具变量、因果森林完整实现 | 强化 T5 因果识别 |
-| P4-T6 | 分层贝叶斯、贝叶斯 EVT | 强化 T3/T4 的不确定性建模 |
+| P4-T4 | Competitor–competition heterogeneous GNN | Improve interaction modeling for T2 placement prediction |
+| P4-T5 | Complete implementations of instrumental variables and causal forest | Strengthen causal identification for T5 |
+| P4-T6 | Hierarchical Bayesian, Bayesian EVT | Strengthen uncertainty modeling for T3/T4 |
 
-- **验收**：新基线纳入排行榜并给出与既有基线的显著性对比
+- **Acceptance**: the new baselines are added to the leaderboard with significance comparisons against existing baselines
 
-### P4-T7 · 挑战赛平台搭建（M6）
+### P4-T7 · Challenge Platform Setup (M6)
 
-- 在 Kaggle 上线竞赛（建议以 T1 或 T2 为主赛道）
-- 提供基线 starter kit、评测脚本、提交格式
-- 明确规则与伦理约束（禁止赌博用途）
-- **验收**：竞赛页上线且可提交
+- Launch a competition on Kaggle (suggested main track: T1 or T2)
+- Provide a baseline starter kit, evaluation scripts, and the submission format
+- State the rules and ethical constraints clearly (gambling use prohibited)
+- **Acceptance**: the competition page is live and accepts submissions
 
-### P4-T8 · 挑战赛运营与结果分析
+### P4-T8 · Challenge Operation and Results Analysis
 
-- 监控排行榜、答疑、防止测试集泄漏
-- 赛后产出分析报告：获胜方法特征、方法学洞察
-- **验收**：分析报告发布
+- Monitor the leaderboard, answer questions, and prevent test-set leakage
+- Produce a post-competition analysis report: characteristics of winning methods and methodological insights
+- **Acceptance**: the analysis report is published
 
-### P4-T9 · 期刊扩展版本规划
+### P4-T9 · Journal Extension Planning
 
-- 目标期刊：*Journal of Quantitative Analysis in Sports* / *Machine Learning*
-- 内容：在 WCA-Bench 上系统评估传统统计与深度学习方法的性能差异
-- **验收**：期刊论文提案与分工
+- Target journals: *Journal of Quantitative Analysis in Sports* / *Machine Learning*
+- Content: systematically evaluate the performance gap between classical statistical methods and deep learning methods on WCA-Bench
+- **Acceptance**: journal paper proposal and task assignments
 
-### P4-T10 · 长期维护机制
+### P4-T10 · Long-Term Maintenance Mechanism
 
-- 维护者手册（发布流程、版本策略、评审标准）
-- 路线图 v2（新任务设想：赛程优化、晋级规则设计等）
-- **验收**：手册与路线图发布
+- Maintainer handbook (release process, versioning strategy, review standards)
+- Roadmap v2 (new task ideas: schedule optimization, advancement rule design, etc.)
+- **Acceptance**: the handbook and roadmap are published
 
-## 4. 阶段交付物清单
+## 4. Phase Deliverables
 
-| 编号 | 交付物 | 对应任务 |
+| ID | Deliverable | Corresponding tasks |
 | --- | --- | --- |
-| D9 | 挑战赛与结果分析 | P4-T7、P4-T8 |
-| — | 任务定义 v1.1 + 变更日志 | P4-T2 |
-| — | 扩展测试集 | P4-T3 |
-| — | 新增方法基线 | P4-T4 ~ P4-T6 |
-| — | 维护者手册与路线图 v2 | P4-T10 |
+| D9 | Challenge and results analysis | P4-T7, P4-T8 |
+| — | Task definition v1.1 + changelog | P4-T2 |
+| — | Extended test set | P4-T3 |
+| — | Additional method baselines | P4-T4 ~ P4-T6 |
+| — | Maintainer handbook and roadmap v2 | P4-T10 |
 
-## 5. 阶段验收标准
+## 5. Phase Acceptance Criteria
 
-- [ ] 社区反馈清单中高优先级项完成 ≥ 80%
-- [ ] 任务定义迭代遵循版本化原则，未破坏既有排行榜
-- [ ] 扩展测试集可加载且单独报告结果
-- [ ] 新增 ≥ 3 类方法基线并纳入排行榜
-- [ ] 挑战赛上线并有参赛队伍（M6）
-- [ ] 赛后分析报告发布
-- [ ] 期刊论文提案完成
+- [ ] ≥ 80% of the high-priority items in the community feedback list are completed
+- [ ] Task definition iteration follows the versioning principle and does not break the existing leaderboard
+- [ ] The extended test set is loadable and results are reported separately
+- [ ] ≥ 3 new classes of method baselines are added to the leaderboard
+- [ ] The challenge is live with participating teams (M6)
+- [ ] The post-competition analysis report is published
+- [ ] The journal paper proposal is complete
 
-## 6. 风险提示
+## 6. Risks
 
-| 风险 | 影响 | 缓解 |
+| Risk | Impact | Mitigation |
 | --- | --- | --- |
-| 反馈冲突 | 迭代方向摇摆 | 以「是否提升基准科学价值」为判据 |
-| 挑战赛测试集泄漏 | 结果失真 | 隐藏测试标签 + 提交频次限制 |
-| 破坏性变更 | 排行榜断裂 | 严格版本化，major 变更另立榜单 |
-| 维护者精力不足 | 项目停滞 | 建立多人维护机制与手册 |
+| Conflicting feedback | Iteration direction wavers | Use "does it increase the scientific value of the benchmark?" as the criterion |
+| Test-set leakage in the challenge | Distorted results | Hide test labels + limit submission frequency |
+| Breaking changes | Leaderboard discontinuity | Strict versioning; major changes get a separate leaderboard |
+| Insufficient maintainer capacity | Project stalls | Establish a multi-maintainer mechanism and a handbook |
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [依赖关系 →](/plan/dependencies)
-- [验收标准 →](/plan/acceptance)
-- [风险与缓解 →](/plan/risks)
+- [Dependencies →](/plan/dependencies)
+- [Acceptance Criteria →](/plan/acceptance)
+- [Risks and Mitigation →](/plan/risks)

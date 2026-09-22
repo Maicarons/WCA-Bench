@@ -1,108 +1,108 @@
-# 阶段划分与里程碑
+# Phase Breakdown and Milestones
 
-## 1. 总体路线图
+## 1. Overall Roadmap
 
-| 阶段 | 时间 | 主题 | 核心目标 | 出口里程碑 |
+| Phase | Time | Theme | Core objective | Exit milestone |
 | --- | --- | --- | --- | --- |
-| 阶段一 | 第 1–3 月 | 数据基础设施 | 数据可复现地产出 | **M1** 数据管线完成 |
-| 阶段二 | 第 4–6 月 | 任务定义与基线实现 | 五任务可评估、有基线 | **M2 / M3** 基线完成 |
-| 阶段三 | 第 7–9 月 | 基准发布与社区建设 | 论文投稿 + 公开发布 | **M4 / M5** 投稿与发布 |
-| 阶段四 | 第 10–12 月 | 迭代与扩展 | 社区反馈闭环 + 挑战赛 | **M6** 挑战赛 |
+| Phase 1 | Months 1–3 | Data infrastructure | Reproducible data production | **M1** Data pipeline complete |
+| Phase 2 | Months 4–6 | Task definitions and baseline implementation | Five tasks evaluable with baselines | **M2 / M3** Baselines complete |
+| Phase 3 | Months 7–9 | Benchmark release and community building | Paper submission + public release | **M4 / M5** Submission and release |
+| Phase 4 | Months 10–12 | Iteration and expansion | Community feedback loop + challenge | **M6** Challenge |
 
 ```text
-月次  1   2   3   4   5   6   7   8   9   10  11  12
+Month  1   2   3   4   5   6   7   8   9   10  11  12
       ├───────────┤
-      阶段一 数据基础设施
+      Phase 1 Data infrastructure
                   ├───────────┤
-                  阶段二 任务定义与基线
+                  Phase 2 Task definition and baselines
                               ├───────────┤
-                              阶段三 基准发布
+                              Phase 3 Benchmark release
                                           ├───────────┤
-                                          阶段四 迭代与扩展
-里程碑     M1      M2  M3          M4  M5              M6
+                                          Phase 4 Iteration and expansion
+Milestones M1      M2  M3          M4  M5              M6
 ```
 
-## 2. 关键里程碑
+## 2. Key Milestones
 
-| 里程碑 | 时间 | 名称 | 交付物 | 验收要点 |
+| Milestone | Time | Name | Deliverables | Acceptance highlights |
 | --- | --- | --- | --- | --- |
-| **M1** | 第 3 月 | 数据管线完成 | 预处理数据、加载器、数据卡 | 单命令可复现，质量检查全通过 |
-| **M2** | 第 5 月 | 任务定义冻结 | 五任务定义文档、评估协议 | 五要素齐全，评审通过 |
-| **M3** | 第 6 月 | 基线实验完成 | 五任务基线结果与排行榜 | 全基线可运行，Report 结构完整 |
-| **M4** | 第 7 月 | NeurIPS 投稿 | 论文初稿 + 代码 + 数据 | 摘要截止前完成投稿材料 |
-| **M5** | 第 9 月 | 公开发布 | GitHub 仓库 + HuggingFace 数据集 | 仓库公开，数据集可下载，CI 绿 |
-| **M6** | 第 12 月 | 社区挑战赛 | Kaggle 竞赛 + 结果分析 | 竞赛上线，有参赛队伍，产出分析报告 |
+| **M1** | Month 3 | Data pipeline complete | Preprocessed data, loader, data card | Reproducible with a single command; all quality checks pass |
+| **M2** | Month 5 | Task definitions frozen | Five task definition documents, evaluation protocol | All five elements present; review passed |
+| **M3** | Month 6 | Baseline experiments complete | Baseline results and leaderboard for five tasks | All baselines runnable; complete Report structure |
+| **M4** | Month 7 | NeurIPS submission | Paper draft + code + data | Submission material complete before the abstract deadline |
+| **M5** | Month 9 | Public release | GitHub repository + HuggingFace dataset | Repository public, dataset downloadable, CI green |
+| **M6** | Month 12 | Community challenge | Kaggle competition + results analysis | Competition live, teams participating, analysis report produced |
 
-## 3. 里程碑详细定义
+## 3. Detailed Milestone Definitions
 
-### M1 · 数据管线完成（第 3 月）
+### M1 · Data Pipeline Complete (Month 3)
 
-- **前置条件**：WCA 导出获取、开发环境就绪
-- **交付内容**：
-  - `data/processed/*.parquet` 全量产物
-  - `src/wca_bench/data/` 完整模块（loader / decoders / features / splits）
-  - `datacard.md` 数据卡
-  - `scripts/build_dataset.py` 一键构建
-- **验收标准**：见[验收标准 · A1](/plan/acceptance#a1-数据管线)
+- **Prerequisites**: WCA export obtained, development environment ready
+- **Deliverables**:
+  - Full `data/processed/*.parquet` artifacts
+  - The complete `src/wca_bench/data/` module (loader / decoders / features / splits)
+  - The `datacard.md` data card
+  - `scripts/build_dataset.py` one-command build
+- **Acceptance criteria**: see [Acceptance Criteria · A1](/plan/acceptance#a1-data-pipeline)
 
-### M2 · 任务定义冻结（第 5 月）
+### M2 · Task Definition Frozen (Month 5)
 
-- **前置条件**：M1 完成
-- **交付内容**：五任务定义（输入/输出/指标/基线/挑战）、评估协议实现、硬样本子集定义
-- **验收标准**：见[验收标准 · A2](/plan/acceptance#a2-任务定义)
+- **Prerequisites**: M1 complete
+- **Deliverables**: five task definitions (inputs/outputs/metrics/baselines/challenges), evaluation protocol implementation, hard sample subset definitions
+- **Acceptance criteria**: see [Acceptance Criteria · A2](/plan/acceptance#a2-task-definition)
 
-### M3 · 基线实验完成（第 6 月）
+### M3 · Baseline Experiments Complete (Month 6)
 
-- **前置条件**：M2 完成
-- **交付内容**：
-  - 每任务 ≥ 3–4 个基线（共 ≥ 18 个）
-  - 初始排行榜
-  - 实验配置与结果归档
-- **验收标准**：见[验收标准 · A3](/plan/acceptance#a3-基线实现)
+- **Prerequisites**: M2 complete
+- **Deliverables**:
+  - ≥ 3–4 baselines per task (≥ 18 in total)
+  - An initial leaderboard
+  - Experiment configurations and archived results
+- **Acceptance criteria**: see [Acceptance Criteria · A3](/plan/acceptance#a3-baseline-implementation)
 
-### M4 · NeurIPS 投稿（第 7 月）
+### M4 · NeurIPS Submission (Month 7)
 
-- **前置条件**：M3 完成
-- **交付内容**：论文初稿、附录、复现性材料包
-- **风险**：投稿时间窗口硬约束，需提前对齐
+- **Prerequisites**: M3 complete
+- **Deliverables**: paper draft, appendix, reproducibility package
+- **Risk**: the submission window is a hard constraint and must be aligned in advance
 
-### M5 · 公开发布（第 9 月）
+### M5 · Public Release (Month 9)
 
-- **前置条件**：M4 完成
-- **交付内容**：
-  - GitHub 公开仓库（Apache-2.0）
-  - HuggingFace 数据集与模型权重
-  - 文档站点上线
-- **验收标准**：见[验收标准 · A4](/plan/acceptance#a4-发布)
+- **Prerequisites**: M4 complete
+- **Deliverables**:
+  - Public GitHub repository (Apache-2.0)
+  - HuggingFace dataset and model weights
+  - Documentation site online
+- **Acceptance criteria**: see [Acceptance Criteria · A4](/plan/acceptance#a4-release)
 
-### M6 · 社区挑战赛（第 12 月）
+### M6 · Community Challenge (Month 12)
 
-- **前置条件**：M5 完成 + 社区反馈收集
-- **交付内容**：Kaggle 竞赛、结果分析报告、期刊扩展版本规划
+- **Prerequisites**: M5 complete + community feedback collected
+- **Deliverables**: Kaggle competition, results analysis report, journal extension plan
 
-## 4. 阶段出口准则
+## 4. Phase Exit Criteria
 
-每个阶段结束必须满足：
+Every phase must end with:
 
-- [ ] 该阶段全部任务达到「已完成」状态
-- [ ] 交付物已归档并可通过验收
-- [ ] 文档已同步更新
-- [ ] CI 全绿
-- [ ] 里程碑评审通过
+- [ ] All tasks of the phase in "done" state
+- [ ] Deliverables archived and passed acceptance
+- [ ] Documentation updated
+- [ ] CI fully green
+- [ ] Milestone review passed
 
-## 5. 时间缓冲与调整
+## 5. Time Buffers and Adjustments
 
-| 阶段 | 计划工期 | 缓冲 | 说明 |
+| Phase | Planned duration | Buffer | Notes |
 | --- | --- | --- | --- |
-| 阶段一 | 3 月 | 2 周 | 数据解码与质量检查是高风险点 |
-| 阶段二 | 3 月 | 2 周 | 序列模型与 GNN 训练可能超时 |
-| 阶段三 | 3 月 | 1 周 | 投稿窗口固定，缓冲有限 |
-| 阶段四 | 3 月 | 3 周 | 依赖社区反馈，不确定性高 |
+| Phase 1 | 3 months | 2 weeks | Data decoding and quality checks are the high-risk points |
+| Phase 2 | 3 months | 2 weeks | Sequence models and GNN training may overrun |
+| Phase 3 | 3 months | 1 week | The submission window is fixed, so the buffer is limited |
+| Phase 4 | 3 months | 3 weeks | Depends on community feedback; high uncertainty |
 
-## 6. 后续阅读
+## 6. Further Reading
 
-- [阶段一：数据基础设施 →](/plan/phase-1)
-- [阶段二：任务定义与基线 →](/plan/phase-2)
-- [阶段三：基准发布 →](/plan/phase-3)
-- [阶段四：迭代与扩展 →](/plan/phase-4)
-- [依赖关系 →](/plan/dependencies)
+- [Phase 1: Data Infrastructure →](/plan/phase-1)
+- [Phase 2: Task Definition and Baselines →](/plan/phase-2)
+- [Phase 3: Benchmark Release →](/plan/phase-3)
+- [Phase 4: Iteration and Expansion →](/plan/phase-4)
+- [Dependencies →](/plan/dependencies)

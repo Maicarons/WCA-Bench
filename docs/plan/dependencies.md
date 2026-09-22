@@ -1,68 +1,68 @@
-# 依赖关系
+# Dependencies
 
-本章给出任务间的前置依赖、关键路径与外部依赖，用于排期与风险识别。
+This chapter presents the prerequisites between tasks, the critical path, and external dependencies, for scheduling and risk identification.
 
-## 1. 依赖关系总图
+## 1. Dependency Overview
 
 ```text
-P1-T1 脚手架
+P1-T1 Scaffolding
    │
-P1-T2 数据获取
+P1-T2 Data acquisition
    │
-P1-T3 成绩解码 ──► P1-T5 轮次归一化 ──► P1-T6 特征工程
+P1-T3 Result decoding ──► P1-T5 Round normalization ──► P1-T6 Feature engineering
    │                                        │
-P1-T4 打乱规范化                            ▼
-                                        P1-T7 时间分割
+P1-T4 Scramble normalization                ▼
+                                        P1-T7 Temporal splitting
                                             │
                                             ▼
-                                        P1-T8 Parquet 导出
+                                        P1-T8 Parquet export
                                             │
                                             ▼
-                                        P1-T9 数据加载器 ──► M1
+                                        P1-T9 Data loader ──► M1
                                             │
                     ┌───────────────────────┘
                     ▼
-              P2-T1 Task 接口 ──► P2-T2 指标库 ──► P2-T3 滚动协议
+              P2-T1 Task interface ──► P2-T2 Metrics library ──► P2-T3 Rolling protocol
                                                       │
                                           ┌───────────┼───────────┐
                                           ▼           ▼           ▼
-                                      P2-T4 分层  P2-T5 检验   （任务实现）
+                                      P2-T4 Stratify  P2-T5 Tests  (task implementations)
                                           │           │           │
                                           └─────┬─────┘           │
                                                 ▼                 │
-                                          P2-T6 定义冻结 (M2) ◄────┤
+                                          P2-T6 Definition freeze (M2) ◄────┤
                                                                 │
-        P2-T7 ~ P2-T11 五任务与基线 ◄───────────────────────────┘
+        P2-T7 ~ P2-T11 Five tasks and baselines ◄───────────────────┘
                     │
                     ▼
-              P2-T13 排行榜 (M3)
+              P2-T13 Leaderboard (M3)
                     │
         ┌───────────┴───────────┐
         ▼                       ▼
-  P3-T2 论文               P3-T6 仓库公开
+  P3-T2 Paper            P3-T6 Repository public
         │                       │
-        ▼                       ├──► P3-T7 数据集 ──► P3-T10 提交规范
-  P3-T5 投稿 (M4)               ├──► P3-T8 模型权重
-                                └──► P3-T9 文档站点
+        ▼                       ├──► P3-T7 Dataset ──► P3-T10 Submission spec
+  P3-T5 Submission (M4)         ├──► P3-T8 Model weights
+                                └──► P3-T9 Documentation site
                                         │
                                         ▼
-                                  P3-T11 社区推广 (M5)
+                                  P3-T11 Community outreach (M5)
                                         │
                                         ▼
-                                  P4-T1 反馈收集
+                                  P4-T1 Feedback collection
                                         │
                     ┌───────────────────┼───────────────────┐
                     ▼                   ▼                   ▼
-              P4-T2 定义迭代      P4-T3 扩展测试集    P4-T4~T6 方法增强
+              P4-T2 Definition iterations  P4-T3 Extended test set  P4-T4~T6 Method enhancement
                     │                   │                   │
                     └───────────────────┼───────────────────┘
                                         ▼
-                                  P4-T7 挑战赛 (M6) ──► P4-T8 结果分析
+                                  P4-T7 Challenge (M6) ──► P4-T8 Results analysis
 ```
 
-## 2. 关键路径
+## 2. Critical Path
 
-**关键路径（决定项目最短工期）：**
+**Critical path (determines the minimum project duration):**
 
 ```text
 P1-T2 → P1-T3 → P1-T5 → P1-T6 → P1-T7 → P1-T8 → P1-T9
@@ -71,83 +71,83 @@ P1-T2 → P1-T3 → P1-T5 → P1-T6 → P1-T7 → P1-T8 → P1-T9
   → P4-T2 → P4-T7(M6)
 ```
 
-| 关键路径节点 | 为什么在关键路径上 |
+| Critical path node | Why it is on the critical path |
 | --- | --- |
-| P1-T3 成绩解码 | 所有下游任务依赖正确的成绩语义 |
-| P1-T7 时间分割 | 评估协议与所有任务的基础 |
-| P2-T3 滚动协议 | 所有指标与基线的公共依赖 |
-| P2-T6 定义冻结 | 不冻结则基线无法收敛 |
-| P3-T2 论文 | 投稿窗口硬约束 |
-| P4-T2 定义迭代 | 挑战赛必须基于稳定定义 |
+| P1-T3 Result decoding | All downstream tasks depend on correct result semantics |
+| P1-T7 Temporal splitting | The foundation of the evaluation protocol and of all tasks |
+| P2-T3 Rolling protocol | A shared dependency of all metrics and baselines |
+| P2-T6 Definition freeze | Without a freeze, baselines cannot converge |
+| P3-T2 Paper | The submission window is a hard constraint |
+| P4-T2 Definition iteration | The challenge must be based on stable definitions |
 
-> **关键路径上任何延期都会直接推迟项目里程碑。**
+> **Any delay on the critical path directly postpones project milestones.**
 
-## 3. 任务依赖矩阵
+## 3. Task Dependency Matrix
 
-| 任务 | 前置依赖 | 被依赖 |
+| Task | Prerequisites | Depended on by |
 | --- | --- | --- |
 | P1-T1 | — | P1-T2 |
-| P1-T2 | P1-T1 | P1-T3、P1-T4 |
-| P1-T3 | P1-T2 | P1-T5、P1-T6 |
+| P1-T2 | P1-T1 | P1-T3, P1-T4 |
+| P1-T3 | P1-T2 | P1-T5, P1-T6 |
 | P1-T4 | P1-T2 | P1-T6 |
 | P1-T5 | P1-T3 | P1-T6 |
-| P1-T6 | P1-T4、P1-T5 | P1-T7 |
-| P1-T7 | P1-T6 | P1-T8、P2-T3 |
-| P1-T8 | P1-T7 | P1-T9、P1-T10 |
+| P1-T6 | P1-T4, P1-T5 | P1-T7 |
+| P1-T7 | P1-T6 | P1-T8, P2-T3 |
+| P1-T8 | P1-T7 | P1-T9, P1-T10 |
 | P1-T9 | P1-T8 | P2-T1 |
 | P1-T10 | P1-T8 | P3-T7 |
 | P1-T11 | P1-T3~T9 | M1 |
-| P2-T1 | M1 | P2-T2、P2-T7~T11 |
+| P2-T1 | M1 | P2-T2, P2-T7~T11 |
 | P2-T2 | P2-T1 | P2-T3 |
-| P2-T3 | P2-T2、P1-T7 | P2-T4、P2-T7~T11 |
+| P2-T3 | P2-T2, P1-T7 | P2-T4, P2-T7~T11 |
 | P2-T4 | P2-T3 | P2-T6 |
 | P2-T5 | P2-T4 | P2-T6 |
 | P2-T6 | P2-T1~T5 | P2-T7~T11 |
-| P2-T7~T11 | P2-T6、P2-T3 | P2-T13 |
-| P2-T13 | P2-T7~T12 | M3、P3-T3 |
-| P3-T2 | M3 | P3-T4、P3-T5 |
-| P3-T3 | M3 | P3-T5、P3-T6 |
-| P3-T6 | P3-T3 | P3-T7~T9、P3-T11 |
-| P3-T7 | P3-T6 | P3-T10、P4-T3 |
-| P4-T2 | M5、P4-T1 | P4-T4~T7 |
+| P2-T7~T11 | P2-T6, P2-T3 | P2-T13 |
+| P2-T13 | P2-T7~T12 | M3, P3-T3 |
+| P3-T2 | M3 | P3-T4, P3-T5 |
+| P3-T3 | M3 | P3-T5, P3-T6 |
+| P3-T6 | P3-T3 | P3-T7~T9, P3-T11 |
+| P3-T7 | P3-T6 | P3-T10, P4-T3 |
+| P4-T2 | M5, P4-T1 | P4-T4~T7 |
 
-## 4. 外部依赖
+## 4. External Dependencies
 
-| 外部依赖 | 用途 | 风险 | 缓解 |
+| External dependency | Purpose | Risk | Mitigation |
 | --- | --- | --- | --- |
-| WCA 官方数据导出 | 全部数据来源 | 快照变更 / 访问受限 | 固定快照版本，本地留存副本 |
-| WCA Results Team 沟通 | 社区采纳 | 响应不确定 | 早期接触，保持礼貌沟通 |
-| HuggingFace Datasets/Models | 数据与权重托管 | 平台政策变化 | 同时提供镜像/直链 |
-| Kaggle | 挑战赛平台 | 规则/资源限制 | 备选：自建评测 + 提交入口 |
-| NeurIPS 投稿系统 | 论文投稿 | 截止日期硬约束 | 提前冻结材料 |
-| 计算资源（GPU） | 深度学习基线 | 资源紧张 | 设定算力预算，可降级 |
-| W&B / MLflow | 实验管理 | 付费额度 | 可切换为本地 MLflow |
+| Official WCA data export | The source of all data | Snapshot changes / restricted access | Pin the snapshot version and keep a local copy |
+| Communication with the WCA Results Team | Community adoption | Uncertain responsiveness | Engage early and keep communication courteous |
+| HuggingFace Datasets/Models | Hosting data and weights | Platform policy changes | Also provide a mirror/direct link |
+| Kaggle | Challenge platform | Rule/resource limits | Fallback: a self-hosted evaluation plus submission entry point |
+| NeurIPS submission system | Paper submission | Hard deadline | Freeze material in advance |
+| Compute resources (GPU) | Deep learning baselines | Resource scarcity | Set a compute budget; allow degrading |
+| W&B / MLflow | Experiment management | Paid quota | Can switch to a local MLflow |
 
-## 5. 并行与串行安排
+## 5. Parallel and Serial Scheduling
 
-可并行执行（无相互依赖）：
+Can be executed in parallel (no mutual dependencies):
 
-- P1-T3 与 P1-T4（解码 / 打乱）
-- P2-T7 ~ P2-T11（五任务实现，在 P2-T3 完成后并行）
-- P3-T7、P3-T8、P3-T9（发布类任务，在 P3-T6 后并行）
-- P4-T4、P4-T5、P4-T6（方法增强，在 P4-T2 后并行）
+- P1-T3 and P1-T4 (decoding / scrambling)
+- P2-T7 ~ P2-T11 (the five task implementations, in parallel after P2-T3 completes)
+- P3-T7, P3-T8, P3-T9 (release-type tasks, in parallel after P3-T6)
+- P4-T4, P4-T5, P4-T6 (method enhancements, in parallel after P4-T2)
 
-必须串行：
+Must be serial:
 
-- P1-T3 → P1-T5 → P1-T6 → P1-T7（数据语义依赖链）
-- P2-T1 → P2-T2 → P2-T3（框架依赖链）
-- P2-T6 → P2-T7~T11 → P2-T13（定义冻结后才能收敛基线）
+- P1-T3 → P1-T5 → P1-T6 → P1-T7 (the data-semantics dependency chain)
+- P2-T1 → P2-T2 → P2-T3 (the framework dependency chain)
+- P2-T6 → P2-T7~T11 → P2-T13 (baselines can only converge after the definition freeze)
 
-## 6. 资源依赖与人力配置
+## 6. Resource Dependencies and Staffing
 
-| 阶段 | 主要投入角色 | 人月（估） |
+| Phase | Main roles involved | Person-months (est.) |
 | --- | --- | --- |
-| 阶段一 | 数据工程师 ×1.5 + ML 工程师 ×1 | ~7.5 |
-| 阶段二 | ML 工程师 ×2 + 统计专家 ×1 | ~9 |
-| 阶段三 | PI ×1 + 工程师 ×1.5 | ~7.5 |
-| 阶段四 | 全员 + 社区维护者 ×1 | ~9 |
+| Phase 1 | Data engineer ×1.5 + ML engineer ×1 | ~7.5 |
+| Phase 2 | ML engineer ×2 + statistics expert ×1 | ~9 |
+| Phase 3 | PI ×1 + engineer ×1.5 | ~7.5 |
+| Phase 4 | Everyone + community maintainer ×1 | ~9 |
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [验收标准 →](/plan/acceptance)
-- [风险与缓解 →](/plan/risks)
+- [Acceptance Criteria →](/plan/acceptance)
+- [Risks and Mitigation →](/plan/risks)

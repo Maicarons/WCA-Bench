@@ -1,58 +1,58 @@
-# 评估框架 · 总览
+# Evaluation Framework · Overview
 
-评估框架是基准可信度的核心。本章描述评估协议、分层策略、统计检验与复现性要求。
+The evaluation framework is the core of the benchmark's credibility. This chapter describes the evaluation protocol, the stratification strategy, statistical testing, and reproducibility requirements.
 
-## 1. 本章结构
+## 1. Chapter Structure
 
-| 章节 | 内容 |
+| Chapter | Contents |
 | --- | --- |
-| [评估协议与分层](/evaluation/protocol) | 滚动窗口协议、四维分层、硬样本子集 |
-| [统计显著性检验](/evaluation/statistics) | 配对检验、Bootstrap、Friedman、效应量 |
-| [复现性要求](/evaluation/reproducibility) | 代码、种子、权重、算力报告 |
+| [Evaluation Protocol and Stratification](/evaluation/protocol) | Rolling-window protocol, four-way stratification, hard sample subsets |
+| [Statistical Significance Testing](/evaluation/statistics) | Paired tests, bootstrap, Friedman, effect sizes |
+| [Reproducibility Requirements](/evaluation/reproducibility) | Code, seeds, weights, compute report |
 
-## 2. 四大支柱
+## 2. Four Pillars
 
 ```text
-┌──────────────────────────────────────────────┐
-│ 1. 防泄漏     滚动窗口 + 冻结统计量            │
-├──────────────────────────────────────────────┤
-│ 2. 分层报告   项目 / 水平 / 时间 / 地区        │
-├──────────────────────────────────────────────┤
-│ 3. 统计严谨   显著性检验 + 效应量              │
-├──────────────────────────────────────────────┤
-│ 4. 可复现     代码 + 数据 + 权重 + 算力        │
-└──────────────────────────────────────────────┘
+┌──────────────────────┐
+│ 1. Leakage-free      │  Rolling window + frozen statistics
+├──────────────────────┤
+│ 2. Stratified        │  Event / level / time / region
+├──────────────────────┤
+│ 3. Statistical rigor │  Significance tests + effect sizes
+├──────────────────────┤
+│ 4. Reproducible      │  Code + data + weights + compute
+└──────────────────────┘
 ```
 
-## 3. 为什么需要分层与统计检验
+## 3. Why Stratification and Statistical Testing
 
-| 风险 | 对策 |
+| Risk | Countermeasure |
 | --- | --- |
-| 结论被主导群体掩盖（三阶数据量远超其他项目） | 按项目分层 |
-| 平均值掩盖子群差异（精英与新手行为不同） | 按选手水平分层 |
-| 模型对时间漂移敏感 | 按时间分层 |
-| 跨文化泛化能力未知 | 按地区分层 |
-| 偶然的性能差异被当作真实增益 | 统计检验 + 效应量 |
-| 结果无法被第三方复现 | 复现性清单 |
+| Conclusions masked by the dominant group (3x3 has far more data than other events) | Stratify by event |
+| Averages masking subgroup differences (elites and novices behave differently) | Stratify by competitor skill level |
+| Models sensitive to temporal drift | Stratify by time |
+| Unknown cross-cultural generalization ability | Stratify by region |
+| Incidental performance differences mistaken for real gains | Statistical testing + effect sizes |
+| Results not reproducible by third parties | Reproducibility checklist |
 
-## 4. 报告模板
+## 4. Report Template
 
-所有模型提交必须包含以下报告结构：
+Every model submission must include the following report structure:
 
 ```text
 report/
-├── overall.json          # 全量指标
-├── by_event.json         # 按项目分层
-├── by_skill_level.json   # 按选手水平分层
-├── by_time_slice.json    # 按时间分层（Test-A/B/C）
-├── by_continent.json     # 按地区分层
-├── calibration.json      # 校准 / Bootstrap CI
-├── significance.json     # 与基线的统计检验
-└── cost.json             # 推理与训练算力成本
+├── overall.json          # Whole-dataset metrics
+├── by_event.json         # Stratified by event
+├── by_skill_level.json   # Stratified by competitor skill level
+├── by_time_slice.json    # Stratified by time (Test-A/B/C)
+├── by_continent.json     # Stratified by region
+├── calibration.json      # Calibration / Bootstrap CI
+├── significance.json     # Statistical tests against baselines
+└── cost.json             # Inference and training compute cost
 ```
 
-## 5. 后续阅读
+## 5. Further Reading
 
-- [评估协议与分层 →](/evaluation/protocol)
-- [统计显著性检验 →](/evaluation/statistics)
-- [复现性要求 →](/evaluation/reproducibility)
+- [Evaluation Protocol and Stratification →](/evaluation/protocol)
+- [Statistical Significance Testing →](/evaluation/statistics)
+- [Reproducibility Requirements →](/evaluation/reproducibility)

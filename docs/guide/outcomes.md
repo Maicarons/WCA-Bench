@@ -1,80 +1,80 @@
-# 预期成果与成功标准
+# Expected Outcomes and Success Criteria
 
-## 1. 交付物清单
+## 1. Deliverables
 
-| 编号 | 交付物 | 形态 | 对应里程碑 |
+| ID | Deliverable | Form | Milestone |
 | --- | --- | --- | --- |
-| D1 | WCA-Bench 数据集 | HuggingFace Datasets | M2 / M4 |
-| D2 | 预处理管线与数据加载器 | Python 包 `src/data` | M1 |
-| D3 | 数据卡（Data Card） | Markdown（含使用/禁用场景） | M1 |
-| D4 | 五任务定义与评估协议 | `src/tasks`、`src/evaluation` | M2 |
-| D5 | 基线模型实现与结果 | `src/baselines` + 排行榜 | M3 |
-| D6 | 排行榜与提交规范 | 文档 + 评测脚本 | M3 |
-| D7 | 主论文（NeurIPS E&D） | 论文初稿 + 附录 | M4 |
-| D8 | 公开代码仓库 | GitHub（Apache-2.0 许可证） | M5 |
-| D9 | 挑战赛与结果分析 | Kaggle 竞赛 + 分析报告 | M6 |
+| D1 | WCA-Bench dataset | HuggingFace Datasets | M2 / M4 |
+| D2 | Preprocessing pipeline and data loader | Python package `src/data` | M1 |
+| D3 | Data Card | Markdown (including permitted/prohibited uses) | M1 |
+| D4 | Five task definitions and evaluation protocol | `src/tasks`, `src/evaluation` | M2 |
+| D5 | Baseline implementations and results | `src/baselines` + leaderboard | M3 |
+| D6 | Leaderboard and submission specification | Documentation + evaluation scripts | M3 |
+| D7 | Main paper (NeurIPS E&D) | Paper draft + appendix | M4 |
+| D8 | Public code repository | GitHub (Apache-2.0 License) | M5 |
+| D9 | Challenge and results analysis | Kaggle competition + analysis report | M6 |
 
-## 2. 预期研究成果
+## 2. Expected Research Outcomes
 
-### 2.1 科学贡献
+### 2.1 Scientific Contributions
 
-1. 提出**首个基于 WCA 真实比赛数据的体育数据分析标准化基准**
-2. 定义了**五个具有领域特定挑战的评估任务**
-3. 提供了**严格的防泄漏评估协议和分层评估框架**
-4. 发布了完整的**基线实现和可复现的实验代码**
+1. Propose the **first standardized benchmark for sports data analysis built on real WCA competition data**
+2. Define **five evaluation tasks with domain-specific challenges**
+3. Provide a **strict leakage-free evaluation protocol and a stratified evaluation framework**
+4. Release **complete baseline implementations and reproducible experimental code**
 
-### 2.2 预期经验发现（假设性）
+### 2.2 Expected Empirical Findings (Hypothetical)
 
-- 传统统计方法（KDE、Plackett-Luce）在中低难度任务上仍具竞争力，深度学习优势主要体现在长序列与多项目联合建模
-- 规则感知特征（如 ao5 去极值机制）对 DNF 与名次预测影响显著
-- 技能迁移的因果效应估计对混淆控制方法高度敏感，简单相关性会系统性高估迁移强度
+- Classical statistical methods (KDE, Plackett-Luce) remain competitive on tasks of low-to-medium difficulty; the advantage of deep learning shows up mainly in long sequences and joint multi-event modeling
+- Rule-aware features (such as the ao5 trimming mechanism) have a significant impact on DNF and placement prediction
+- Causal effect estimates of skill transfer are highly sensitive to confounder control; naive correlation systematically overestimates transfer strength
 
-## 3. 成功标准
+## 3. Success Criteria
 
-### 3.1 技术标准（可量化）
+### 3.1 Technical Criteria (Quantifiable)
 
-| 指标 | 目标值 |
+| Metric | Target |
 | --- | --- |
-| 预处理管线可复现性 | 单命令从原始数据产出全部 Parquet，产物校验和一致 |
-| 数据覆盖率 | 覆盖 WCA 全部 17 个现役项目与已废止项目 |
-| 任务完整性 | 5 个任务全部具备定义、指标、≥3 个基线 |
-| 基线可运行性 | 全部基线在 CI 中可端到端跑通（小样本模式） |
-| 测试覆盖率 | `src/` 核心模块单元测试覆盖率 ≥ 80% |
-| 文档完整性 | 每个任务含定义/输入输出/指标/基线/挑战五要素 |
+| Preprocessing pipeline reproducibility | A single command produces all Parquet artifacts from raw data, with identical checksums |
+| Data coverage | Covers all 17 active WCA events plus retired events |
+| Task completeness | All 5 tasks have definitions, metrics, and ≥3 baselines |
+| Baseline runnability | All baselines run end-to-end in CI (small-sample mode) |
+| Test coverage | Unit test coverage of the core `src/` modules ≥ 80% |
+| Documentation completeness | Each task covers the five elements: definition / inputs-outputs / metrics / baselines / challenges |
 
-### 3.2 学术标准
+### 3.2 Academic Criteria
 
-| 指标 | 目标 |
+| Metric | Target |
 | --- | --- |
-| 论文投稿 | NeurIPS 2026 Evaluations & Datasets Track |
-| 复现性材料 | 代码 + 数据 + 权重 + 种子 + 算力报告齐全 |
-| 同行评审 | 通过评审或获得建设性修改意见 |
+| Paper submission | NeurIPS 2026 Evaluations & Datasets Track |
+| Reproducibility material | Code + data + weights + seeds + compute report, all complete |
+| Peer review | Accepted, or receives constructive revision feedback |
 
-### 3.3 社区标准
+### 3.3 Community Criteria
 
-| 指标 | 目标 |
+| Metric | Target |
 | --- | --- |
-| 仓库活跃度 | 公开后 6 个月内 ≥ 若干外部提交的基线/复现 |
-| 数据下载量 | HuggingFace 数据集累计下载达一定规模 |
-| 社区协作 | 与 WCA Results Team 建立正式沟通渠道 |
-| 挑战赛参与 | 挑战赛吸引一定数量参赛队伍 |
+| Repository activity | External baseline/reproduction submissions within 6 months of release |
+| Data downloads | Cumulative HuggingFace dataset downloads reach a meaningful scale |
+| Community collaboration | A formal communication channel established with the WCA Results Team |
+| Challenge participation | The challenge attracts a certain number of participating teams |
 
-## 4. 成功/失败判据
+## 4. Success and Failure Criteria
 
 ```text
-完全成功：D1–D9 全部交付 + 论文被 NeurIPS E&D 接收 + 社区开始使用
-部分成功：D1–D6、D8 交付 + 论文投稿（无论接收与否）+ 社区初步关注
-最低可接受：数据管线 + 五任务定义 + 基线结果 + 公开仓库（D2–D5、D8）
+Complete success: D1–D9 all delivered + paper accepted at NeurIPS E&D + community adoption begins
+Partial success: D1–D6 and D8 delivered + paper submitted (accepted or not) + initial community attention
+Minimum acceptable: Data pipeline + five task definitions + baseline results + public repository (D2–D5, D8)
 ```
 
-## 5. 长期影响
+## 5. Long-Term Impact
 
-如果成功，WCA-Bench 不仅会成为速拧数据分析的标准工具，还可能为更广泛的体育数据分析领域提供一个可复制的范式：
+If successful, WCA-Bench will not only become a standard tool for speedcubing data analysis, but may also provide a replicable paradigm for the broader field of sports data analysis:
 
-> **如何在一个具有明确规则约束、纵向数据结构和多任务特性的竞技领域中，构建有科学价值的 AI 基准。**
+> **How to build a scientifically valuable AI benchmark in a competitive domain with explicit rule constraints, a longitudinal data structure, and multi-task characteristics.**
 
-## 6. 后续阅读
+## 6. Further Reading
 
-- [开发计划 · 验收标准 →](/plan/acceptance)
-- [开发计划 · 里程碑 →](/plan/roadmap)
-- [发表策略 →](/plan/publication)
+- [Development Plan · Acceptance Criteria →](/plan/acceptance)
+- [Development Plan · Milestones →](/plan/roadmap)
+- [Publication Strategy →](/plan/publication)

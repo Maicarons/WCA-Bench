@@ -3,57 +3,57 @@ layout: home
 
 hero:
   name: WCA-Bench
-  text: 体育数据分析的标准化基准
-  tagline: 首个基于世界魔方协会（WCA）全部公开比赛数据的综合性机器学习基准 —— 5 类核心任务、289k 选手、660 万条成绩、严格的防泄漏评估协议
+  text: A Standardized Benchmark for Sports Data Analysis
+  tagline: The first comprehensive machine learning benchmark built on the complete public competition data of the World Cube Association (WCA) — 5 core tasks, 289k competitors, 6.6M results, and a strict leakage-free evaluation protocol
   actions:
     - theme: brand
-      text: 阅读项目计划书
+      text: Read the Project Proposal
       link: /guide/
     - theme: alt
-      text: 查看开发计划
+      text: View the Development Plan
       link: /plan/
     - theme: alt
-      text: 在 GitHub 上查看
+      text: View on GitHub
       link: https://github.com/
 
 features:
   - icon: 🎯
-    title: 定义一个科学问题
-    details: 不追求新模型，而是回答「在体育竞技数据的真实约束下，不同方法论的表现如何」。问题本身即具独立研究价值。
+    title: Define a Scientific Question
+    details: Rather than chasing a new model, we ask "under the real constraints of competitive sports data, how do different methodologies perform?" The question itself carries independent research value.
   - icon: 🗄️
-    title: 真实而非合成
-    details: 数据来自 WCA 官方数据库导出（persons / results / scrambles 等），覆盖 17 个现役项目与 23 年纵向追踪记录。
+    title: Real, Not Synthetic
+    details: Data comes from the official WCA database export (persons / results / scrambles, etc.), covering 17 active events and 23 years of longitudinal records.
   - icon: 🧩
-    title: 五大任务难度谱
-    details: 成绩预测（回归）、名次预测（排序）、DNF 预测（分类）、人类极限估计（极值）、技能迁移（因果推断）。
+    title: A Spectrum of Five Tasks
+    details: Result prediction (regression), placement prediction (ranking), DNF prediction (classification), human limit estimation (extremes), and skill transfer (causal inference).
   - icon: 🔒
-    title: 严格防泄漏
-    details: 时间分割 + 滚动窗口评估，基准统计量在测试窗口期间冻结，杜绝任何形式的未来信息泄漏。
+    title: Strictly Leakage-Free
+    details: Temporal splitting plus rolling-window evaluation; benchmark statistics are frozen during the test window, eliminating every form of future information leakage.
   - icon: 📊
-    title: 分层评估框架
-    details: 按项目、选手水平、时间、地区四维分层报告，避免结果被主导群体掩盖。
+    title: A Stratified Evaluation Framework
+    details: Results are reported along four dimensions — event, competitor skill level, time, and region — so that no dominant group masks the rest.
   - icon: 🔁
-    title: 可复现优先
-    details: 训练代码、随机种子、预处理脚本、模型权重（HuggingFace）与算力成本全部公开。
+    title: Reproducibility First
+    details: Training code, random seeds, preprocessing scripts, model weights (HuggingFace), and compute cost are all released.
 ---
 
-## 这是什么
+## What Is This
 
-WCA-Bench 是 **首个基于世界魔方协会（WCA）全部公开比赛数据的综合性机器学习基准**。它涵盖成绩预测、名次预测、DNF 预测、人类极限估计和技能迁移分析五类核心任务，为体育数据分析领域提供标准化的评估协议与可复现的实验框架。
+WCA-Bench is the **first comprehensive machine learning benchmark built on the complete public competition data of the World Cube Association (WCA)**. It covers five core tasks — result prediction, placement prediction, DNF prediction, human limit estimation, and skill transfer analysis — and provides a standardized evaluation protocol and a reproducible experimental framework for the field of sports data analysis.
 
-## 文档导航
+## Documentation Map
 
-| 板块 | 内容 | 入口 |
+| Section | Contents | Entry |
 | --- | --- | --- |
-| **项目计划书** | 项目目标、范围、技术方案概述、预期成果 | [进入 →](/guide/) |
-| **技术方案** | 数据基础设施、任务套件定义、评估框架 | [进入 →](/data/) |
-| **开发计划** | 目录组织、阶段划分、里程碑、任务分解、依赖与验收标准 | [进入 →](/plan/) |
+| **Project Proposal** | Objectives, scope, technical approach overview, expected outcomes | [Enter →](/guide/) |
+| **Technical Design** | Data infrastructure, task suite definitions, evaluation framework | [Enter →](/data/) |
+| **Development Plan** | Directory organization, phase breakdown, milestones, task breakdown, dependencies and acceptance criteria | [Enter →](/plan/) |
 
-## 快速开始（文档站点）
+## Quick Start (Documentation Site)
 
 ```bash
-npm install          # 安装依赖
-npm run docs:dev     # 本地预览（默认 http://localhost:5173）
-npm run docs:build   # 构建静态站点到 docs/.vitepress/dist
-npm run docs:preview # 预览构建产物
+npm install          # install dependencies
+npm run docs:dev     # local preview (default http://localhost:5173)
+npm run docs:build   # build the static site to docs/.vitepress/dist
+npm run docs:preview # preview the build output
 ```

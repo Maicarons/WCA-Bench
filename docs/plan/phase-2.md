@@ -1,45 +1,45 @@
-# 阶段二：任务定义与基线实现（第 4–6 月）
+# Phase 2: Task Definition and Baseline Implementation (Months 4–6)
 
-> **目标**：将五个任务形式化，并实现完整基线集合，产出初始排行榜。
-> **出口里程碑**：[M2 任务定义冻结](/plan/roadmap#m2-·-任务定义冻结-第-5-月)、[M3 基线实验完成](/plan/roadmap#m3-·-基线实验完成-第-6-月)
+> **Objective**: Formalize the five tasks, implement the complete set of baselines, and produce an initial leaderboard.
+> **Exit milestones**: [M2 Task Definition Frozen](/plan/roadmap#m2-·-task-definition-frozen-month-5), [M3 Baseline Experiments Complete](/plan/roadmap#m3-·-baseline-experiments-complete-month-6)
 
-## 1. 阶段目标
+## 1. Phase Objectives
 
-- 形式化定义五个任务的问题设定和评估指标
-- 实现每个任务的基线模型（传统统计 + 简单深度学习）
-- 运行基线实验，生成初始排行榜
-- 编写任务说明文档
+- Formally define the problem setting and evaluation metrics of the five tasks
+- Implement baseline models for each task (classical statistics + simple deep learning)
+- Run baseline experiments and generate the initial leaderboard
+- Write the task documentation
 
-## 2. 任务分解（WBS）
+## 2. Work Breakdown (WBS)
 
-### 2.1 评估框架任务
+### 2.1 Evaluation Framework Tasks
 
-| 任务 ID | 任务名称 | 周次 | 前置依赖 | 交付物 |
+| Task ID | Task name | Weeks | Prerequisites | Deliverables |
 | --- | --- | --- | --- | --- |
-| P2-T1 | 统一 Task 接口 | W13 | M1 | `tasks/base.py` |
-| P2-T2 | 评估指标库 | W13–W14 | P2-T1 | `evaluation/metrics.py` |
-| P2-T3 | 滚动窗口协议 | W14–W15 | P2-T2 | `evaluation/protocol.py` |
-| P2-T4 | 四维分层评估 | W15–W16 | P2-T3 | `evaluation/stratified.py` |
-| P2-T5 | 统计检验与效应量 | W16 | P2-T4 | `evaluation/significance.py` |
-| P2-T6 | 任务定义文档冻结 | W17–W18 | P2-T1~T5 | `docs/tasks/*`（M2） |
+| P2-T1 | Unified Task interface | W13 | M1 | `tasks/base.py` |
+| P2-T2 | Evaluation metrics library | W13–W14 | P2-T1 | `evaluation/metrics.py` |
+| P2-T3 | Rolling-window protocol | W14–W15 | P2-T2 | `evaluation/protocol.py` |
+| P2-T4 | Four-way stratified evaluation | W15–W16 | P2-T3 | `evaluation/stratified.py` |
+| P2-T5 | Statistical tests and effect sizes | W16 | P2-T4 | `evaluation/significance.py` |
+| P2-T6 | Task definition documentation freeze | W17–W18 | P2-T1~T5 | `docs/tasks/*` (M2) |
 
-### 2.2 任务与基线实现
+### 2.2 Task and Baseline Implementation
 
-| 任务 ID | 任务名称 | 周次 | 前置依赖 | 交付物 |
+| Task ID | Task name | Weeks | Prerequisites | Deliverables |
 | --- | --- | --- | --- | --- |
-| P2-T7 | T1 成绩预测 + 基线 | W18–W20 | P2-T3 | `tasks/result_prediction/` + 4 基线 |
-| P2-T8 | T2 名次预测 + 基线 | W19–W21 | P2-T3 | `tasks/placement/` + 4 基线 |
-| P2-T9 | T3 DNF 预测 + 基线 | W20–W22 | P2-T3 | `tasks/dnf/` + 4 基线 |
-| P2-T10 | T4 极限估计 + 基线 | W21–W23 | P2-T3 | `tasks/limit/` + 4 基线 |
-| P2-T11 | T5 技能迁移 + 基线 | W22–W24 | P2-T3 | `tasks/transfer/` + 4 基线 |
-| P2-T12 | 实验管理与配置 | W19–W24 | P2-T7 | `configs/*` + W&B/MLflow 接入 |
-| P2-T13 | 排行榜生成 | W24–W25 | P2-T7~T12 | `scripts/build_leaderboard.py` + 排行榜（M3） |
+| P2-T7 | T1 Result prediction + baselines | W18–W20 | P2-T3 | `tasks/result_prediction/` + 4 baselines |
+| P2-T8 | T2 Placement prediction + baselines | W19–W21 | P2-T3 | `tasks/placement/` + 4 baselines |
+| P2-T9 | T3 DNF prediction + baselines | W20–W22 | P2-T3 | `tasks/dnf/` + 4 baselines |
+| P2-T10 | T4 Limit estimation + baselines | W21–W23 | P2-T3 | `tasks/limit/` + 4 baselines |
+| P2-T11 | T5 Skill transfer + baselines | W22–W24 | P2-T3 | `tasks/transfer/` + 4 baselines |
+| P2-T12 | Experiment management and configuration | W19–W24 | P2-T7 | `configs/*` + W&B/MLflow integration |
+| P2-T13 | Leaderboard generation | W24–W25 | P2-T7~T12 | `scripts/build_leaderboard.py` + leaderboard (M3) |
 
-> 周次接续阶段一（W13 = 项目第 13 周），阶段共 12 周（W13–W24），含 1 周缓冲。
+> Weeks continue from Phase 1 (W13 = the project's 13th week); the phase lasts 12 weeks (W13–W24), including a 1-week buffer.
 
-## 3. 任务详细说明
+## 3. Detailed Task Descriptions
 
-### P2-T1 · 统一 Task 接口
+### P2-T1 · Unified Task Interface
 
 ```python
 class Task(Protocol):
@@ -52,101 +52,101 @@ class Task(Protocol):
     def evaluate(self, model) -> Report: ...
 ```
 
-- **验收**：所有任务的 `evaluate` 返回统一的 `Report` 结构
+- **Acceptance**: the `evaluate` method of every task returns a unified `Report` structure
 
-### P2-T2 · 评估指标库
+### P2-T2 · Evaluation Metrics Library
 
-| 任务 | 指标 |
+| Task | Metrics |
 | --- | --- |
-| T1 | MAE(log)、RMSE(log)、区间覆盖率 |
-| T2 | Kendall's τ、前 3 准确率、Brier |
-| T3 | AUC-ROC、AUC-PR、F1、MCC、校准 |
-| T4 | 留一稳定性、区间覆盖率 |
-| T5 | 点估计精度、稳健性 |
+| T1 | MAE(log), RMSE(log), interval coverage |
+| T2 | Kendall's τ, top-3 accuracy, Brier |
+| T3 | AUC-ROC, AUC-PR, F1, MCC, calibration |
+| T4 | Leave-one-out stability, interval coverage |
+| T5 | Point estimate precision, robustness |
 
-- **验收**：每个指标有单元测试与已知输入输出的基准用例
+- **Acceptance**: every metric has unit tests and benchmark cases with known inputs and outputs
 
-### P2-T3 · 滚动窗口协议
+### P2-T3 · Rolling-Window Protocol
 
-- 实现按时间推进的评估循环
-- 冻结统计量注入
-- `assert_no_leakage` 断言工具
-- **验收**：协议在合成数据上可验证无泄漏
+- Implement the time-advancing evaluation loop
+- Injection of frozen statistics
+- The `assert_no_leakage` assertion utility
+- **Acceptance**: the protocol is verifiably leakage-free on synthetic data
 
-### P2-T4 · 四维分层评估
+### P2-T4 · Four-Way Stratified Evaluation
 
-- 项目 / 选手水平 / 时间 / 地区四维分层
-- 硬样本子集定义与抽取
-- 冷启动样本单独报告
-- **验收**：分层结果可从原始预测完整重算
+- Four-way stratification by event / competitor skill level / time / region
+- Definition and extraction of hard sample subsets
+- Cold-start samples reported separately
+- **Acceptance**: stratified results can be fully recomputed from the raw predictions
 
-### P2-T5 · 统计检验与效应量
+### P2-T5 · Statistical Tests and Effect Sizes
 
-- 配对 t 检验、Bootstrap CI（1000 次）、Friedman + Nemenyi
+- Paired t-test, bootstrap CI (1000 resamples), Friedman + Nemenyi
 - Cohen's d / Cliff's delta
-- **验收**：`significance.json` 按[规范](/evaluation/statistics#_4-报告规范)输出
+- **Acceptance**: `significance.json` is emitted according to the [specification](/evaluation/statistics#_4-reporting-specification)
 
-### P2-T6 · 任务定义文档冻结（M2）
+### P2-T6 · Task Definition Documentation Freeze (M2)
 
-- 五任务文档五要素齐全（定义/输入输出/指标/基线/挑战）
-- 领域挑战显式描述
-- **验收**：评审通过，标记为冻结版本
+- All five elements present in the five task documents (definition/inputs-outputs/metrics/baselines/challenges)
+- Domain challenges described explicitly
+- **Acceptance**: review passed and the version marked as frozen
 
-### P2-T7 ~ P2-T11 · 五任务实现
+### P2-T7 ~ P2-T11 · Implementation of the Five Tasks
 
-每个任务的实现模式一致：
+The implementation pattern is identical for every task:
 
 ```text
-1. 实现 Task 子类（split / featurize / metrics）
-2. 实现平凡基线（建立下界）
-3. 实现领域基线（反映当前实践）
-4. 实现方法论基线（DL / GNN / 贝叶斯 / 因果）
-5. 运行滚动窗口评估
-6. 生成分层报告 + 统计检验
+1. Implement the Task subclass (split / featurize / metrics)
+2. Implement the trivial baseline (establishing the lower bound)
+3. Implement the domain baseline (reflecting current practice)
+4. Implement methodological baselines (DL / GNN / Bayesian / causal)
+5. Run the rolling-window evaluation
+6. Generate the stratified report + statistical tests
 ```
 
-各任务基线清单见[任务套件](/tasks/)。
+The baseline list for each task is given in the [Task Suite](/tasks/).
 
-### P2-T12 · 实验管理与配置
+### P2-T12 · Experiment Management and Configuration
 
-- 所有实验通过 `configs/*.yaml` 驱动
-- 接入 W&B 或 MLflow 记录指标、配置、产物
-- 固定随机种子并记录
-- **验收**：任一实验可由配置单命令复现
+- All experiments are driven by `configs/*.yaml`
+- Integrate W&B or MLflow to record metrics, configurations, and artifacts
+- Fix random seeds and record them
+- **Acceptance**: any experiment can be reproduced from its configuration with a single command
 
-### P2-T13 · 排行榜生成（M3）
+### P2-T13 · Leaderboard Generation (M3)
 
-- 从各任务的 `report/` 聚合生成总排行榜
-- 排行榜含：主指标、分层指标、算力成本
-- **验收**：≥ 18 个基线全部收录，结果可重算
+- Aggregate each task's `report/` into the overall leaderboard
+- The leaderboard contains: primary metrics, stratified metrics, compute cost
+- **Acceptance**: all ≥ 18 baselines are included and results can be recomputed
 
-## 4. 阶段交付物清单
+## 4. Phase Deliverables
 
-| 编号 | 交付物 | 对应任务 |
+| ID | Deliverable | Corresponding tasks |
 | --- | --- | --- |
-| D4 | 五任务定义与评估协议 | P2-T1 ~ P2-T6 |
-| D5 | 基线模型实现与结果 | P2-T7 ~ P2-T12 |
-| D6 | 排行榜与提交规范 | P2-T13 |
+| D4 | Five task definitions and evaluation protocol | P2-T1 ~ P2-T6 |
+| D5 | Baseline implementations and results | P2-T7 ~ P2-T12 |
+| D6 | Leaderboard and submission specification | P2-T13 |
 
-## 5. 阶段验收标准
+## 5. Phase Acceptance Criteria
 
-- [ ] 五任务定义文档五要素齐全并通过评审（M2）
-- [ ] 每任务 ≥ 3 个可运行基线，合计 ≥ 18 个
-- [ ] 全部基线在 CI 小样本模式下端到端跑通
-- [ ] 每个基线产出完整 `report/`（含四维分层与显著性）
-- [ ] 排行榜可由脚本一键重建
-- [ ] 所有实验配置可单命令复现（复现等级 ≥ L2）
+- [ ] All five task definition documents contain the five elements and have passed review (M2)
+- [ ] ≥ 3 runnable baselines per task, ≥ 18 in total
+- [ ] All baselines run end-to-end in CI small-sample mode
+- [ ] Every baseline produces a complete `report/` (including four-way stratification and significance)
+- [ ] The leaderboard can be rebuilt with a single script
+- [ ] All experiment configurations are reproducible with a single command (reproduction level ≥ L2)
 
-## 6. 风险提示
+## 6. Risks
 
-| 风险 | 影响 | 缓解 |
+| Risk | Impact | Mitigation |
 | --- | --- | --- |
-| 序列模型训练超时 | 阶段延期 | 早启动、限算力预算、可降级为小模型 |
-| GNN 构图复杂 | 任务二延期 | 先交付非 GNN 基线，GNN 作为增量 |
-| 指标实现错误 | 结果不可信 | 指标单测 + 与官方/已知实现对齐 |
-| 任务定义反复 | 影响下游 | 设 M2 冻结点，变更走版本化流程 |
+| Sequence model training overruns | Phase delay | Start early, cap the compute budget, allow degrading to a smaller model |
+| GNN graph construction is complex | Task 2 delayed | Ship non-GNN baselines first; add the GNN incrementally |
+| Metric implementation errors | Untrustworthy results | Metric unit tests + alignment with official/known implementations |
+| Repeated changes to task definitions | Affects downstream work | Set the M2 freeze point; route changes through a versioned process |
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [阶段三：基准发布 →](/plan/phase-3)
-- [验收标准 →](/plan/acceptance)
+- [Phase 3: Benchmark Release →](/plan/phase-3)
+- [Acceptance Criteria →](/plan/acceptance)

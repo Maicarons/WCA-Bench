@@ -1,65 +1,65 @@
-# 开发计划 · 总览
+# Development Plan · Overview
 
-本章为 WCA-Bench 的**详细开发计划**，包含目录组织、文档分层、阶段划分、里程碑、任务分解（WBS）、依赖关系与验收标准，供审阅与后续执行。
+This chapter is the **detailed development plan** for WCA-Bench, covering directory organization, documentation layering, phase breakdown, milestones, the work breakdown structure (WBS), dependencies, and acceptance criteria, for review and subsequent execution.
 
-## 1. 计划结构
+## 1. Plan Structure
 
-| 章节 | 内容 |
+| Chapter | Contents |
 | --- | --- |
-| [目录组织与文档分层](/plan/structure) | GitHub 仓库结构、模块职责、文档分层体系 |
-| [阶段划分与里程碑](/plan/roadmap) | 12 个月四阶段路线图与 M1–M6 里程碑 |
-| [阶段一：数据基础设施](/plan/phase-1) | 第 1–3 月任务分解 |
-| [阶段二：任务定义与基线](/plan/phase-2) | 第 4–6 月任务分解 |
-| [阶段三：基准发布](/plan/phase-3) | 第 7–9 月任务分解 |
-| [阶段四：迭代与扩展](/plan/phase-4) | 第 10–12 月任务分解 |
-| [依赖关系](/plan/dependencies) | 任务间前置依赖、关键路径、外部依赖 |
-| [验收标准](/plan/acceptance) | 阶段与最终交付的验收判据 |
-| [风险与缓解](/plan/risks) | 数据 / 饱和 / 社区 / 伦理风险 |
-| [发表策略](/plan/publication) | 论文目标与发表路线图 |
+| [Directory Organization and Documentation Layering](/plan/structure) | GitHub repository structure, module responsibilities, documentation layering system |
+| [Phase Breakdown and Milestones](/plan/roadmap) | 12-month, four-phase roadmap and milestones M1–M6 |
+| [Phase 1: Data Infrastructure](/plan/phase-1) | Task breakdown for months 1–3 |
+| [Phase 2: Task Definition and Baselines](/plan/phase-2) | Task breakdown for months 4–6 |
+| [Phase 3: Benchmark Release](/plan/phase-3) | Task breakdown for months 7–9 |
+| [Phase 4: Iteration and Expansion](/plan/phase-4) | Task breakdown for months 10–12 |
+| [Dependencies](/plan/dependencies) | Inter-task prerequisites, critical path, external dependencies |
+| [Acceptance Criteria](/plan/acceptance) | Acceptance criteria for the phases and for final delivery |
+| [Risks and Mitigation](/plan/risks) | Data / saturation / community / ethical risks |
+| [Publication Strategy](/plan/publication) | Paper targets and the publication roadmap |
 
-## 2. 时间线速览
+## 2. Timeline at a Glance
 
 ```text
-第 1–3 月   阶段一 ██████████  数据基础设施
-第 4–6 月   阶段二 ██████████  任务定义与基线实现
-第 7–9 月   阶段三 ██████████  基准发布与社区建设
-第 10–12 月 阶段四 ██████████  迭代与扩展
+Months 1–3    Phase 1 ██████████  Data infrastructure
+Months 4–6    Phase 2 ██████████  Task definitions and baselines
+Months 7–9    Phase 3 ██████████  Benchmark release and community building
+Months 10–12  Phase 4 ██████████  Iteration and expansion
 
-里程碑：  M1(第3月)   M2(第5月)  M3(第6月)   M4(第7月)  M5(第9月)   M6(第12月)
+Milestones:  M1(month 3)   M2(month 5)  M3(month 6)   M4(month 7)  M5(month 9)   M6(month 12)
 ```
 
-## 3. 任务编号规范
+## 3. Task Numbering Convention
 
 ```text
-P<阶段号>-T<序号>    例如 P1-T3 = 阶段一第 3 项任务
-M<n>                 里程碑，例如 M2 = 第 5 月基线完成
-D<n>                 交付物，例如 D3 = 数据卡
+P<phase>-T<index>    e.g. P1-T3 = the 3rd task of phase 1
+M<n>                 milestone, e.g. M2 = baselines complete in month 5
+D<n>                 deliverable, e.g. D3 = data card
 ```
 
-## 4. 角色分工（建议）
+## 4. Roles (Suggested)
 
-| 角色 | 职责 |
+| Role | Responsibilities |
 | --- | --- |
-| 项目负责人（PI） | 总体方向、论文撰写、社区对接 |
-| 数据工程师 | 数据管线、存储优化、数据卡 |
-| ML 工程师 ×2 | 任务适配、基线实现、实验管理 |
-| 统计/因果专家 | 统计检验、贝叶斯与因果方法 |
-| 文档/社区维护者 | 文档站点、提交规范、社区运营 |
+| Principal investigator (PI) | Overall direction, paper writing, community liaison |
+| Data engineer | Data pipeline, storage optimization, data card |
+| ML engineer ×2 | Task adaptation, baseline implementation, experiment management |
+| Statistics / causal expert | Statistical testing, Bayesian and causal methods |
+| Documentation / community maintainer | Documentation site, submission specification, community operations |
 
-## 5. 工作方式
+## 5. Working Practices
 
-| 机制 | 约定 |
+| Mechanism | Convention |
 | --- | --- |
-| 版本控制 | GitHub，主干 `main` + 功能分支 |
-| 代码评审 | 所有合并需 PR + 至少 1 人 review |
-| 持续集成 | GitHub Actions 跑测试与小样本端到端 |
-| 任务追踪 | GitHub Issues + Projects（看板） |
-| 实验记录 | W&B / MLflow，配置入 `configs/` |
-| 文档同步 | 本 VitePress 站点随代码仓库一同更新 |
+| Version control | GitHub, with `main` as the trunk plus feature branches |
+| Code review | Every merge requires a PR and at least one reviewer |
+| Continuous integration | GitHub Actions runs tests and a small-sample end-to-end pipeline |
+| Task tracking | GitHub Issues + Projects (kanban board) |
+| Experiment logging | W&B / MLflow, with configs stored in `configs/` |
+| Documentation sync | This VitePress site is updated together with the code repository |
 
-## 6. 后续阅读
+## 6. Further Reading
 
-- [目录组织与文档分层 →](/plan/structure)
-- [阶段划分与里程碑 →](/plan/roadmap)
-- [依赖关系 →](/plan/dependencies)
-- [验收标准 →](/plan/acceptance)
+- [Directory Organization and Documentation Layering →](/plan/structure)
+- [Phase Breakdown and Milestones →](/plan/roadmap)
+- [Dependencies →](/plan/dependencies)
+- [Acceptance Criteria →](/plan/acceptance)

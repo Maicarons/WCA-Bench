@@ -1,129 +1,129 @@
-# 风险与缓解
+# Risks and Mitigation
 
-## 1. 风险登记册
+## 1. Risk Register
 
-| 编号 | 风险 | 类别 | 概率 | 影响 | 等级 |
+| ID | Risk | Category | Probability | Impact | Level |
 | --- | --- | --- | --- | --- | --- |
-| R1 | WCA 数据更新导致测试集不再「未来」 | 数据 | 高 | 中 | **高** |
-| R2 | 基准饱和（某任务迅速达到高精度） | 科学 | 中 | 高 | **高** |
-| R3 | 社区不采纳，影响力受限 | 社区 | 中 | 高 | **高** |
-| R4 | 伦理与隐私争议 | 伦理 | 低 | 高 | **中** |
-| R5 | 多盲解码 / 规则处理错误 | 技术 | 中 | 高 | **高** |
-| R6 | 深度学习基线训练超时 | 技术 | 中 | 中 | **中** |
-| R7 | 投稿窗口错过 | 进度 | 中 | 高 | **高** |
-| R8 | 复现性不足导致评审质疑 | 科学 | 中 | 高 | **高** |
+| R1 | WCA data updates mean the test set is no longer "the future" | Data | High | Medium | **High** |
+| R2 | Benchmark saturation (a task rapidly reaches high accuracy) | Scientific | Medium | High | **High** |
+| R3 | The community does not adopt it, limiting impact | Community | Medium | High | **High** |
+| R4 | Ethical and privacy disputes | Ethics | Low | High | **Medium** |
+| R5 | Multi-blind decoding / rule handling errors | Technical | Medium | High | **High** |
+| R6 | Deep learning baseline training overruns | Technical | Medium | Medium | **Medium** |
+| R7 | Missing the submission window | Schedule | Medium | High | **High** |
+| R8 | Insufficient reproducibility casting doubt during review | Scientific | Medium | High | **High** |
 
-## 2. 风险详细缓解策略
+## 2. Detailed Mitigation Strategies
 
-### R1 · 数据风险
+### R1 · Data Risk
 
-**风险**：WCA 数据的更新可能导致基准的测试集不再「未来」。由于 WCA 数据库持续更新，2026 年之后的比赛数据会不断加入。
+**Risk**: Updates to WCA data may mean the benchmark's test set is no longer "the future". Because the WCA database keeps being updated, competition data from 2026 onward is continuously added.
 
-**缓解**：
+**Mitigation**:
 
-- 将测试集固定在 **2025–2026 年**
-- 后续新增的数据作为「**扩展测试集**」发布
-- **主排行榜始终基于固定的测试窗口**
-- 符合时间序列基准的惯例，保证历史可比性
+- Fix the test set to **2025–2026**
+- Release subsequently added data as an "**Extended Test Set**"
+- **The main leaderboard is always based on the fixed test window**
+- This follows the convention of time-series benchmarks and preserves historical comparability
 
-### R2 · 基准饱和风险
+### R2 · Benchmark Saturation Risk
 
-**风险**：如果某个任务的基线方法迅速达到很高精度（如 DNF 预测的 AUC > 0.95），基准可能失去区分度。
+**Risk**: If the baseline methods for a task rapidly reach very high accuracy (for example, AUC > 0.95 for DNF prediction), the benchmark may lose its discriminative power.
 
-**缓解**：
+**Mitigation**:
 
-- 设计任务时确保每个任务都有足够的「**硬样本**」子集
-  - 例如 DNF 预测额外报告「高不确定性」子集（选手历史 DNF 率在 0.1–0.3 之间）上的性能
-- 五个任务覆盖了从简单到困难的**连续难度谱**
-- 引入成本维度：同时报告性能与算力，避免「算力换精度」掩盖区分度丧失
+- Design each task to have a sufficient "**hard sample**" subset
+  - For example, DNF prediction additionally reports performance on the "high-uncertainty" subset (competitor historical DNF rate between 0.1 and 0.3)
+- The five tasks cover a **continuous difficulty spectrum** from easy to hard
+- Introduce a cost dimension: report performance together with compute, so that "compute for accuracy" cannot hide a loss of discriminative power
 
-### R3 · 社区采纳风险
+### R3 · Community Adoption Risk
 
-**风险**：基准的价值取决于社区是否使用它。如果 WCA 社区或 ML 社区不采纳，项目的影响力将受限。
+**Risk**: The value of a benchmark depends on whether the community uses it. If the WCA community or the ML community does not adopt it, the project's impact will be limited.
 
-**缓解**：
+**Mitigation**:
 
-- 从项目启动阶段就与 **WCA Results Team** 和**速拧社区**建立联系
-- 将 WCA-Bench 定位为「**服务于社区**」的工具：
-  - 选手可以用它来分析自己的表现
-  - 比赛组织者可以用它来优化轮次设置和晋级规则
-- 降低参与门槛：提供 starter kit、提交模板、评测脚本
+- Establish relationships with the **WCA Results Team** and the **speedcubing community** from the very start of the project
+- Position WCA-Bench as a tool that "**serves the community**":
+  - Competitors can use it to analyze their own performance
+  - Competition organizers can use it to optimize round settings and advancement rules
+- Lower the barrier to entry: provide a starter kit, submission template, and evaluation scripts
 
-### R4 · 伦理与隐私风险
+### R4 · Ethical and Privacy Risk
 
-**风险**：虽然 WCA 数据是公开的，但选手的参赛记录可能被用于不恰当的用途（如赌博预测、选手歧视）。
+**Risk**: Although WCA data is public, competitors' participation records could be used for inappropriate purposes (such as gambling prediction or competitor discrimination).
 
-**缓解**：
+**Mitigation**:
 
-- 在**数据卡中明确说明**允许的使用场景和禁止的使用场景
-- 提供**匿名化选项**——允许选手申请从基准数据中移除其个人记录（保留聚合统计量但不保留个体级别数据）
-- 遵守 WCA 数据的允许使用条款
-- 挑战赛规则中明令禁止赌博相关用途
+- State the permitted and prohibited use cases **explicitly in the data card**
+- Provide an **anonymization option** — allowing competitors to request removal of their personal records from the benchmark data (retaining aggregate statistics but not individual-level data)
+- Comply with the acceptable use terms for WCA data
+- Explicitly prohibit gambling-related uses in the challenge rules
 
-### R5 · 技术风险：规则解码错误
+### R5 · Technical Risk: Rule Decoding Errors
 
-**风险**：多盲编码、特殊值（-1/-2）、轮次去极值机制处理错误，将系统性污染全部下游任务。
+**Risk**: Errors in multi-blind encoding, special values (-1/-2), or the round trimming mechanism will systematically contaminate all downstream tasks.
 
-**缓解**：
+**Mitigation**:
 
-- 多盲解码**往返测试**（`encode(decode(v)) == v`）
-- average 重建与官方值一致性校验，低于阈值告警
-- 人工抽样校验边界样本
-- 数据质量检查清单作为阶段一门禁
+- **Round-trip tests** for multi-blind decoding (`encode(decode(v)) == v`)
+- Consistency checks between reconstructed average and the official value, with warnings below the threshold
+- Manual sampling checks on boundary samples
+- The data quality checklist serves as a Phase 1 gate
 
-### R6 · 技术风险：训练超时
+### R6 · Technical Risk: Training Overruns
 
-**风险**：序列模型（LSTM/Transformer）与图神经网络训练可能超出算力预算与工期。
+**Risk**: Training sequence models (LSTM/Transformer) and graph neural networks may exceed the compute budget and the schedule.
 
-**缓解**：
+**Mitigation**:
 
-- 早启动、设算力预算上限
-- 可降级为小模型 / 子采样训练
-- 先交付非 GNN / 非深度基线，深度基线作为增量
-- 用「性能–成本」双维度报告，避免唯精度导向
+- Start early and set an upper bound on the compute budget
+- Allow degrading to a smaller model / subsampled training
+- Ship non-GNN / non-deep baselines first, with deep baselines added incrementally
+- Report on two dimensions, "performance–cost", to avoid a pure-accuracy orientation
 
-### R7 · 进度风险：投稿窗口
+### R7 · Schedule Risk: Submission Window
 
-**风险**：NeurIPS 投稿截止日期为硬约束。
+**Risk**: The NeurIPS submission deadline is a hard constraint.
 
-**缓解**：
+**Mitigation**:
 
-- 提前 1 周完成所有材料冻结
-- M2/M3 设置缓冲（各 2 周）
-- 论文写作与工程并行推进
+- Freeze all material one week in advance
+- Set buffers on M2/M3 (2 weeks each)
+- Advance paper writing and engineering in parallel
 
-### R8 · 科学风险：复现性
+### R8 · Scientific Risk: Reproducibility
 
-**风险**：评审或第三方无法复现结果，影响接收与社区信任。
+**Risk**: Reviewers or third parties cannot reproduce the results, affecting acceptance and community trust.
 
-**缓解**：
+**Mitigation**:
 
-- 独立的第三人复现验证（P3-T3）
-- 环境锁定、种子固定、原始预测可下载
-- 明确复现等级（L1/L2/L3）与最低要求
+- An independent third party reproduces and validates the results (P3-T3)
+- Environment lock, fixed seeds, downloadable raw predictions
+- Clear reproduction levels (L1/L2/L3) and minimum requirements
 
-## 3. 风险监控机制
+## 3. Risk Monitoring Mechanisms
 
-| 机制 | 频率 | 负责 |
+| Mechanism | Frequency | Owner |
 | --- | --- | --- |
-| 风险登记册更新 | 每两周 | 项目负责人 |
-| 里程碑评审 | 每个里程碑 | 全员 |
-| CI 门禁 | 每次提交 | 自动化 |
-| 社区反馈归并 | 阶段四每两周 | 社区维护者 |
+| Risk register update | Biweekly | PI |
+| Milestone review | Every milestone | Everyone |
+| CI gate | Every commit | Automated |
+| Community feedback triage | Biweekly in Phase 4 | Community maintainer |
 
-## 4. 升级路径
+## 4. Escalation Path
 
 ```text
-风险触发
+Risk triggered
    │
-   ├─ 低影响 ──► 记录到登记册，常规缓解
+   ├─ Low impact ──► Log in the register, routine mitigation
    │
-   ├─ 中影响 ──► 两周内评估，调整任务优先级
+   ├─ Medium impact ──► Assess within two weeks, adjust task priorities
    │
-   └─ 高影响 ──► 立即召开评审会，必要时调整里程碑
+   └─ High impact ──► Convene a review meeting immediately, adjust milestones if necessary
 ```
 
-## 5. 后续阅读
+## 5. Further Reading
 
-- [发表策略 →](/plan/publication)
-- [验收标准 →](/plan/acceptance)
+- [Publication Strategy →](/plan/publication)
+- [Acceptance Criteria →](/plan/acceptance)

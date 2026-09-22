@@ -1,79 +1,79 @@
-# 项目概述与目标
+# Project Overview and Objectives
 
-## 1. 背景与动机
+## 1. Background and Motivation
 
-当前 WCA 数据分析领域存在三个突出问题：
+WCA data analysis currently suffers from three prominent problems:
 
-### 1.1 研究碎片化
+### 1.1 Fragmented Research
 
-已有的 WCA 相关机器学习工作分散在单一任务上：
+Existing machine learning work on WCA data is scattered across single tasks:
 
-- 使用核密度估计预测比赛名次
-- 用线性回归预测世界纪录
-- 用高斯过程与极值理论估计人类极限
+- Using kernel density estimation to predict competition placement
+- Using linear regression to predict world records
+- Using Gaussian processes and extreme value theory to estimate human limits
 
-这些工作各自使用**不同的数据划分方式、评估指标和预处理流程**，导致结果无法横向比较。
+Each of these works uses **different data splitting schemes, evaluation metrics, and preprocessing pipelines**, which makes their results mutually incomparable.
 
-### 1.2 缺乏标准化评估
+### 1.2 Lack of Standardized Evaluation
 
-现有的 "CubeBench" 系列基准聚焦于**魔方求解**——评估 LLM 的空间推理和序列规划能力，通过让模型调用工具完成魔方还原任务来诊断认知瓶颈。这些基准：
+The existing "CubeBench" family of benchmarks focuses on **cube solving** — evaluating an LLM's spatial reasoning and sequence planning ability, and diagnosing cognitive bottlenecks by having models call tools to solve the cube. These benchmarks:
 
-- 与 WCA 的真实比赛数据**无关**
-- 无法回答「哪个模型能更准确地预测选手成绩」「哪种方法能更好地估计 DNF 概率」等问题
+- Are **unrelated** to real WCA competition data
+- Cannot answer questions such as "which model predicts competitor results more accurately" or "which method estimates DNF probability better"
 
-### 1.3 领域特定挑战被忽视
+### 1.3 Domain-Specific Challenges Are Overlooked
 
-WCA 数据具有独特的结构特征，要求模型具备对规则约束的显式建模能力，而通用时序预测模型往往无法直接处理：
+WCA data has distinctive structural characteristics that require models to explicitly model rule constraints, something generic time-series forecasting models are usually unable to handle directly:
 
-| 特征 | 说明 |
+| Characteristic | Description |
 | --- | --- |
-| 纵向追踪记录 | 选手的职业生涯跨越多场比赛、多年时间 |
-| 多项目技能迁移 | 17 个项目间存在可量化的迁移效应 |
-| 轮次格式 | average of 5、mean of 3 等格式对结果计算有影响 |
-| 特殊编码 | DNF = `-1`、DNS = `-2`、多盲 `1SSAATTTTT` / `0DDTTTTTMM` |
-| 去极值机制 | ao5 去掉最优最差，单次 DNF 对最终成绩影响被放大 |
+| Longitudinal records | A competitor's career spans many competitions and several years |
+| Cross-event skill transfer | Quantifiable transfer effects exist among the 17 events |
+| Round formats | Formats such as average of 5 and mean of 3 affect how results are computed |
+| Special encodings | DNF = `-1`, DNS = `-2`, multi-blind `1SSAATTTTT` / `0DDTTTTTMM` |
+| Trimming mechanism | ao5 discards the best and worst attempt, which amplifies the impact of a single DNF |
 
-## 2. 项目目标
+## 2. Project Objectives
 
-### 2.1 总目标
+### 2.1 Overall Objective
 
-> **定义一个评估科学问题**：在体育竞技数据的真实约束下，不同方法论（传统统计、深度学习、图学习、生成模型）的表现如何？
+> **Define an evaluation science question**: under the real constraints of competitive sports data, how do different methodologies (classical statistics, deep learning, graph learning, generative models) perform?
 
-WCA-Bench 的目标**不是提出一个新的预测模型**，而是提供标准化的评估基础设施。这个问题本身具有独立的研究价值。
+The goal of WCA-Bench is **not to propose a new prediction model**, but to provide standardized evaluation infrastructure. This question carries independent research value.
 
-### 2.2 具体目标
+### 2.2 Specific Objectives
 
-| 编号 | 目标 | 衡量方式 |
+| ID | Objective | How it is measured |
 | --- | --- | --- |
-| G1 | 构建可复现的数据基础设施 | 预处理管线可一键运行，输出 Parquet 与数据卡 |
-| G2 | 形式化定义五类任务 | 每个任务有明确输入/输出/指标/基线 |
-| G3 | 提供完整基线实现 | 每任务 ≥ 3 个基线，覆盖统计与深度学习方法 |
-| G4 | 建立严格防泄漏评估协议 | 时间分割 + 滚动窗口，基准统计量冻结 |
-| G5 | 发布基准与代码 | HuggingFace 数据集 + GitHub 仓库（Apache-2.0） |
-| G6 | 形成社区影响力 | 论文投稿 + 挑战赛 + 社区采纳 |
+| G1 | Build reproducible data infrastructure | The preprocessing pipeline runs with a single command and emits Parquet plus a data card |
+| G2 | Formally define five task classes | Every task has explicit inputs/outputs/metrics/baselines |
+| G3 | Provide complete baseline implementations | At least 3 baselines per task, covering statistical and deep learning methods |
+| G4 | Establish a strict leakage-free evaluation protocol | Temporal splitting + rolling window, with benchmark statistics frozen |
+| G5 | Release the benchmark and code | HuggingFace dataset + GitHub repository (Apache-2.0) |
+| G6 | Achieve community impact | Paper submission + challenge + community adoption |
 
-## 3. 与现有基准的关键差异
+## 3. Key Differences from Existing Benchmarks
 
-| 维度 | CubeBench 系列 | WCA-Bench |
+| Dimension | CubeBench family | WCA-Bench |
 | --- | --- | --- |
-| 数据来源 | 合成打乱状态 | WCA 真实比赛数据（289k 选手、660 万条成绩） |
-| 评估目标 | 空间推理与序列规划 | 体育数据分析的预测与推断能力 |
-| 任务类型 | 求解、步数优化 | 回归、排序、分类、极值估计、因果推断 |
-| 时间维度 | 静态状态 | 纵向追踪（选手职业生涯） |
-| 领域规则 | 魔方转动规则 | WCA 竞赛规则（轮次格式、DNF 处理、多盲编码） |
-| 评估对象 | LLM 智能体 | 传统 ML 模型、深度学习模型、统计模型 |
+| Data source | Synthetic scramble states | Real WCA competition data (289k competitors, 6.6M results) |
+| Evaluation target | Spatial reasoning and sequence planning | Prediction and inference on sports data |
+| Task types | Solving, move-count optimization | Regression, ranking, classification, extreme value estimation, causal inference |
+| Time dimension | Static states | Longitudinal tracking (competitor careers) |
+| Domain rules | Cube turn rules | WCA competition regulations (round formats, DNF handling, multi-blind encoding) |
+| Evaluated subjects | LLM agents | Classical ML models, deep learning models, statistical models |
 
-## 4. 目标用户
+## 4. Target Users
 
-| 用户群体 | 使用方式 |
+| Audience | How they use it |
 | --- | --- |
-| ML / 统计研究者 | 在标准化任务上评测新方法，横向对比已有工作 |
-| 体育数据分析研究者 | 研究纵向竞技数据中的非平稳性、稀有事件与因果效应 |
-| WCA 社区（选手/组织者） | 分析个人表现、优化轮次设置与晋级规则 |
-| 基准方法学研究者 | 研究防泄漏协议、分层评估与统计检验的设计 |
+| ML / statistics researchers | Evaluate new methods on standardized tasks and compare against prior work |
+| Sports data analysis researchers | Study non-stationarity, rare events, and causal effects in longitudinal competitive data |
+| WCA community (competitors/organizers) | Analyze individual performance and optimize round settings and advancement rules |
+| Benchmark methodology researchers | Study the design of leakage-free protocols, stratified evaluation, and statistical testing |
 
-## 5. 后续阅读
+## 5. Further Reading
 
-- [项目范围界定 →](/guide/scope)
-- [技术方案概述 →](/guide/architecture)
-- [预期成果与成功标准 →](/guide/outcomes)
+- [Project Scope →](/guide/scope)
+- [Technical Approach Overview →](/guide/architecture)
+- [Expected Outcomes and Success Criteria →](/guide/outcomes)

@@ -1,144 +1,144 @@
-# 技术方案概述
+# Technical Approach Overview
 
-本章给出 WCA-Bench 的整体技术路线，详细内容见[数据基础设施](/data/)、[任务套件](/tasks/)与[评估框架](/evaluation/)。
+This chapter presents the overall technical route of WCA-Bench. Detailed content is covered in [Data Infrastructure](/data/), the [Task Suite](/tasks/), and the [Evaluation Framework](/evaluation/).
 
-## 1. 技术路线总览
+## 1. Technical Route Overview
 
 ```text
-WCA 原始导出 (TSV)
+WCA raw export (TSV)
       │
       ▼
 ┌─────────────────────────┐
-│  数据预处理管线          │  成绩解码 / 多盲解码 / 轮次格式归一化
-│  loader → decoders      │  特殊值处理 (-1 DNF, -2 DNS, 0 无成绩)
-│  → features             │  时间泄漏防护
+│  Preprocessing pipeline │  Result decoding / multi-blind decoding / round normalization
+│  loader → decoders      │  Special values (-1 DNF, -2 DNS, 0 no result)
+│  → features             │  Temporal leakage protection
 └─────────────────────────┘
       │
       ▼
 ┌─────────────────────────┐
-│  列式存储与划分          │  Parquet + splits(train/val/test)
-│  data/processed         │  选手纵向序列索引
+│  Columnar storage       │  Parquet + splits (train/val/test)
+│  data/processed         │  Per-competitor longitudinal sequence index
 └─────────────────────────┘
       │
       ▼
 ┌─────────────────────────┐
-│  五类任务适配层          │  T1 回归 / T2 排序 / T3 分类
-│  src/tasks/*            │  T4 极值 / T5 因果
+│  Five-task adapter      │  T1 regression / T2 ranking / T3 classification
+│  src/tasks/*            │  T4 extremes / T5 causal inference
 └─────────────────────────┘
       │
       ▼
 ┌─────────────────────────┐
-│  基线模型实现            │  统计基线 / 树模型 / 序列模型 / 图模型
-│  src/baselines/*        │  贝叶斯与因果基线
+│  Baseline models        │  Statistical / tree / sequence / graph baselines
+│  src/baselines/*        │  Bayesian and causal baselines
 └─────────────────────────┘
       │
       ▼
 ┌─────────────────────────┐
-│  统一评估框架            │  滚动窗口协议 / 四维分层 / 统计检验
-│  src/evaluation/*       │  Bootstrap CI / 效应量
+│  Unified evaluation     │  Rolling-window protocol / four-way stratification / statistical tests
+│  src/evaluation/*       │  Bootstrap CI / effect sizes
 └─────────────────────────┘
       │
       ▼
-   排行榜 / 论文 / 数据集发布
+   Leaderboard / paper / dataset release
 ```
 
-## 2. 代码库结构
+## 2. Codebase Structure
 
 ```text
 wca-bench/
 ├── data/
-│   ├── raw/                    # 原始 WCA 导出文件
-│   ├── processed/              # 预处理后的 Parquet 文件
-│   └── splits/                 # 时间分割的 train/val/test 索引
+│   ├── raw/                    # Raw WCA export files
+│   ├── processed/              # Preprocessed Parquet files
+│   └── splits/                 # Temporally split train/val/test indices
 ├── src/
 │   ├── data/
-│   │   ├── loader.py           # 数据加载与预处理
-│   │   ├── decoders.py         # 多盲编码、成绩值解码
-│   │   └── features.py         # 特征工程
+│   │   ├── loader.py           # Data loading and preprocessing
+│   │   ├── decoders.py         # Multi-blind and result value decoding
+│   │   └── features.py         # Feature engineering
 │   ├── tasks/
-│   │   ├── result_prediction/  # 任务一
-│   │   ├── placement/          # 任务二
-│   │   ├── dnf/                # 任务三
-│   │   ├── limit/              # 任务四
-│   │   └── transfer/           # 任务五
-│   ├── baselines/              # 基线模型实现
-│   ├── evaluation/             # 评估指标与协议
+│   │   ├── result_prediction/  # Task 1
+│   │   ├── placement/          # Task 2
+│   │   ├── dnf/                # Task 3
+│   │   ├── limit/              # Task 4
+│   │   └── transfer/           # Task 5
+│   ├── baselines/              # Baseline model implementations
+│   ├── evaluation/             # Evaluation metrics and protocols
 │   └── utils/
-├── configs/                    # 实验配置文件
-├── notebooks/                  # 探索性分析
-├── tests/                      # 单元测试
-├── docs/                       # 文档（本 VitePress 站点）
-└── scripts/                    # 自动化脚本
+├── configs/                    # Experiment configuration files
+├── notebooks/                  # Exploratory analysis
+├── tests/                      # Unit tests
+├── docs/                       # Documentation (this VitePress site)
+└── scripts/                    # Automation scripts
 ```
 
-> 完整的目录组织与文档分层设计见[开发计划 · 目录组织与文档分层](/plan/structure)。
+> The complete directory organization and documentation layering design is described in [Development Plan · Directory Organization and Documentation Layering](/plan/structure).
 
-## 3. 核心技术决策
+## 3. Core Technical Decisions
 
-### 3.1 数据层：列式优先
+### 3.1 Data Layer: Columnar First
 
-| 决策 | 方案 | 理由 |
+| Decision | Approach | Rationale |
 | --- | --- | --- |
-| 加载引擎 | Polars 替代 Pandas 做初始加载 | 660 万行场景下内存效率提升 3–5 倍 |
-| 存储格式 | Parquet（PyArrow） | 列式读取，支持按列裁剪与谓词下推 |
-| 特征缓存 | 高频访问的选手特征持久化缓存 | 避免重复计算 |
-| 数据加载器 | 提供流式加载器 | 支持大规模训练与内存受限环境 |
+| Loading engine | Polars instead of Pandas for initial loading | 3–5× better memory efficiency at 6.6M rows |
+| Storage format | Parquet (PyArrow) | Columnar reads, supporting column pruning and predicate pushdown |
+| Feature cache | Persistent cache for frequently accessed competitor features | Avoids repeated computation |
+| Data loader | Provide a streaming loader | Supports large-scale training and memory-constrained environments |
 
-### 3.2 任务层：统一抽象
+### 3.2 Task Layer: Unified Abstraction
 
-所有任务遵循统一接口约定：
+All tasks follow a unified interface contract:
 
-- `Task.split()` —— 返回该任务的时间分割视图
-- `Task.featurize()` —— 从原始记录构造模型输入
-- `Task.evaluate()` —— 返回标准指标字典与分层结果
-- `Task.baseline()` —— 注册并运行基线模型
+- `Task.split()` — returns the task's temporal split view
+- `Task.featurize()` — constructs model inputs from raw records
+- `Task.evaluate()` — returns a standard metrics dictionary plus stratified results
+- `Task.baseline()` — registers and runs baseline models
 
-这一抽象保证了「同一份评估代码评估所有模型」，是基准可信度的关键。
+This abstraction guarantees that "the same evaluation code evaluates every model", which is the key to the benchmark's credibility.
 
-### 3.3 评估层：防泄漏优先
+### 3.3 Evaluation Layer: Leakage-Free First
 
-- **时间分割**而非随机分割（体育数据分析基本原则）
-- **滚动窗口**：对测试集每场比赛，模型只能访问该场之前的数据
-- **基准统计量冻结**：历史均值、世界纪录等从训练期计算后冻结
-- **分层报告**：项目 / 选手水平 / 时间 / 地区四维
+- **Temporal splitting** rather than random splitting (a basic principle of sports data analysis)
+- **Rolling window**: for every competition in the test set, the model may only access data preceding that competition
+- **Frozen benchmark statistics**: historical means, world records, etc. are computed on the training period and then frozen
+- **Stratified reporting**: event / competitor skill level / time / region
 
-## 4. 核心依赖
+## 4. Core Dependencies
 
-| 领域 | 依赖 |
+| Area | Dependencies |
 | --- | --- |
-| 数据处理 | Pandas、Polars（大规模数据）、PyArrow（Parquet） |
-| 机器学习 | scikit-learn、XGBoost、LightGBM |
-| 深度学习 | PyTorch、PyTorch Lightning |
-| 概率编程 | PyMC、NumPyro（贝叶斯模型） |
-| 图学习 | PyTorch Geometric（GNN 基线） |
-| 实验管理 | Weights & Biases 或 MLflow |
-| 数据托管 | HuggingFace Datasets |
-| 文档站点 | VitePress |
+| Data processing | Pandas, Polars (large-scale data), PyArrow (Parquet) |
+| Machine learning | scikit-learn, XGBoost, LightGBM |
+| Deep learning | PyTorch, PyTorch Lightning |
+| Probabilistic programming | PyMC, NumPyro (Bayesian models) |
+| Graph learning | PyTorch Geometric (GNN baselines) |
+| Experiment management | Weights & Biases or MLflow |
+| Data hosting | HuggingFace Datasets |
+| Documentation site | VitePress |
 
-## 5. 关键领域处理要点
+## 5. Key Domain Handling Points
 
-### 5.1 成绩值解码
+### 5.1 Result Value Decoding
 
-| format | 数值含义 | 示例 |
+| format | Meaning of the value | Example |
 | --- | --- | --- |
-| `time` | 百分之一秒 | `8653` → 1:26.53 |
-| `number` | 原始数字（最少步数） | `28` → 28 步 |
-| `multi` | 多盲编码 | `1SSAATTTTT` / `0DDTTTTTMM` |
-| 特殊值 | DNF / DNS / 无成绩 | `-1` / `-2` / `0` |
+| `time` | Hundredths of a second | `8653` → 1:26.53 |
+| `number` | Raw number (fewest moves) | `28` → 28 moves |
+| `multi` | Multi-blind encoding | `1SSAATTTTT` / `0DDTTTTTMM` |
+| Special values | DNF / DNS / no result | `-1` / `-2` / `0` |
 
-### 5.2 轮次格式归一化
+### 5.2 Round Format Normalization
 
-- best of 3：取最优
-- average of 5 / mean of 3：平均成绩计算需**去除最优与最差尝试**后取算术平均
-- 单次 DNF 在 ao5 中去极值机制下对最终成绩影响被放大，需显式建模
+- best of 3: take the best attempt
+- average of 5 / mean of 3: the average must be computed as the arithmetic mean **after discarding the best and worst attempts**
+- A single DNF is amplified by the trimming mechanism in ao5, and must therefore be modeled explicitly
 
-### 5.3 打乱序列处理
+### 5.3 Scramble Sequence Handling
 
-`333mbf` 项目的打乱由多个换行分隔的 3x3 打乱组成，在 TSV 版本中换行被替换为 `|` 字符，预处理时需还原并规范化。
+The scrambles for the `333mbf` event consist of multiple newline-separated 3x3 scrambles. In the TSV version, newlines are replaced by the `|` character, so preprocessing must restore and normalize them.
 
-## 6. 相关章节
+## 6. Related Sections
 
-- [数据基础设施 · 总览 →](/data/)
-- [任务套件 · 总览 →](/tasks/)
-- [评估框架 · 总览 →](/evaluation/)
-- [开发计划 · 依赖关系 →](/plan/dependencies)
+- [Data Infrastructure · Overview →](/data/)
+- [Task Suite · Overview →](/tasks/)
+- [Evaluation Framework · Overview →](/evaluation/)
+- [Development Plan · Dependencies →](/plan/dependencies)

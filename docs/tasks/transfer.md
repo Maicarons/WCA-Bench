@@ -1,90 +1,90 @@
-# 任务五：技能迁移分析（Skill Transfer Analysis）
+# Task 5: Skill Transfer Analysis
 
-## 任务定义
+## Task Definition
 
-量化选手在**一个项目上的表现提升**如何**因果地**影响其在**另一个项目上的表现**。
+Quantify how a competitor's **improvement in one event** **causally** affects their **performance in another event**.
 
-## 输入
+## Inputs
 
-| 类别 | 字段 |
+| Category | Field |
 | --- | --- |
-| 多项目记录 | 选手的多项目参赛记录（时间戳、项目、成绩） |
-| 时间标注 | 选手首次参加各项目的时间 |
+| Multi-event records | The competitor's multi-event participation records (timestamp, event, result) |
+| Time annotations | The time at which the competitor first participated in each event |
 
-## 输出
+## Outputs
 
-| 输出 | 类型 |
+| Output | Type |
 | --- | --- |
-| 技能迁移矩阵 | 17 × 17，项目 i 对项目 j 的因果迁移效应 |
-| 迁移效应的置信区间 | 区间估计 |
+| Skill transfer matrix | 17 × 17; the causal transfer effect from event i to event j |
+| Confidence intervals of transfer effects | Interval estimates |
 
-## 评估指标
+## Evaluation Metrics
 
-- **迁移效应的点估计精度**（与留出数据的对比）
-- **因果效应的稳健性**（在不同子样本上的稳定性）
-- **与领域专家判断的一致性**
+- **Precision of point estimates of transfer effects** (compared against held-out data)
+- **Robustness of causal effects** (stability across different subsamples)
+- **Consistency with domain expert judgment**
 
-## 基线方法
+## Baseline Methods
 
-### 相关性基线
+### Correlation Baseline
 
-- **相关性分析**：项目间成绩的 Pearson / Spearman 相关
+- **Correlation analysis**: Pearson / Spearman correlation of results across events
 
-### 因果方法基线
+### Causal Method Baselines
 
-- **双重差分（DID）**：以选手首次参加某项目为「处理」，比较处理组与对照组的后续表现
-- **工具变量（IV）**：以「选手所在国家首次举办某项目比赛」作为工具变量
-- **因果森林（Causal Forest）**：使用因果森林估计异质性处理效应
+- **Difference-in-differences (DID)**: treats a competitor's first participation in an event as the "treatment" and compares the subsequent performance of the treated and control groups
+- **Instrumental variables (IV)**: uses "the first edition of the event held in the competitor's country" as an instrument
+- **Causal forest**: uses a causal forest to estimate heterogeneous treatment effects
 
-## 领域挑战
+## Domain Challenges
 
-### 混淆因素
+### Confounders
 
-技能迁移分析的核心困难在于**混淆因素**：
+The core difficulty of skill transfer analysis lies in **confounders**:
 
-> 一个选手在三阶和四阶上的成绩可能同时受到「天赋」和「训练投入」的影响，简单的相关性无法区分因果关系。
+> A competitor's results in 3x3 and 4x4 may both be influenced by "talent" and "training investment"; simple correlation cannot separate causal relationships.
 
-| 混淆变量 | 影响方向 |
+| Confounder | Direction of influence |
 | --- | --- |
-| 天赋（G） | 同时提升多项目表现 → 虚假正迁移 |
-| 训练投入（E） | 同时提升多项目表现 → 虚假正迁移 |
-| 年龄 / 经验 | 随时间增长 → 需时间固定效应 |
+| Talent (G) | Improves performance in multiple events simultaneously → spurious positive transfer |
+| Training investment (E) | Improves performance in multiple events simultaneously → spurious positive transfer |
+| Age / experience | Grows over time → requires time fixed effects |
 
-### 参赛顺序的非随机性
+### Non-Random Event Participation Order
 
-WCA 数据中选手的项目参赛顺序**不是随机分配的**——选手可能因为擅长某项目而选择更早参加相关项目（自选择偏差）。
+In WCA data, the order in which a competitor takes up events is **not randomly assigned** — a competitor may choose to take up related events earlier because they are already good at a certain event (self-selection bias).
 
 ```text
-选择偏差示意：
-   擅长三阶的人 → 更早开始练四阶 → 观察到三阶↑伴随四阶↑
-   → 误判为「三阶训练导致四阶提升」
+Illustration of selection bias:
+   A person strong at 3x3 → starts practicing 4x4 earlier → observes 3x3↑ accompanied by 4x4↑
+   → mistakenly concluded as "3x3 training causes 4x4 improvement"
 ```
 
-### 稀疏与不平衡
+### Sparsity and Imbalance
 
-部分项目对之间的共同参赛选手极少，导致效应估计方差极大，需要：
+Some event pairs share very few competitors in common, leading to extremely high variance in effect estimates. This requires:
 
-- 分层收缩（借用相似项目对的信息）
-- 明确的不可识别标注（样本不足时不做强结论）
+- Hierarchical shrinkage (borrowing information from similar event pairs)
+- Explicit "unidentifiable" flags (no strong conclusions when samples are insufficient)
 
-## 识别策略
+## Identification Strategies
 
-| 策略 | 假设 | 强度 |
+| Strategy | Assumption | Strength |
 | --- | --- | --- |
-| 相关性 | 无混淆（强假设，仅作参照） | 弱 |
-| DID | 平行趋势假设 | 中 |
-| IV | 工具变量外生性 | 强（但需检验） |
-| 因果森林 | 无未观测混淆 | 强 |
+| Correlation | No confounding (a strong assumption; only for reference) | Weak |
+| DID | Parallel trends assumption | Medium |
+| IV | Exogeneity of the instrument | Strong (but requires testing) |
+| Causal forest | No unobserved confounding | Strong |
 
-## 交付与验收
+## Deliverables and Acceptance
 
-- 定义文档（五要素齐全）
-- ≥ 4 个可运行基线
-- 17 × 17 迁移矩阵 + 置信区间
-- 稳健性分析（子样本 / 敏感性）
-- 自选择偏差的显式讨论
+- Definition document (all five elements present)
+- ≥ 4 runnable baselines
+- 17 × 17 transfer matrix + confidence intervals
+- Robustness analysis (subsamples / sensitivity)
+- Explicit discussion of self-selection bias
 
-## 后续阅读
+## Further Reading
 
-- [评估框架 · 总览 →](/evaluation/)
-- [发表策略 →](/plan/publication)
+- [Evaluation Framework · Overview →](/evaluation/)
+- [Publication Strategy →](/plan/publication)

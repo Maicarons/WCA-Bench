@@ -1,38 +1,38 @@
-# 预处理管线
+# Preprocessing Pipeline
 
-WCA-Bench 的数据预处理需要处理四类领域特定问题：成绩值解码、打乱序列处理、轮次格式归一化、时间泄漏防护。
+Preprocessing WCA-Bench data requires handling four classes of domain-specific problems: result value decoding, scramble sequence handling, round format normalization, and temporal leakage protection.
 
-## 1. 成绩值解码
+## 1. Result Value Decoding
 
-正数值的含义**取决于项目的 format 字段**：
+The meaning of a positive value **depends on the event's format field**:
 
-| format | 数值含义 | 示例 |
+| format | Meaning of the value | Example |
 | --- | --- | --- |
-| `time` | 百分之一秒 | `8653` → 1 分 26.53 秒 |
-| `number` | 原始数字（仅最少步数） | `28` → 28 步 |
-| `multi` | 多盲编码 | 需按 `1SSAATTTTT` / `0DDTTTTTMM` 解码 |
+| `time` | Hundredths of a second | `8653` → 1 minute 26.53 seconds |
+| `number` | Raw number (fewest moves only) | `28` → 28 moves |
+| `multi` | Multi-blind encoding | Must be decoded as `1SSAATTTTT` / `0DDTTTTTMM` |
 
-特殊值：
+Special values:
 
-| 值 | 含义 | 处理方式 |
+| Value | Meaning | Handling |
 | --- | --- | --- |
-| `-1` | DNF | 标记为失败，参与 DNF 率统计，不参与均值 |
-| `-2` | DNS | 标记为未开始，通常从训练中剔除 |
-| `0` | 无成绩 | 视为缺失 |
+| `-1` | DNF | Marked as a failure; contributes to DNF-rate statistics but not to averages |
+| `-2` | DNS | Marked as not started; usually excluded from training |
+| `0` | No result | Treated as missing |
 
-### 1.1 多盲解码实现要点
+### 1.1 Multi-Blind Decoding Implementation Notes
 
 ```python
 def decode_multi(value: int) -> tuple[int, int, int]:
-    """将多盲编码解码为 (完成数, 尝试数, 用时秒)。"""
+    """Decode a multi-blind encoding into (solved, attempted, seconds)."""
     s = str(value).zfill(10)
-    if s[0] == "1":                     # 旧版 1SSAATTTTT
+    if s[0] == "1":                     # old format 1SSAATTTTT
         dd = 99 - int(s[1:3])
         mm = int(s[3:5])
         solved = dd + mm
         attempted = solved + mm
         seconds = int(s[5:10])
-    else:                               # 新版 0DDTTTTTMM
+    else:                               # new format 0DDTTTTTMM
         dd = int(s[1:3])
         seconds = int(s[3:8])
         mm = int(s[8:10])
@@ -41,95 +41,95 @@ def decode_multi(value: int) -> tuple[int, int, int]:
     return solved, attempted, seconds
 ```
 
-## 2. 打乱序列处理
+## 2. Scramble Sequence Handling
 
-`333mbf` 项目的打乱由**多个换行分隔的 3x3 打乱**组成。在 TSV 版本中，换行被替换为 `|` 字符。
+Scrambles for the `333mbf` event consist of **multiple newline-separated 3x3 scrambles**. In the TSV version, newlines are replaced by the `|` character.
 
-预处理步骤：
+Preprocessing steps:
 
-1. 按 `|` 切分
-2. 还原为多行打乱序列
-3. 规范化空白字符与转义
-4. 校验打乱长度与项目匹配
+1. Split on `|`
+2. Restore the multi-line scramble sequence
+3. Normalize whitespace and escaping
+4. Validate that the scramble length matches the event
 
-## 3. 轮次格式归一化
+## 3. Round Format Normalization
 
-不同轮次格式对结果计算方式不同：
+Different round formats compute results differently:
 
-| 格式 | 计算方式 |
+| Format | Computation |
 | --- | --- |
-| best of 3 | 取 3 次中最优 |
-| average of 5 | 去除最优与最差尝试后取剩余 3 次算术平均 |
-| mean of 3 | 3 次算术平均 |
+| best of 3 | Take the best of 3 attempts |
+| average of 5 | Discard the best and worst attempts, then take the arithmetic mean of the remaining 3 |
+| mean of 3 | Arithmetic mean of 3 attempts |
 
-::: warning 去极值机制的影响
-在 ao5 中，**单次 DNF 对最终成绩的影响被放大**（DNF 通常占据「最差」位置而被去除，但若出现两次 DNF 则整轮 DNF）。模型需要显式建模这种规则效应，而不是简单地把尝试值平均。
+::: warning Impact of the trimming mechanism
+In ao5, **the impact of a single DNF on the final result is amplified** (a DNF usually occupies the "worst" slot and is discarded, but two DNFs make the whole round a DNF). Models need to model this rule effect explicitly rather than simply averaging the attempt values.
 :::
 
-管线需：
+The pipeline must:
 
-1. 从 `result_attempts` 重建每轮的尝试序列
-2. 按 `format_id` 计算标准化的 `average`
-3. 与官方 `results.average` 做一致性校验（不一致则记录告警）
+1. Reconstruct the attempt sequence of each round from `result_attempts`
+2. Compute the standardized `average` according to `format_id`
+3. Cross-check it against the official `results.average` (and log a warning on mismatch)
 
-## 4. 时间泄漏防护
+## 4. Temporal Leakage Protection
 
-评估协议必须确保基准计算**仅使用决策时刻可用的信息**：
-
-```text
-对于比赛 t 的成绩预测：
-    允许：所有 competition_date < date(t) 的数据
-    禁止：比赛 t 及其之后的一切数据
-    冻结：选手历史均值、世界纪录等基准统计量
-```
-
-实现约定：
-
-- 所有特征函数签名强制传入 `as_of` 时间戳
-- 特征缓存按 `as_of` 分桶，避免跨时间复用
-- 提供断言工具 `assert_no_leakage(features, target_date)` 用于测试
-
-## 5. 管线阶段
+The evaluation protocol must ensure that benchmark computation **uses only information available at the decision time**:
 
 ```text
-Stage 0  原始文件校验（存在性、列头、编码）
-   │
-Stage 1  全表加载（Polars scan_tsv）
-   │
-Stage 2  成绩解码（time / number / multi + 特殊值）
-   │
-Stage 3  打乱规范化（333mbf 多行还原）
-   │
-Stage 4  轮次格式归一化（best/average/mean 一致性校验）
-   │
-Stage 5  特征工程（选手、项目、对抗、时间上下文）
-   │
-Stage 6  时间分割与索引生成
-   │
-Stage 7  导出 Parquet + 数据卡校验
+For result prediction at competition t:
+    Allowed: all data with competition_date < date(t)
+    Forbidden: competition t and any data after it
+    Frozen: benchmark statistics such as competitor historical means and world records
 ```
 
-## 6. 性能策略
+Implementation conventions:
 
-| 策略 | 说明 |
+- All feature function signatures are required to accept an `as_of` timestamp
+- Feature caches are bucketed by `as_of` to avoid reuse across time
+- An assertion utility `assert_no_leakage(features, target_date)` is provided for testing
+
+## 5. Pipeline Stages
+
+```text
+Stage 0  Raw file validation (existence, headers, encoding)
+   │
+Stage 1  Full-table loading (Polars scan_tsv)
+   │
+Stage 2  Result decoding (time / number / multi + special values)
+   │
+Stage 3  Scramble normalization (restore multi-line 333mbf)
+   │
+Stage 4  Round format normalization (best/average/mean consistency checks)
+   │
+Stage 5  Feature engineering (competitor, event, head-to-head, temporal context)
+   │
+Stage 6  Temporal splitting and index generation
+   │
+Stage 7  Export Parquet + data card validation
+```
+
+## 6. Performance Strategy
+
+| Strategy | Description |
 | --- | --- |
-| Polars 替代 Pandas | 660 万行场景下内存效率提升 3–5 倍 |
-| Parquet 列式存储 | 支持列裁剪与谓词下推 |
-| 特征缓存 | 高频访问的选手特征持久化 |
-| 流式加载器 | 支持大规模训练与内存受限环境 |
+| Polars instead of Pandas | 3–5× better memory efficiency at 6.6M rows |
+| Parquet columnar storage | Supports column pruning and predicate pushdown |
+| Feature cache | Persists frequently accessed competitor features |
+| Streaming loader | Supports large-scale training and memory-constrained environments |
 
-## 7. 数据质量检查清单
+## 7. Data Quality Checklist
 
-- [ ] 主键唯一性与外键完整性（persons / competitions / events）
-- [ ] 成绩值域合法性（正值范围、特殊值分布）
-- [ ] 多盲解码往返一致性（encode(decode(v)) == v）
-- [ ] 打乱序列长度与项目匹配率
-- [ ] average 重建与官方值一致率 ≥ 阈值
-- [ ] 时间戳单调性与时区一致性
-- [ ] 分割索引与原始表行数对账
+- [ ] Primary key uniqueness and foreign key integrity (persons / competitions / events)
+- [ ] Valid result value ranges (range of positive values, distribution of special values)
+- [ ] Multi-blind decoding round-trip consistency (encode(decode(v)) == v)
+- [ ] Match rate between scramble sequence length and event
+- [ ] Consistency rate between reconstructed average and the official value ≥ threshold
+- [ ] Timestamp monotonicity and time zone consistency
+- [ ] Reconciliation between split indices and raw table row counts
 
-## 8. 后续阅读
+## 8. Further Reading
 
-- [数据划分策略 →](/data/splits)
-- [评估协议与分层 →](/evaluation/protocol)
-- [开发计划 · 阶段一任务分解 →](/plan/phase-1)
+- [Data Splitting Strategy →](/data/splits)
+- [Evaluation Protocol and Stratification →](/evaluation/protocol)
+- [Development Plan · Phase 1 Task Breakdown →](/plan/phase-1)

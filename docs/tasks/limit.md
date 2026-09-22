@@ -1,88 +1,88 @@
-# 任务四：人类极限估计（Human Limit Estimation）
+# Task 4: Human Limit Estimation
 
-## 任务定义
+## Task Definition
 
-基于各项目的**历史世界纪录序列**，估计该项目的理论人类表现极限，并预测达到极限的时间范围。
+Based on the **historical world record sequence** of each event, estimate the theoretical human performance limit for that event and predict the time horizon over which the limit will be reached.
 
-## 输入
+## Inputs
 
-| 类别 | 字段 |
+| Category | Field |
 | --- | --- |
-| 序列 | 每个项目的世界纪录时间序列（日期、成绩值） |
-| 项目特征 | 平均成绩、成绩方差、项目历史长度 |
+| Sequence | The world record time series of each event (date, result value) |
+| Event features | Mean result, result variance, length of the event's history |
 
-## 输出
+## Outputs
 
-| 输出 | 类型 |
+| Output | Type |
 | --- | --- |
-| 极限值的点估计 | 连续值 |
-| 极限值的后验分布 | 概率分布 |
-| 达到极限的预期年份 | 年份 + 区间 |
-| 不确定性区间 | 置信 / 可信区间 |
+| Point estimate of the limit | Continuous value |
+| Posterior distribution of the limit | Probability distribution |
+| Expected year of reaching the limit | Year + interval |
+| Uncertainty interval | Confidence / credible interval |
 
-## 评估指标
+## Evaluation Metrics
 
-- **极限估计的稳定性**（在留一法交叉验证中的方差）
-- **预测区间的覆盖率**
-- **与已知领域知识的一致性**
+- **Stability of the limit estimate** (variance under leave-one-out cross-validation)
+- **Coverage of prediction intervals**
+- **Consistency with known domain knowledge**
 
-::: info 参照点
-已知领域知识给出三阶的极限估计约为 **2.37 秒**，收敛时间约为 **2036 年**，可作为一致性校验的锚点之一。
+::: info Reference point
+Known domain knowledge puts the 3x3 limit estimate at approximately **2.37 seconds**, with convergence around **2036**, which can serve as one anchor for consistency checks.
 :::
 
-## 基线方法
+## Baseline Methods
 
-### 统计基线
+### Statistical Baselines
 
-- **指数衰减模型**：假设成绩按指数趋近极限
+- **Exponential decay model**: assumes results approach the limit exponentially
 
-### 方法论基线
+### Methodological Baselines
 
-- **高斯过程回归 + 极值理论**：使用 GP 建模非线性趋势，用 EVT 建模极端观测
-- **贝叶斯分层极值模型**：将各项目的极限视为从超分布中采样的随机变量
-- **变点检测**：识别成绩进步速率的结构性变化
+- **Gaussian process regression + extreme value theory**: uses a GP to model the non-linear trend and EVT to model extreme observations
+- **Bayesian hierarchical extreme value model**: treats each event's limit as a random variable drawn from a hyper-distribution
+- **Change point detection**: identifies structural changes in the rate of result improvement
 
-## 领域挑战
+## Domain Challenges
 
-### 外推风险
+### Extrapolation Risk
 
-人类极限估计面临**外推风险**——历史数据可能无法捕捉未来训练方法或硬件创新带来的跃变（例如新型魔方磁力结构、训练体系革新）。
+Human limit estimation faces **extrapolation risk** — historical data may fail to capture the step changes brought about by future training methods or hardware innovation (for example, new magnetic cube structures or revolutionary training systems).
 
-### 数据密度差异巨大
+### Vastly Different Data Density
 
-不同项目的极限估计需要**不同的模型复杂度**：
+Limit estimation across events requires **different model complexity**:
 
-| 项目类别 | 数据情况 | 建模策略 |
+| Event category | Data situation | Modeling strategy |
 | --- | --- | --- |
-| 三阶 | 23 年密集数据 | 可用复杂模型（GP + EVT） |
-| 新兴项目 | 数据点可能不足 50 个 | 需强先验或分层借用信息 |
+| 3x3 | 23 years of dense data | Complex models are viable (GP + EVT) |
+| Emerging events | Possibly fewer than 50 data points | Require strong priors or hierarchical information borrowing |
 
-### 无直接监督信号
+### No Direct Supervision Signal
 
-「真实极限」**不可观测**，因此评估依赖：
+The "true limit" is **unobservable**, so evaluation relies on:
 
-- 留一法交叉验证下的**稳定性**
-- 与领域判断的**一致性**
-- 不同方法间的**收敛性**
+- **Stability** under leave-one-out cross-validation
+- **Consistency** with domain judgment
+- **Convergence** across different methods
 
-## 建模框架
+## Modeling Framework
 
 ```text
-观测：世界纪录时间序列 { (t_i, y_i) }
-模型：y(t) = L + (y_0 - L) · exp(-λ · g(t)) + ε(t)
-      其中 L 为极限，g(t) 为技术进步函数，ε 为噪声
-推断：贝叶斯后验 p(L, λ, params | data)
-输出：L 的后验分布 + 收敛年份分布
+Observation: world record time series { (t_i, y_i) }
+Model: y(t) = L + (y_0 - L) · exp(-λ · g(t)) + ε(t)
+       where L is the limit, g(t) is the technological progress function, and ε is noise
+Inference: Bayesian posterior p(L, λ, params | data)
+Output: posterior distribution of L + distribution of the convergence year
 ```
 
-## 交付与验收
+## Deliverables and Acceptance
 
-- 定义文档（五要素齐全）
-- ≥ 4 个可运行基线
-- 留一法稳定性报告
-- 与领域知识的对照分析
+- Definition document (all five elements present)
+- ≥ 4 runnable baselines
+- Leave-one-out stability report
+- Comparative analysis against domain knowledge
 
-## 后续阅读
+## Further Reading
 
-- [任务五：技能迁移分析 →](/tasks/transfer)
-- [任务套件 · 总览 →](/tasks/)
+- [Task 5: Skill Transfer Analysis →](/tasks/transfer)
+- [Task Suite · Overview →](/tasks/)

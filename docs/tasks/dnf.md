@@ -1,96 +1,96 @@
-# 任务三：DNF 预测（DNF Prediction）
+# Task 3: DNF Prediction
 
-## 任务定义
+## Task Definition
 
-给定选手在某轮次中**已完成的尝试序列**和**剩余尝试数**，预测该选手后续尝试出现 DNF 的概率。
+Given a competitor's **completed attempt sequence** in a round and the **number of remaining attempts**, predict the probability that a DNF occurs in the competitor's subsequent attempts.
 
-## 输入
+## Inputs
 
-| 类别 | 字段 |
+| Category | Field |
 | --- | --- |
-| 选手 | 选手 ID |
-| 序列 | 已完成尝试的值（含 DNF 标记） |
-| 上下文 | 当前轮次格式、剩余尝试数 |
-| 历史 | 选手历史 DNF 率 |
-| 时间约束 | 决策时刻 `as_of`（强制） |
+| Competitor | Competitor ID |
+| Sequence | Values of completed attempts (including DNF flags) |
+| Context | Current round format, number of remaining attempts |
+| History | The competitor's historical DNF rate |
+| Time constraint | Decision time `as_of` (mandatory) |
 
-## 输出
+## Outputs
 
-| 输出 | 类型 |
+| Output | Type |
 | --- | --- |
-| 下一次尝试的 DNF 概率 | 二分类概率 |
-| 该轮次最终成绩的 DNF 概率 | 整轮 DNF 概率 |
+| DNF probability of the next attempt | Binary probability |
+| DNF probability of the round's final result | Probability of a DNF for the whole round |
 
-## 评估指标
+## Evaluation Metrics
 
-- **AUC-ROC 和 AUC-PR**（考虑类别不平衡）
-- **F1 分数和 Matthews 相关系数（MCC）**
-- **校准曲线（Reliability Diagram）**
-- **按轮次阶段分层评估**（第一轮 vs 决赛）
+- **AUC-ROC and AUC-PR** (accounting for class imbalance)
+- **F1 score and Matthews correlation coefficient (MCC)**
+- **Calibration curve (reliability diagram)**
+- **Stratified evaluation by round stage** (first round vs final)
 
-::: warning 类别不平衡下的指标选择
-整体 DNF 率约 2–3%，此时 AUC-ROC 会**高估**模型能力。必须同时报告 **AUC-PR** 与 **MCC**，并给出基线（随机 / 全局 DNF 率）的对应值作为对照。
+::: warning Metric selection under class imbalance
+The overall DNF rate is about 2–3%, and in that regime AUC-ROC **overestimates** model ability. AUC-PR and MCC must also be reported, together with the corresponding values of baselines (random / global DNF rate) as a reference.
 :::
 
-## 基线方法
+## Baseline Methods
 
-### 平凡 / 领域基线
+### Trivial and Domain Baseline
 
-- **历史 DNF 率**：选手所有历史尝试中 DNF 的比例
+- **Historical DNF rate**: the proportion of DNFs among all of a competitor's historical attempts
 
-### 统计基线
+### Statistical Baselines
 
-- **Logistic 回归**：使用已完成尝试的均值和方差作为特征
-- **贝叶斯层次模型**：将 DNF 率建模为选手特定参数，使用 Beta 先验进行收缩估计
+- **Logistic regression**: uses the mean and variance of completed attempts as features
+- **Bayesian hierarchical model**: models the DNF rate as a competitor-specific parameter, using a Beta prior for shrinkage estimation
 
-### 方法论基线
+### Methodological Baselines
 
-- **随机森林 / XGBoost**：使用选手特征和轮次上下文特征
+- **Random forest / XGBoost**: uses competitor features and round context features
 
-## 领域挑战
+## Domain Challenges
 
-### 稀有且不均匀
+### Rare and Uneven
 
-DNF 在 WCA 数据中是**稀有事件**（整体约 2–3%），但分布极不均匀：
+DNFs are **rare events** in WCA data (about 2–3% overall), but their distribution is extremely uneven:
 
-| 项目类别 | DNF 率特征 |
+| Event category | DNF rate characteristics |
 | --- | --- |
-| 盲拧 / 多盲 | 远高于平均，存在大量「全 DNF」轮次 |
-| 速拧类（三阶等） | 较低，稳定 |
-| 最少步 | 特殊性：超时或违规导致 DNF |
+| Blindfolded / multi-blind | Far above average, with many "all-DNF" rounds |
+| Speed events (3x3 etc.) | Lower and stable |
+| Fewest moves | Distinctive: timeouts or rule violations cause DNFs |
 
-### 序列依赖性
+### Sequential Dependence
 
-DNF 的发生具有**序列依赖性**——一次 DNF 可能导致选手在后续尝试中：
+The occurrence of a DNF exhibits **sequential dependence** — one DNF may lead a competitor, in subsequent attempts, to:
 
-- 采取更保守的策略（降低 DNF 率），或
-- 心理崩溃（提高 DNF 率）
+- Adopt a more conservative strategy (lowering the DNF rate), or
+- Experience a psychological collapse (raising the DNF rate)
 
-这一双向效应要求模型显式建模**轮次内的状态演化**，而非仅用静态特征。
+This two-way effect requires models to explicitly model **state evolution within a round** rather than relying on static features alone.
 
-### 规则依赖
+### Rule Dependence
 
-ao5 中「已有 1 次 DNF」与「已有 0 次 DNF」的后续风险结构完全不同（1 次 DNF 后容错空间为零）。
+In ao5, the risk structure after "already 1 DNF" is completely different from that after "0 DNFs" (after one DNF there is zero margin for error).
 
-## 硬样本子集
+## Hard Sample Subset
 
-为防止基准饱和（如 AUC > 0.95 时失去区分度），额外报告**高不确定性子集**：
+To prevent benchmark saturation (for example, losing discriminative power when AUC > 0.95), a **high-uncertainty subset** is additionally reported:
 
 ```text
-高不确定性子集定义：
-    选手历史 DNF 率 ∈ [0.1, 0.3]
+Definition of the high-uncertainty subset:
+    Competitor historical DNF rate ∈ [0.1, 0.3]
 ```
 
-在该子集上单独报告全部指标，保证任务在基准演进中保持区分度。
+All metrics are reported separately on this subset, keeping the task discriminative as the benchmark evolves.
 
-## 交付与验收
+## Deliverables and Acceptance
 
-- 定义文档（五要素齐全）
-- ≥ 4 个可运行基线
-- AUC-ROC / AUC-PR / MCC / 校准曲线 + 分层报告
-- 高不确定性子集的独立结果
+- Definition document (all five elements present)
+- ≥ 4 runnable baselines
+- AUC-ROC / AUC-PR / MCC / calibration curve + stratified report
+- Independent results for the high-uncertainty subset
 
-## 后续阅读
+## Further Reading
 
-- [任务四：人类极限估计 →](/tasks/limit)
-- [风险与缓解 · 基准饱和风险 →](/plan/risks)
+- [Task 4: Human Limit Estimation →](/tasks/limit)
+- [Risks and Mitigation · Benchmark Saturation Risks →](/plan/risks)

@@ -1,35 +1,35 @@
-# 数据来源与表结构
+# Data Sources and Table Schemas
 
-## 1. 数据来源
+## 1. Data Sources
 
-WCA-Bench 使用 **WCA 官方公开数据库导出**，包含以下核心表：
+WCA-Bench uses the **official public WCA database export**, which includes the following core tables:
 
-| 表 | 规模（约） | 说明 |
+| Table | Scale (approx.) | Description |
 | --- | --- | --- |
-| `persons` | 289k 行 | 选手信息：WCA ID、姓名、国籍、性别 |
-| `competitions` | 17.7k 行 | 比赛元数据：日期、城市、坐标 |
-| `results` | 660 万行 | 每人每项每轮的成绩记录，含 best、average 字段 |
-| `result_attempts` | — | 每轮的单次尝试值 |
-| `scrambles` | 310 万行 | 每轮每组的打乱序列 |
-| `events` | — | 17 个现役项目和已废止项目 |
-| `formats` / `round_types` | — | 计分格式（ao5、mo3 等）与轮次类型（决赛、半决赛等） |
-| `countries` / `continents` | — | 国家和地区信息 |
-| `championships` | — | 锦标赛归属，含 `eligible_country_iso2s_for_championship` |
+| `persons` | 289k rows | Competitor information: WCA ID, name, nationality, gender |
+| `competitions` | 17.7k rows | Competition metadata: date, city, coordinates |
+| `results` | 6.6M rows | Result records per person, event, and round, including best and average fields |
+| `result_attempts` | — | Individual attempt values for each round |
+| `scrambles` | 3.1M rows | Scramble sequences for each round and group |
+| `events` | — | The 17 active events and retired events |
+| `formats` / `round_types` | — | Scoring formats (ao5, mo3, etc.) and round types (final, semifinal, etc.) |
+| `countries` / `continents` | — | Country and continent information |
+| `championships` | — | Championship affiliation, including `eligible_country_iso2s_for_championship` |
 
-::: info 关于 result_attempts 的版本差异
-在 v2.0.2 导出中，`result_attempts` 已**移除** `id`、`created_at`、`updated_at` 字段以减小文件体积。预处理管线不应依赖这些字段。
+::: info Version differences in result_attempts
+In the v2.0.2 export, `result_attempts` has **dropped** the `id`, `created_at`, and `updated_at` fields to reduce file size. The preprocessing pipeline must not depend on those fields.
 :::
 
-## 2. 数据规模
+## 2. Data Scale
 
-截至 2026 年，WCA 数据库包含：
+As of 2026, the WCA database contains:
 
-- 超过 **282,000** 名选手
-- **16,600+** 场比赛
+- More than **282,000** competitors
+- **16,600+** competitions
 
-Developer 导出额外包含**轮次配置、赛程、场馆**等信息，支持获取每轮的限时、及格线、晋级条件等比赛配置字段。
+The Developer export additionally contains **round configuration, schedule, and venue** information, making it possible to obtain per-round time limits, cutoff times, advancement conditions, and other competition configuration fields.
 
-## 3. 核心表关系
+## 3. Core Table Relationships
 
 ```text
 persons ──┐
@@ -46,62 +46,62 @@ championships ──► competitions
 - `persons.WCA ID` ↔ `results.person_id`
 - `competitions.id` ↔ `results.competition_id`
 - `events.id` ↔ `results.event_id`
-- `results` 通过 `(competition_id, event_id, round_type_id, format_id)` 关联格式与轮次语义
+- `results` links format and round semantics through `(competition_id, event_id, round_type_id, format_id)`
 
-## 4. 关键字段语义
+## 4. Key Field Semantics
 
-### 4.1 results 表
+### 4.1 The results Table
 
-| 字段 | 语义 | 注意事项 |
+| Field | Semantics | Notes |
 | --- | --- | --- |
-| `best` | 该轮最优成绩 | 编码取决于 `format_id`，见下 |
-| `average` | 该轮平均成绩 | 仅 ao5 / mo3 等格式存在 |
-| `format_id` | 计分格式 | 决定数值解码方式 |
-| `round_type_id` | 轮次类型 | 决赛 / 半决赛 / 第一轮等 |
-| `pos` | 名次 | 可用于任务二监督信号 |
-| `regional_*` / ` continental_*` | 地区记录标记 | 可选特征 |
+| `best` | Best result of the round | The encoding depends on `format_id`, see below |
+| `average` | Average result of the round | Only present for ao5 / mo3 and similar formats |
+| `format_id` | Scoring format | Determines how the value is decoded |
+| `round_type_id` | Round type | Final / semifinal / first round, etc. |
+| `pos` | Placement | Can serve as the supervision signal for Task 2 |
+| `regional_*` / `continental_*` | Regional record flags | Optional features |
 
-### 4.2 特殊值编码
+### 4.2 Special Value Encoding
 
-| 值 | 含义 |
+| Value | Meaning |
 | --- | --- |
-| `-1` | DNF（Did Not Finish，未完成） |
-| `-2` | DNS（Did Not Start，未开始） |
-| `0` | 无成绩（该轮未产生记录） |
+| `-1` | DNF (Did Not Finish) |
+| `-2` | DNS (Did Not Start) |
+| `0` | No result (no record produced in that round) |
 
-### 4.3 formats 表
+### 4.3 The formats Table
 
-| format | 数值含义 | 示例 |
+| format | Meaning of the value | Example |
 | --- | --- | --- |
-| `time` | 百分之一秒 | `8653` = 1 分 26.53 秒 |
-| `number` | 原始数字（仅最少步数） | `28` = 28 步 |
-| `multi` | 多盲编码 | `1SSAATTTTT`（旧）/ `0DDTTTTTMM`（新） |
+| `time` | Hundredths of a second | `8653` = 1 minute 26.53 seconds |
+| `number` | Raw number (fewest moves only) | `28` = 28 moves |
+| `multi` | Multi-blind encoding | `1SSAATTTTT` (old) / `0DDTTTTTMM` (new) |
 
-## 5. 多盲编码格式
+## 5. Multi-Blind Encoding Format
 
-多盲项目（`333mbf`）的成绩使用复合编码：
+Results in the multi-blind event (`333mbf`) use a composite encoding:
 
 ```text
-旧版格式：1 S S A A T T T T T
-新版格式：0 D D T T T T T M M
+Old format: 1 S S A A T T T T T
+New format: 0 D D T T T T T M M
 ```
 
-其中：
+Where:
 
-- 首位标识版本（`1` = 旧，`0` = 新）
-- `SS` / `DD` = 差值编码（尝试数与完成数的关系）
-- `TTTTT` = 总用时（秒）
-- `MM` = 未完成数
+- The first digit identifies the version (`1` = old, `0` = new)
+- `SS` / `DD` = difference encoding (the relationship between the number of attempts and the number of solved cubes)
+- `TTTTT` = total time (seconds)
+- `MM` = number of unsolved cubes
 
-具体解码逻辑见[预处理管线 · 成绩值解码](/data/pipeline#_1-成绩值解码)。
+The decoding logic is described in [Preprocessing Pipeline · Result Value Decoding](/data/pipeline#_1-result-value-decoding).
 
-## 6. 使用条款与伦理
+## 6. Terms of Use and Ethics
 
-- 数据版权归 **World Cube Association** 所有，遵循其公开数据的允许使用条款
-- 仅用于聚合与统计用途，禁止用于赌博预测、个体歧视等场景
-- 详见[项目范围 · 明确禁止的使用场景](/guide/scope#_4-明确禁止的使用场景)
+- Data copyright belongs to the **World Cube Association** and follows the acceptable use terms for its public data
+- For aggregate and statistical purposes only; scenarios such as gambling prediction and individual discrimination are prohibited
+- See [Project Scope · Forbidden Use Cases](/guide/scope#_4-forbidden-use-cases)
 
-## 7. 后续阅读
+## 7. Further Reading
 
-- [预处理管线 →](/data/pipeline)
-- [数据划分策略 →](/data/splits)
+- [Preprocessing Pipeline →](/data/pipeline)
+- [Data Splitting Strategy →](/data/splits)

@@ -1,114 +1,132 @@
-# 评估协议与分层
+# Evaluation Protocol and Stratification
 
-## 1. 评估协议
+## 1. Evaluation Protocol
 
-WCA-Bench 采用**滚动窗口评估**协议，模拟真实部署场景：
+WCA-Bench adopts a **rolling window evaluation** protocol that simulates the real deployment scenario:
 
-- 对于测试集中的**每一场比赛**，模型只能访问该比赛之前的数据
-- 基准统计量（如选手的历史均值、项目的世界纪录）从**训练期**数据计算，在测试窗口期间**冻结**
-- **不进行任何形式的未来信息泄漏**
+- For **every competition** in the test set, the model may only access data preceding that competition
+- Benchmark statistics (such as a competitor's historical mean and an event's world record) are computed on **training-period** data and **frozen** throughout the test window
+- **No form of future information leakage**
 
-这一协议参考了体育数据分析中防泄漏的最佳实践。
+This protocol follows best practice for leakage prevention in sports data analysis.
 
-### 1.1 协议伪代码
+### 1.1 Protocol Pseudocode
 
 ```python
 def rolling_evaluation(model, test_competitions, frozen_stats):
     reports = []
     for comp in sorted(test_competitions, key=lambda c: c.date):
-        # 1. 仅使用 as_of 之前的数据构造特征
+        # 1. Build features using only data before as_of
         features = featurize(as_of=comp.date, frozen_stats=frozen_stats)
-        # 2. 断言无泄漏
+        # 2. Assert that there is no leakage
         assert_no_leakage(features, target_date=comp.date)
-        # 3. 预测并评估
+        # 3. Predict and evaluate
         preds = model.predict(features)
         reports.append(evaluate(preds, comp.ground_truth))
     return aggregate(reports)
 ```
 
-### 1.2 冻结统计量
+### 1.2 Frozen Statistics
 
-| 统计量 | 计算来源 | 冻结时机 |
+| Statistic | Computed from | Frozen at |
 | --- | --- | --- |
-| 选手历史均值 / 方差 | 训练期（≤ 2022） | 测试窗口全程 |
-| 项目世界纪录 | 训练期 | 测试窗口全程 |
-| 项目基准分布 | 训练期 | 测试窗口全程 |
-| 选手水平分位阈值 | 训练期 | 测试窗口全程 |
+| Competitor historical mean / variance | Training period (≤ 2022) | Throughout the test window |
+| Event world records | Training period | Throughout the test window |
+| Event baseline distributions | Training period | Throughout the test window |
+| Competitor skill percentile thresholds | Training period | Throughout the test window |
 
-## 2. 分层评估
+## 2. Stratified Evaluation
 
-为避免评估结果被数据中的**主导群体掩盖**，WCA-Bench 要求在所有任务上提供分层评估报告。
+To prevent evaluation results from being **masked by dominant groups** in the data, WCA-Bench requires stratified evaluation reports on all tasks.
 
-### 2.1 按项目分层
+### 2.1 Stratification by Event
 
-17 个 WCA 项目的数据量和难度差异极大。三阶有最多的数据，而高盲、多盲等项目的样本量有限。分层评估揭示模型在**不同项目上的泛化能力**。
+The 17 WCA events differ enormously in data volume and difficulty. 3x3 has the most data, while events such as 4x4 blindfolded and multi-blind have limited sample sizes. Stratified evaluation reveals a model's **generalization ability across events**.
 
-| 组别 | 项目 |
+| Group | Events |
 | --- | --- |
-| 速拧类 | 三阶、四阶、五阶、六阶、七阶 |
-| 异形类 | 三阶单手、三阶盲拧、最少步、魔表、斜转、金字塔、SQ1 |
-| 盲拧类 | 四盲、五盲、多盲 |
-| 其他 | 三阶脚拧（若仍有效）等 |
+| Cubic speed events | 3x3, 4x4, 5x5, 6x6, 7x7 |
+| Non-cubic and side events | 3x3 one-handed, 3x3 blindfolded, fewest moves, clock, skewb, pyraminx, SQ1 |
+| Blindfolded | 4x4 blindfolded, 5x5 blindfolded, multi-blind |
+| Other | 3x3 with feet (if still valid), etc. |
 
-### 2.2 按选手水平分层
+### 2.2 Stratification by Competitor Skill Level
 
-将选手按历史成绩的百分位分为四组：
+Competitors are divided into four groups by the percentile of their historical results:
 
-| 组别 | 百分位 |
+| Group | Percentile |
 | --- | --- |
-| 新手 | 后 25% |
-| 中级 | 25% – 75% |
-| 高级 | 75% – 95% |
-| 精英 | 前 5% |
+| Novice | Bottom 25% |
+| Intermediate | 25% – 75% |
+| Advanced | 75% – 95% |
+| Elite | Top 5% |
 
-不同水平的选手在**成绩稳定性、DNF 率、参赛频率**上存在系统性差异。
+Competitors at different levels differ systematically in **result stability, DNF rate, and participation frequency**.
 
-### 2.3 按时间分层
+### 2.3 Stratification by Time
 
-将测试集分为三个子集，评估模型的**时间鲁棒性**：
+The test set is divided into three subsets to evaluate a model's **temporal robustness**:
 
-| 子集 | 时间窗口 |
+| Subset | Time window |
 | --- | --- |
-| Test-A | 2025 年上半年 |
-| Test-B | 2025 年下半年 |
-| Test-C | 2026 年上半年 |
+| Test-A | First half of 2025 |
+| Test-B | Second half of 2025 |
+| Test-C | First half of 2026 |
 
-### 2.4 按地区分层
+### 2.4 Stratification by Region
 
-按选手所属大洲分层，评估模型的**跨文化泛化能力**：
+Stratify by the competitor's continent to evaluate a model's **cross-cultural generalization ability**:
 
 ```text
-亚洲 / 欧洲 / 北美 / 南美 / 大洋洲 / 非洲
+Asia / Europe / North America / South America / Oceania / Africa
 ```
 
-## 3. 硬样本子集
+## 3. Hard Sample Subsets
 
-为防止基准饱和，任务需额外报告硬样本子集：
+To prevent benchmark saturation, tasks must additionally report hard sample subsets:
 
-| 任务 | 硬样本定义 |
+| Task | Definition of the hard sample |
 | --- | --- |
-| T3 DNF | 选手历史 DNF 率 ∈ [0.1, 0.3] |
-| T1 成绩 | 近期成绩方差位于上四分位 |
-| T2 名次 | 前 8 名选手历史成绩差异 < 阈值 |
-| T5 迁移 | 样本量位于下四分位的项目对 |
+| T3 DNF | Competitor historical DNF rate ∈ [0.1, 0.3] |
+| T1 Result | Recent result variance in the upper quartile |
+| T2 Placement | Historical result difference among the top 8 competitors < threshold |
+| T5 Transfer | Event pairs whose sample size is in the lower quartile |
 
-## 4. 冷启动处理
+## 4. Cold-Start Handling
 
-| 情形 | 处理方式 |
+| Case | Handling |
 | --- | --- |
-| 选手首次参赛 | 标记为冷启动，单独报告（不混入主指标） |
-| 项目首次举办 | 从项目分层的可比样本中剔除 |
-| 新地区参与者 | 单独报告，并说明样本量 |
+| A competitor's first competition | Marked as a cold start and reported separately (not mixed into the primary metric) |
+| An event's first edition | Removed from the comparable samples of the per-event stratum |
+| Participants from a new region | Reported separately, with the sample size stated |
 
-## 5. 报告一致性要求
+## 5. Report Consistency Requirements
 
-- 所有模型使用**同一套分割索引**（`data/splits/`）
-- 所有模型使用**同一份冻结统计量**
-- 分层结果必须可追溯到原始的每场比赛预测
-- 缺失值处理策略需在报告中显式声明
+- All models use the **same split indices** (`data/splits/`)
+- All models use the **same frozen statistics**
+- Stratified results must be traceable back to the original per-competition predictions
+- Statistical significance is **part of the report**, not an afterthought — see §6
+- Missing-value handling strategies must be stated explicitly in the report
 
-## 6. 后续阅读
+## 6. Report Contents
 
-- [统计显著性检验 →](/evaluation/statistics)
-- [复现性要求 →](/evaluation/reproducibility)
-- [数据划分策略 →](/data/splits)
+Every evaluated model emits one report object. The `significance` block is **produced by the task runner** and persisted with the metrics; it is never added by hand afterwards.
+
+| Field | Content |
+| --- | --- |
+| `task`, `model` | Task and baseline identifiers |
+| `overall` | Whole-dataset metrics |
+| `stratified` | `by_event`, `by_skill_level`, `by_time_slice`, `by_continent` |
+| `hard_subset` | Hard-sample-subset metrics (§3) |
+| `significance` | Paired test against the reference model of that task: metric, pairing unit, `n_pairs`, `mean_diff`, `ci95`, `p_value`, effect size, test name, seed, reference |
+| `cost` | Compute cost — device, wall clock, CPU/GPU hours (see [Compute and Hardware · Cost Reporting Specification](/evaluation/compute#_4-cost-reporting-specification)) |
+| `extras` | Cold-start summary and further diagnostics |
+| `seed`, `data_summary` | Seed and dataset provenance, where the runner records them |
+
+The `significance` block is computed against the task's reference baseline (for example `xgboost_log` for T1) using the pairing unit declared for that task. Statistical definitions, required fields, and effect sizes are specified in [Statistical Significance Testing · Reporting Specification](/evaluation/statistics#_4-reporting-specification).
+
+## 7. Further Reading
+
+- [Statistical Significance Testing →](/evaluation/statistics)
+- [Reproducibility Requirements →](/evaluation/reproducibility)
+- [Data Splitting Strategy →](/data/splits)

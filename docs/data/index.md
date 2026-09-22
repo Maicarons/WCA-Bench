@@ -1,49 +1,49 @@
-# 数据基础设施 · 总览
+# Data Infrastructure · Overview
 
-数据是 WCA-Bench 的地基。本章描述数据来源、预处理管线与划分策略，三者共同决定基准的科学可信度。
+Data is the foundation of WCA-Bench. This chapter describes the data sources, the preprocessing pipeline, and the splitting strategy; together these three determine the scientific credibility of the benchmark.
 
-## 1. 本章结构
+## 1. Chapter Structure
 
-| 章节 | 内容 |
+| Chapter | Contents |
 | --- | --- |
-| [数据来源与表结构](/data/sources) | WCA 官方导出的核心表、规模与字段 |
-| [预处理管线](/data/pipeline) | 成绩解码、打乱处理、轮次归一化、防泄漏 |
-| [数据划分策略](/data/splits) | 时间分割、选手纵向序列、扩展测试集 |
+| [Data Sources and Table Schemas](/data/sources) | Core tables, scale, and fields of the official WCA export |
+| [Preprocessing Pipeline](/data/pipeline) | Result decoding, scramble handling, round normalization, leakage protection |
+| [Data Splitting Strategy](/data/splits) | Temporal splitting, competitor longitudinal sequences, extended test set |
 
-## 2. 设计原则
+## 2. Design Principles
 
-1. **只用公开数据。** 全部数据来自 WCA 官方公开数据库导出，不自建采集。
-2. **列式优先。** 660 万行量级下，Polars + Parquet 是性能与成本的必然选择。
-3. **规则显式建模。** DNF/DNS 编码、多盲格式、去极值机制必须在预处理阶段显式处理，不留给模型「猜」。
-4. **防泄漏内建。** 时间分割与基准统计量冻结是管线的一等公民，不是事后补丁。
-5. **可复现。** 管线单命令运行，产物可校验，随机性可固定。
+1. **Public data only.** All data comes from the official public WCA database export; no self-built collection.
+2. **Columnar first.** At the 6.6M-row scale, Polars + Parquet is the inevitable choice for both performance and cost.
+3. **Explicit rule modeling.** DNF/DNS encodings, multi-blind formats, and the trimming mechanism must be handled explicitly during preprocessing, not left for the model to "guess".
+4. **Leakage protection built in.** Temporal splitting and frozen benchmark statistics are first-class citizens of the pipeline, not after-the-fact patches.
+5. **Reproducible.** The pipeline runs with a single command, its artifacts are verifiable, and all randomness can be fixed.
 
-## 3. 数据流
+## 3. Data Flow
 
 ```text
 data/raw/*.tsv
     │
-    │  decode（成绩 / 多盲 / 特殊值）
+    │  decode (results / multi-blind / special values)
     ▼
-data/processed/*.parquet  ──►  features 缓存
+data/processed/*.parquet  ──►  features cache
     │
-    │  split（时间分割）
+    │  split (temporal splitting)
     ▼
-data/splits/{train,val,test}.*  ──►  任务适配层
+data/splits/{train,val,test}.*  ──►  task adapter layer
 ```
 
-## 4. 关键规模参考
+## 4. Key Scale Reference
 
-| 表 | 规模（约） |
+| Table | Scale (approx.) |
 | --- | --- |
-| persons | 289k 行 |
-| competitions | 17.7k 行 |
-| results | 660 万行 |
-| scrambles | 310 万行 |
-| events | 17 个现役项目 + 已废止项目 |
+| persons | 289k rows |
+| competitions | 17.7k rows |
+| results | 6.6M rows |
+| scrambles | 3.1M rows |
+| events | 17 active events + retired events |
 
-## 5. 后续阅读
+## 5. Further Reading
 
-- [数据来源与表结构 →](/data/sources)
-- [预处理管线 →](/data/pipeline)
-- [数据划分策略 →](/data/splits)
+- [Data Sources and Table Schemas →](/data/sources)
+- [Preprocessing Pipeline →](/data/pipeline)
+- [Data Splitting Strategy →](/data/splits)

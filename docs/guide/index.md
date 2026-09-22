@@ -1,34 +1,34 @@
-# 项目计划书 · 执行摘要
+# Project Proposal: Executive Summary
 
-> 本文档为 WCA-Bench 项目的整体计划书入口，供审阅与立项决策使用。完整技术细节与开发排期见「技术方案」与「开发计划」板块。
+> This document is the entry point of the overall WCA-Bench project proposal, intended for review and go/no-go decisions. Full technical details and the development schedule are covered in the "Technical Design" and "Development Plan" sections.
 
-## 一句话描述
+## One-Sentence Description
 
-**WCA-Bench 是首个基于世界魔方协会（WCA）全部公开比赛数据的综合性机器学习基准**，涵盖成绩预测、名次预测、DNF 预测、人类极限估计和技能迁移分析五类核心任务，为体育数据分析领域提供标准化的评估协议和可复现的实验框架。
+**WCA-Bench is the first comprehensive machine learning benchmark built on the complete public competition data of the World Cube Association (WCA)**, covering five core tasks — result prediction, placement prediction, DNF prediction, human limit estimation, and skill transfer analysis — and providing a standardized evaluation protocol and a reproducible experimental framework for sports data analysis.
 
-## 计划书结构
+## Proposal Structure
 
-| 章节 | 核心问题 | 链接 |
+| Chapter | Core Question | Link |
 | --- | --- | --- |
-| 项目概述与目标 | 为什么做？要解决什么问题？ | [查看](/guide/overview) |
-| 项目范围界定 | 做什么、不做什么？ | [查看](/guide/scope) |
-| 技术方案概述 | 怎么实现？技术栈与架构？ | [查看](/guide/architecture) |
-| 预期成果与成功标准 | 交付什么？如何算成功？ | [查看](/guide/outcomes) |
+| Project Overview and Objectives | Why do this? What problem does it solve? | [View](/guide/overview) |
+| Project Scope | What is in scope, and what is out of scope? | [View](/guide/scope) |
+| Technical Approach Overview | How is it implemented? What is the stack and architecture? | [View](/guide/architecture) |
+| Expected Outcomes and Success Criteria | What are the deliverables? What counts as success? | [View](/guide/outcomes) |
 
-## 核心结论
+## Key Conclusions
 
-1. **问题真实存在。** 体育数据分析领域缺少一个基于真实比赛数据、具有明确领域约束、支持标准化评估的综合性基准。
-2. **数据基础已完备。** WCA 官方公开数据库导出（含 289k 选手、660 万条成绩、17 个现役项目）可直接获取，无需自建采集。
-3. **技术栈成熟。** Polars / PyArrow 处理大规模数据、PyTorch 训练、PyMC/NumPyro 做贝叶斯推断、HuggingFace 托管数据与权重。
-4. **主要风险在社区采纳。** 可通过与 WCA Results Team 及速拧社区的早期合作缓解。
+1. **The problem is real.** Sports data analysis lacks a comprehensive benchmark grounded in real competition data, with explicit domain constraints and support for standardized evaluation.
+2. **The data foundation is ready.** The official public WCA database export (289k competitors, 6.6M results, 17 active events) can be obtained directly, with no need to build a data collection pipeline.
+3. **The technology stack is mature.** Polars / PyArrow for large-scale data processing, PyTorch for training, PyMC/NumPyro for Bayesian inference, and HuggingFace for hosting data and weights.
+4. **The main risk is community adoption.** This can be mitigated through early collaboration with the WCA Results Team and the speedcubing community.
 
-## 与「魔方求解类基准」的关系
+## Relationship to Cube-Solving Benchmarks
 
-WCA-Bench 与 CubeBench 系列**互补**而非竞争：后者评估 LLM 的空间推理与序列规划能力（魔方还原），WCA-Bench 评估 AI 在真实竞技数据上的**预测与推断**能力。二者共同构成「魔方与 AI」研究的完整图景。
+WCA-Bench is **complementary** to, rather than competitive with, the CubeBench family: the latter evaluates an LLM's spatial reasoning and sequence planning abilities (solving the cube), whereas WCA-Bench evaluates an AI system's **prediction and inference** abilities on real competitive data. Together they form a complete picture of research on "cubes and AI".
 
-## 快速导航
+## Quick Navigation
 
-- [→ 项目概述与目标](/guide/overview)
-- [→ 任务套件总览](/tasks/)
-- [→ 开发计划总览](/plan/)
-- [→ 里程碑与阶段划分](/plan/roadmap)
+- [→ Project Overview and Objectives](/guide/overview)
+- [→ Task Suite Overview](/tasks/)
+- [→ Development Plan Overview](/plan/)
+- [→ Milestones and Phase Breakdown](/plan/roadmap)
