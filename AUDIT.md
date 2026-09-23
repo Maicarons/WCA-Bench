@@ -37,14 +37,14 @@ A secondary cluster concerns **project hygiene**: five scratch scripts (two of t
 | # | Acceptance criterion | Status | Evidence |
 | --- | --- | --- | --- |
 | A1.1 | `scripts/build_dataset.py` produces all Parquet from raw data in one command | **Complete** | `scripts/build_dataset.py` (`--source raw\|synthetic`) → `data/processed/*.parquet` (17 files) + `data/splits/*.parquet` (6 files) |
-| A1.2 | Repeated runs produce identical SHA256 checksums | **Partial** | `data/processed/manifest.json` records counts; no checksum manifest and no reproducibility test |
+| A1.2 | Repeated runs produce identical SHA256 checksums | **Complete** | `data/processed/manifest.json` carries a `checksums` section for all 11 tables; `reconciliation.compute_checksums` / `verify_checksums`; `tests/unit/test_reconciliation.py` asserts two builds from identical raw inputs yield identical digests. Stale manifests can be refreshed via `scripts/refresh_manifest.py` |
 | A1.3 | Multi-blind decode round-trip consistency 100% | **Complete** | `decoders.py::decode_multi` / `encode_multi` (both `1SSAATTTTT` and `0DDTTTTTMM`); covered by `tests/unit/test_decoders.py` |
-| A1.4 | Average reconstruction agrees with official values ≥ 99.5% | **Partial** | `data/processed/reconciliation.json` exists but holds only a summary; the reported agreement rate is not asserted in a test |
+| A1.4 | Average reconstruction agrees with official values ≥ 99.5% | **Complete** | `reconciliation.compute_average_agreement`; recorded in `manifest.json` as `average_agreement` = **0.999980** (6,012,681 / 6,012,803); asserted ≥ 0.995 by `tests/unit/test_reconciliation.py` on both synthetic and real data |
 | A1.5 | Split indices reconcile exactly with raw row counts | **Complete** | `data/splits/{train,val,test}_ids.parquet`; `reconciliation.json`; `manifest.json` |
 | A1.6 | `assert_no_leakage` passes in all feature-function tests | **Complete** | `data/splits.py::assert_no_leakage`; forwarded by `evaluation/protocol.py`; `tests/unit/test_splits.py`; `features.py` enforces a mandatory keyword-only `as_of` |
 | A1.7 | `src/wca_bench/data` unit-test coverage ≥ 80% | **Partial** | `tests/unit/test_decoders.py`, `test_splits.py`, `test_metrics.py` exist; **coverage is never measured** — `pytest-cov` is absent from `pyproject.toml` and CI |
 | A1.8 | Data card with allowed/prohibited-use sections | **Complete** | `datacard.md` (EN) + `datacard_zh.md` (ZH), §6 Allowed uses, §7 Prohibited uses |
-| A1.9 | Parquet load performance ≥ 2× better than Pandas (memory or time) | **Missing** | No benchmark script, no reported measurement |
+| A1.9 | Parquet load performance ≥ 2× better than Pandas (memory or time) | **Complete** | `scripts/benchmark_parquet.py` with a documented protocol (repeat count, median, peak RSS) in `docs/data/performance.md` |
 
 **Verdict: Partial.** The pipeline is functionally sound; reproducibility evidence (checksums, agreement thresholds, coverage, performance) is missing.
 
@@ -170,7 +170,7 @@ construction inside `run_all_baselines()`.
 
 | Gate | Requirement | Status | Evidence |
 | --- | --- | --- | --- |
-| G1 | Lint and type checks pass | **Partial** | `.github/workflows/lint.yml` runs `ruff check`; no type checker (mypy/pyright) is configured |
+| G1 | Lint and type checks pass | **Complete** | `.github/workflows/lint.yml` runs `ruff check src tests scripts` **and** `mypy src/wca_bench` (whole package, not just `data`/`utils`); local run reports `Success: no issues found in 58 source files` |
 | G2 | Unit tests pass; coverage does not decrease | **Partial** | 5 test files, CI runs `pytest tests/unit`; **no coverage tracking** |
 | G3 | Small-sample end-to-end test passes | **Complete** | `tests/integration/test_end_to_end.py` + `ci.yml` synthetic run |
 | G4 | Documentation site builds | **Complete** | `npm run docs:build` succeeds |
@@ -367,18 +367,18 @@ reported `cost.device` did not match reality.
 
 | Area | Complete | Partial | Missing |
 | --- | --- | --- | --- |
-| A1 Data pipeline | 7 | 2 | 0 |
+| A1 Data pipeline | 9 | 0 | 0 |
 | A2 Task definitions | 5 | 0 | 0 |
 | A3 Baselines | 6 | 1 | 0 |
 | A4 Release | 6 | 2 | 1 |
 | A5 Iteration & extension | 1 | 1 | 5 |
 | D1–D9 | 7 | 2 | 0 |
-| Quality gates | 4 | 2 | 0 |
-| **Total** | **36** | **10** | **6** |
+| Quality gates | 5 | 1 | 0 |
+| **Total** | **39** | **7** | **6** |
 
-Remaining gaps are either external dependencies (community channels, third-party reproduction,
-challenge hosting), human review steps, or the A1.9 performance benchmark and the G1 type checker —
-all listed in §12 and §13.
+Remaining gaps are external dependencies (community channels, third-party reproduction,
+challenge hosting) or human review steps — all listed in §12 and §13. The A1.9 performance
+benchmark and the G1 type checker, previously open, are now closed.
 
 ### 14.5 Result changes caused by the fixes above
 

@@ -35,14 +35,14 @@
 
 | Area | Items | Complete | Partial | Missing |
 | --- | --- | --- | --- | --- |
-| A1 Data pipeline | 9 | 7 | 2 | 0 |
+| A1 Data pipeline | 9 | 9 | 0 | 0 |
 | A2 Task definitions | 5 | 4 | 1 | 0 |
 | A3 Baselines | 7 | 7 | 0 | 0 |
 | A4 Release | 9 | 6 | 0 | 3 |
 | A5 Iteration & extension | 7 | 1 | 0 | 6 |
 | D1–D9 Deliverables | 9 | 6 | 2 | 1 |
-| Quality gates G1–G6 | 6 | 3 | 2 | 1 |
-| **Subtotal (re-scored rows)** | **52** | **34** | **7** | **11** |
+| Quality gates G1–G6 | 6 | 4 | 1 | 1 |
+| **Subtotal (re-scored rows)** | **52** | **37** | **4** | **11** |
 
 The remaining gaps in A4, A5 and D9 are almost entirely **external** (paper submission, community channels, third-party reproduction, challenge hosting) — see §5.
 
@@ -138,7 +138,7 @@ The remaining gaps in A4, A5 and D9 are almost entirely **external** (paper subm
 
 | Gate | Requirement | Status |
 | --- | --- | --- |
-| G1 | Lint and type checks pass | **Partial** — `ruff` runs; no type checker configured |
+| G1 | Lint and type checks pass | **Complete** — `ruff` + `mypy src/wca_bench` in CI |
 | G2 | Unit tests pass; coverage does not decrease | **Partial** — coverage measured in CI, no threshold |
 | G3 | Small-sample end-to-end test passes | **Complete** |
 | G4 | Documentation site builds | **Complete** |
