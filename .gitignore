@@ -9,6 +9,7 @@ package-lock.json.bak
 # Python / data and experiment artefacts
 __pycache__/
 *.py[cod]
+.mypy_cache/
 .venv/
 .venv*/
 .ipynb_checkpoints/
@@ -30,6 +31,10 @@ mlruns/
 *.arrow
 *.zip
 
+# Local benchmark / type-check scratch
+.bench_tmp/
+.bench_tmp_mypy.txt
+
 # Large raw WCA exports
 WCA_export_*.tsv
 WCA_export_*.zip
@@ -37,6 +42,8 @@ WCA_export_*.zip
 # Release staging and archives (publish/)
 publish/_staging/
 publish/dist/
+# ModelScope upload cache written by publish/modelscope/upload.py
+**/.ms_upload_cache
 
 # Local secrets / credentials — NEVER commit, never uploaded
 .env
