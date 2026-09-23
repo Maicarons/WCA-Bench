@@ -30,6 +30,7 @@ publish/
 │   └── requirements.txt
 └── tools/
     ├── stage_release.py         # assemble data/processed + data/splits + examples
+    ├── verify_release.py        # checksum + A1.2 provenance checks before upload
     └── make_archive.py          # tar.gz / zip archives + SHA256 manifests
 ```
 
@@ -80,6 +81,16 @@ python scripts/build_dataset.py --source raw
 This produces `data/processed/` and `data/splits/`. The real export is ~512 MB across the
 processed + split artifacts; see `DATASET_LAYOUT.md` for the exact inventory.
 
+The build writes the A1.2 `checksums` section and the A1.4 `average_agreement` fields into
+`data/processed/manifest.json`. If you already have built tables but a manifest from an older
+version, refresh those fields in place instead of rebuilding:
+
+```bash
+set PYTHONPATH=src                 # Windows cmd.exe; use `export PYTHONPATH=src` in bash
+python scripts/refresh_manifest.py --dry-run   # preview
+python scripts/refresh_manifest.py            # rewrite manifest.json
+```
+
 ### Step 1 — stage the release
 
 ```bash
@@ -92,6 +103,21 @@ python publish/tools/stage_release.py --tier full --clean
 
 Output: `publish/_staging/dataset/` plus a `RELEASE_MANIFEST.json` with per-file sizes and
 SHA256 digests. Use `--dry-run` to preview without copying.
+
+### Step 1.5 — verify the staged release (do this before every upload)
+
+```bash
+python publish/tools/verify_release.py
+```
+
+This performs two independent checks and exits non-zero on any mismatch:
+
+1. **Staging self-consistency** — every file listed in `RELEASE_MANIFEST.json` exists and its
+   SHA-256 matches what was recorded at staging time.
+2. **Provenance against the build manifest** — every staged `data/processed/<table>.parquet`
+   matches the SHA-256 recorded in `data/processed/manifest.json`. This guarantees that what is
+   uploaded is the artefact the reproducibility tests (A1.2) were actually run against, rather
+   than a stale or locally modified copy.
 
 ### Step 2a — upload to the Hugging Face Hub
 

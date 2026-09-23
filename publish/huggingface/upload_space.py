@@ -183,7 +183,7 @@ def main(argv: list[str] | None = None) -> int:
 
     print("WCA-Bench leaderboard -> Hugging Face Hub (space)")
     print(f"  repo id     : {args.repo_id}")
-    print(f"  visibility  : public")
+    print("  visibility  : public")
     print(f"  revision    : {args.revision}")
     print(f"  local dir   : {local_dir}")
     print(f"  files       : {len(files)} ({human_size(total)})")

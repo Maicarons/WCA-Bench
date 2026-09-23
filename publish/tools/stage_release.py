@@ -144,7 +144,8 @@ def plan_stage(
 
     if include_examples and examples_dir.is_dir():
         for path in sorted(examples_dir.iterdir()):
-            if path.is_file():
+            # skip hidden files, e.g. the ModelScope upload cache (.ms_upload_cache)
+            if path.is_file() and not path.name.startswith("."):
                 files.append(StagedFile(path, f"examples/{path.name}"))
 
     for name in CARD_FILES:
