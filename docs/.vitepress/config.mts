@@ -181,7 +181,12 @@ const zhSidebar = {
   ]
 }
 
+// GitHub Pages serves this site from https://maicarons.github.io/WCA-Bench/, so the
+// base path must be the repository name. Local dev/preview keep the root base.
+const base = process.env.DOCS_BASE ?? (process.env.GITHUB_ACTIONS ? '/WCA-Bench/' : '/')
+
 export default defineConfig({
+  base,
   srcDir,
   cleanUrls: true,
   lastUpdated: true,
