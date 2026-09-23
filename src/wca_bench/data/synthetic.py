@@ -173,8 +173,8 @@ def generate_synthetic_dataset(
     )
 
     persons_rows = []
-    skill = {}
-    dnf_bias = {}
+    skill: dict[str, dict[str, float]] = {}
+    dnf_bias: dict[str, float] = {}
     for i in range(cfg.n_persons):
         wca_id = f"20{i // 20 + 8:02d}{i % 20 + 1:02d}{i % 97 + 1:02d}"
         # ensure unique-ish
@@ -245,7 +245,7 @@ def generate_synthetic_dataset(
     person_ids = persons["wca_id"].tolist()
 
     for comp in comps_rows:
-        comp_date = date.fromisoformat(comp["start_date"])
+        comp_date = date.fromisoformat(str(comp["start_date"]))
         n_entered = int(rng.integers(8, min(cfg.n_persons, 40) + 1))
         entrants = rng.choice(person_ids, size=n_entered, replace=False)
         n_events = int(rng.integers(2, min(len(cfg.events), 7) + 1))

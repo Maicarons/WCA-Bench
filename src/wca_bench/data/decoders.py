@@ -221,13 +221,13 @@ def compute_average(
             return DNF
         if fmt == "multi":
             # mean of 3 multi-blind is not used historically; keep defensive path
-            scores = [a.score for a in seq]
+            scores = [float(a.score or 0.0) for a in seq]
             return int(sum(scores) / len(scores)) if scores else DNF
         if fmt == "number":
             # FMC averages stored as 100 * mean
-            vals = [a.score for a in seq]
+            vals = [float(a.score or 0.0) for a in seq]
             return int(round(sum(vals) / len(vals) * 100))
-        vals = [a.score for a in seq]
+        vals = [float(a.score or 0.0) for a in seq]
         return int(round(sum(vals) / len(vals)))
 
     # average of 5
@@ -267,15 +267,17 @@ def compute_average(
         if len(nums) < 3:
             return DNF
         # include DNF as +inf for drop logic then drop best and worst
-        expanded = list(nums) + [float("inf")] * dnf_count
-        expanded = expanded[:5] if len(expanded) >= 5 else expanded + [float("inf")] * (
-            5 - len(expanded)
+        nums_expanded = list(nums) + [float("inf")] * dnf_count
+        nums_expanded = (
+            nums_expanded[:5]
+            if len(nums_expanded) >= 5
+            else nums_expanded + [float("inf")] * (5 - len(nums_expanded))
         )
-        expanded = sorted(expanded)[:5]
-        middle = expanded[1:4]
-        if any(x == float("inf") for x in middle):
+        nums_expanded = sorted(nums_expanded)[:5]
+        center = nums_expanded[1:4]
+        if any(x == float("inf") for x in center):
             return DNF
-        return int(round(sum(middle) / 3.0 * 100))
+        return int(round(sum(center) / 3.0 * 100))
 
     expanded: list[float] = []
     for a in seq:
@@ -286,10 +288,10 @@ def compute_average(
     expanded = sorted(expanded)[:5]
     while len(expanded) < 5:
         expanded.append(float("inf"))
-    middle = expanded[1:4]
-    if any(x == float("inf") for x in middle):
+    center = expanded[1:4]
+    if any(x == float("inf") for x in center):
         return DNF
-    return int(round(sum(middle) / 3.0))
+    return int(round(sum(center) / 3.0))
 
 
 def reconstruct_round(

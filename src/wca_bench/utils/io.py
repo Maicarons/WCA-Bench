@@ -31,7 +31,9 @@ def save_table(df: pd.DataFrame, path: str | Path) -> Path:
     if suffix in {".json", ".jsonl"}:
         orient = "records" if suffix == ".json" else "records"
         if suffix == ".json":
-            df.to_json(path, orient=orient, force_ascii=False, indent=2, date_format="iso")
+            df.to_json(  # type: ignore[call-overload]
+                str(path), orient=orient, force_ascii=False, indent=2, date_format="iso"
+            )
         else:
             df.to_json(path, orient="records", lines=True, force_ascii=False, date_format="iso")
         return path

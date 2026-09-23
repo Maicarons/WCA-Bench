@@ -9,6 +9,7 @@ Data is the foundation of WCA-Bench. This chapter describes the data sources, th
 | [Data Sources and Table Schemas](/data/sources) | Core tables, scale, and fields of the official WCA export |
 | [Preprocessing Pipeline](/data/pipeline) | Result decoding, scramble handling, round normalization, leakage protection |
 | [Data Splitting Strategy](/data/splits) | Temporal splitting, competitor longitudinal sequences, extended test set |
+| [Performance Benchmark](/data/performance) | Parquet-vs-CSV protocol and measured load/memory ratios (A1.9) |
 
 ## 2. Design Principles
 

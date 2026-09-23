@@ -9,6 +9,10 @@ from typing import Any
 import pandas as pd
 
 from wca_bench.data.features import build_competition_features, build_result_features
+from wca_bench.data.reconciliation import (
+    compute_average_agreement,
+    compute_checksums,
+)
 from wca_bench.data.splits import assign_split, freeze_stats, time_slice
 from wca_bench.utils.io import load_json, read_table, save_json, save_table
 from wca_bench.utils.logging import get_logger
@@ -362,6 +366,7 @@ def build_dataset(
     # reconciliation
     n_train, n_val, n_test = len(train_ids), len(val_ids), len(test_ids)
     n_total = len(results)
+    agreement = compute_average_agreement(results, tables.get("result_attempts", pd.DataFrame()))
     reconciliation = {
         "n_results": n_total,
         "n_train": n_train,
@@ -371,10 +376,17 @@ def build_dataset(
         "n_out_of_window": int((results["split"] == "out_of_window").sum()),
         "balance_ok": n_train + n_val + n_test + int((results["split"] == "out_of_window").sum())
         == n_total,
+        "average_agreement": round(float(agreement["agreement"]), 6),
+        "average_agreement_n": int(agreement["n_compared"]),
+        "average_agreement_match": int(agreement["n_match"]),
     }
+
+    # content checksums for reproducible builds (A1.2)
+    checksums = compute_checksums(outputs)
 
     manifest = {
         "tables": outputs,
+        "checksums": checksums,
         "reconciliation": reconciliation,
         "frozen_at": frozen["frozen_at"],
         "global_dnf_rate": frozen["global_dnf_rate"],
