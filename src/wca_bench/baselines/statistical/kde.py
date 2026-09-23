@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from wca_bench.baselines.statistical.history_mean import history_mean_predict
+from wca_bench.utils.frame import numeric_column
 
 
 def kde_predict_result(task, n_sim: int = 50, seed: int = 42) -> pd.DataFrame:
@@ -20,7 +21,7 @@ def kde_predict_result(task, n_sim: int = 50, seed: int = 42) -> pd.DataFrame:
         return base
 
     mean = base["y_pred"].to_numpy(dtype=float)
-    std = pd.to_numeric(base.get("recent_std"), errors="coerce").to_numpy(dtype=float)
+    std = numeric_column(base, "recent_std").to_numpy(dtype=float)
     fallback = np.where(np.isfinite(std) & (std > 0), std, np.abs(mean) * 0.08)
     std = np.where(np.isfinite(std) & (std > 0), std, fallback)
 

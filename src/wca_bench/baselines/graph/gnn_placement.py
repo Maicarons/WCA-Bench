@@ -53,7 +53,7 @@ def _numpy_graph_adjust(task, base: pd.DataFrame, gamma: float = 0.25) -> pd.Ser
     )
     z = pd.to_numeric(base["person_id"].map(person_prop), errors="coerce").fillna(0.0)
     z = (z - z.mean()) / (z.std() or 1.0)
-    return np.exp(-gamma * z.to_numpy())
+    return pd.Series(np.exp(-gamma * z.to_numpy()), index=z.index)
 
 
 COV_COLS = ["recent_mean", "recent_std", "frozen_mean", "n_hist_valid"]

@@ -15,13 +15,13 @@ from wca_bench.baselines.statistical.plackett_luce import (
     psych_sheet_predict,
 )
 from wca_bench.evaluation.metrics import brier_score, kendall_tau, topk_accuracy
-from wca_bench.tasks.base import Baseline
+from wca_bench.tasks.base import Baseline, TaskType
 from wca_bench.tasks.result_prediction.task import ResultPredictionTask
 
 
 class PlacementTask(ResultPredictionTask):
     name = "placement"
-    task_type = "ranking"
+    task_type: TaskType = "ranking"
     significance_metric = "kendall_tau"
     significance_higher_is_better = True
     significance_unit = "competition_event_round"

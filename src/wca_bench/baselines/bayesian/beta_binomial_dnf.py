@@ -5,6 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from wca_bench.utils.frame import numeric_column
+
 
 def beta_binomial_dnf_predict(
     task,
@@ -32,8 +34,8 @@ def beta_binomial_dnf_predict(
     alpha0 = global_rate * prior_strength
     beta0 = (1.0 - global_rate) * prior_strength
 
-    rate = pd.to_numeric(feats.get("historical_dnf_rate"), errors="coerce")
-    rounds = pd.to_numeric(feats.get("n_hist_rounds"), errors="coerce")
+    rate = numeric_column(feats, "historical_dnf_rate")
+    rounds = numeric_column(feats, "n_hist_rounds")
     rate = rate.fillna(global_rate)
     rounds = rounds.fillna(0).clip(lower=0)
 

@@ -89,16 +89,16 @@ def iv_transfer_matrix(
                 post = g[g["date"] > t0]
                 if len(post) < 1:
                     continue
-                y = float(np.log(post["best"].iloc[:3].mean()) - np.log(g["best"].iloc[0]))
+                y_delta = float(np.log(post["best"].iloc[:3].mean()) - np.log(g["best"].iloc[0]))
                 src_hist = src[(src["person_id"] == pid) & (src["date"] < t0)]
-                d = float(len(src_hist))
+                n_hist = float(len(src_hist))
                 pf = person_first.get((pid, e_from))
                 if pf is None or pd.isna(pf):
                     continue
                 country = person_country.get(pid, "UNK")
                 host = country_event_first.get((country, e_from))
-                z = 1.0 if (host is not None and not pd.isna(host) and host < pf) else 0.0
-                persons.append((d, z, y))
+                z_instr = 1.0 if (host is not None and not pd.isna(host) and host < pf) else 0.0
+                persons.append((n_hist, z_instr, y_delta))
                 if len(persons) >= max_persons_per_pair:
                     break
 

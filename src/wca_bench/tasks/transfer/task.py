@@ -22,6 +22,7 @@ def _estimates_frame(out: dict[str, Any]) -> pd.DataFrame:
     matrix = out.get("matrix", [])
     n_pairs = out.get("n_pairs")
     rows = []
+    mat: Any
     if isinstance(matrix, dict):
         mat = matrix
     else:

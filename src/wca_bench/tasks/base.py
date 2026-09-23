@@ -165,18 +165,21 @@ class BaseTask:
         return out if np.isfinite(out) else None
 
     def _reference_model(self, reports: list[Report]) -> str | None:
+        metric = self.significance_metric
+        if metric is None:
+            return None
         scores: dict[str, float] = {}
         for rep in reports:
             if rep.extras.get("failed"):
                 continue
-            val = self._as_finite(rep.overall.get(self.significance_metric))
+            val = self._as_finite(rep.overall.get(metric))
             if val is not None:
                 scores[rep.model] = val
         if not scores:
             return None
         if self.significance_higher_is_better:
-            return max(scores, key=scores.get)
-        return min(scores, key=scores.get)
+            return max(scores, key=lambda m: scores[m])
+        return min(scores, key=lambda m: scores[m])
 
     def _reference_stub(self, model: str, n_pairs: int) -> dict[str, Any]:
         return {

@@ -16,12 +16,12 @@ from wca_bench.baselines.tree.xgb_result import xgb_result_predict
 from wca_bench.data.features import build_competition_features, build_result_features
 from wca_bench.data.splits import time_slice
 from wca_bench.evaluation.metrics import coverage, mae_log, rmse_log
-from wca_bench.tasks.base import Baseline, BaseTask
+from wca_bench.tasks.base import Baseline, BaseTask, TaskType
 
 
 class ResultPredictionTask(BaseTask):
     name = "result_prediction"
-    task_type = "regression"
+    task_type: TaskType = "regression"
     significance_metric = "mae_log"
     significance_higher_is_better = False
     significance_unit = "competition_event_round"

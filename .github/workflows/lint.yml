@@ -16,3 +16,14 @@ jobs:
       - run: pip install ruff
       - run: ruff check src tests scripts
       - run: ruff format --check src tests scripts || true
+
+  mypy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      # Gate G1: the whole package is type-checked, not just the foundational layers.
+      - run: mypy src/wca_bench

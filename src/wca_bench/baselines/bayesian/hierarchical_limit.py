@@ -83,20 +83,20 @@ def hierarchical_limit_estimate(
     pooled = float(np.mean(valid_ratios)) if valid_ratios else float("nan")
 
     for eid, info in raw.items():
-        s = info.get("series")
-        if s is None or not np.isfinite(info["ratio"]):
+        ev_series = info.get("series")
+        if ev_series is None or not np.isfinite(info["ratio"]):
             rows.append(
                 {
                     "event_id": eid,
                     "limit": float("nan"),
                     "year_converge": float("nan"),
-                    "n_points": 0 if s is None else int(len(s)),
+                    "n_points": 0 if ev_series is None else int(len(ev_series)),
                     "loo_std": float("nan"),
                     "method": "hierarchical_shrinkage",
                 }
             )
             continue
-        n = int(len(s))
+        n = int(len(ev_series))
         if np.isfinite(pooled):
             ratio_hat = (n * info["ratio"] + kappa * pooled) / (n + kappa)
         else:
@@ -105,7 +105,7 @@ def hierarchical_limit_estimate(
 
         loo = []
         for i in range(n):
-            sub = s.drop(index=s.index[i])
+            sub = ev_series.drop(index=ev_series.index[i])
             if len(sub) < 3:
                 continue
             r, _, _ = _log_linear_ratio(sub, horizon_years=horizon_years)

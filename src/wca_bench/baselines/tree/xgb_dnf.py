@@ -7,6 +7,7 @@ import pandas as pd
 
 from wca_bench.baselines.tree.ridge_result import _prepare_matrix
 from wca_bench.utils.device import device_label, resolve_device
+from wca_bench.utils.frame import numeric_column
 
 
 def _build_classifier(n_estimators: int, max_depth: int, device: str = "cpu"):
@@ -66,7 +67,7 @@ def xgb_dnf_predict(
     train = train[train["target_dnf"].notna()]
 
     global_rate = float(task.data.frozen_stats.get("global_dnf_rate", 0.03))
-    hist = pd.to_numeric(feats.get("historical_dnf_rate"), errors="coerce").fillna(global_rate)
+    hist = numeric_column(feats, "historical_dnf_rate").fillna(global_rate)
 
     if train.empty or train["target_dnf"].nunique() < 2:
         out = feats.copy()

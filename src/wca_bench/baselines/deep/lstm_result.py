@@ -16,6 +16,7 @@ import pandas as pd
 
 from wca_bench.baselines.statistical.history_mean import history_mean_predict
 from wca_bench.utils.device import device_label, resolve_device
+from wca_bench.utils.frame import numeric_column
 
 SEQ_COLS = ["recent_mean", "recent_std", "recent_min", "recent_slope", "frozen_mean", "frozen_std"]
 
@@ -35,10 +36,10 @@ def _fallback_ridge(task, feats: pd.DataFrame, train: pd.DataFrame) -> np.ndarra
     from sklearn.linear_model import Ridge
 
     if train.empty or "best" not in train.columns:
-        return pd.to_numeric(feats.get("recent_mean"), errors="coerce").to_numpy(dtype=float)
+        return numeric_column(feats, "recent_mean").to_numpy(dtype=float)
     tr = train[train["best"].notna() & (train["best"] > 0)]
     if tr.empty:
-        return pd.to_numeric(feats.get("recent_mean"), errors="coerce").to_numpy(dtype=float)
+        return numeric_column(feats, "recent_mean").to_numpy(dtype=float)
     model = Ridge(alpha=1.0)
     model.fit(_clean_matrix(tr), np.log(tr["best"].astype(float).to_numpy()))
     return np.exp(model.predict(_clean_matrix(feats)))
