@@ -125,7 +125,7 @@ construction inside `run_all_baselines()`.
 | A4.3 | Public repo with README / LICENSE / CONTRIBUTING / CODE_OF_CONDUCT / CITATION.cff | **Complete** | All present; `LICENSE` = Apache-2.0; `CITATION.cff` repository URL was a placeholder and has been fixed |
 | A4.4 | HF dataset loadable via `load_dataset`, card complete | **In remediation** | `publish/huggingface/` |
 | A4.5 | Model weights downloadable and metrics reproducible | **Missing** | No weight artefacts and no model-hub upload path existed |
-| A4.6 | Public documentation site, three main sections | **Partial** | Site builds (`npm run docs:build`, 31 pages + 404). Not deployed; now being made bilingual |
+| A4.6 | Public documentation site, three main sections | **Complete** | Repository is public; site deployed via GitHub Actions to **https://maicarons.github.io/WCA-Bench/** (EN + ZH). `docs.yml` builds with `base=/WCA-Bench/` and deploys through `upload-pages-artifact` + `deploy-pages`; Pages source set to `build_type=workflow` |
 | A4.7 | Submission validator script | **In remediation** | `scripts/validate_submission.py` + `examples/submission_template/` |
 | A4.8 | ≥2 community channels | **Missing** | External activity; out of scope |
 | A4.9 | Independent third-party reproduction at L3 | **Missing** | External activity; out of scope |
@@ -370,11 +370,11 @@ reported `cost.device` did not match reality.
 | A1 Data pipeline | 9 | 0 | 0 |
 | A2 Task definitions | 5 | 0 | 0 |
 | A3 Baselines | 6 | 1 | 0 |
-| A4 Release | 6 | 2 | 1 |
+| A4 Release | 7 | 1 | 1 |
 | A5 Iteration & extension | 1 | 1 | 5 |
 | D1–D9 | 7 | 2 | 0 |
 | Quality gates | 5 | 1 | 0 |
-| **Total** | **39** | **7** | **6** |
+| **Total** | **40** | **6** | **6** |
 
 Remaining gaps are external dependencies (community channels, third-party reproduction,
 challenge hosting) or human review steps — all listed in §12 and §13. The A1.9 performance
