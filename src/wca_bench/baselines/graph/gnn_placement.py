@@ -183,11 +183,9 @@ def gnn_placement_predict(task, device: str | None = None) -> pd.DataFrame:
     torch_error: str | None = None
     if "person_id" in base.columns and "competition_id" in base.columns:
         try:
-            import torch  # noqa: F401
-
             factor = _torch_graph_adjust(task, base, train, resolved)
-        except ImportError as exc:
-            torch_error = f"ImportError: {exc}"
+        except ImportError:
+            # torch not installed — graceful fallback, not a hard error
             factor = None
         except Exception as exc:  # noqa: BLE001 - reported in attrs, never swallowed silently
             torch_error = f"{type(exc).__name__}: {exc}"

@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from wca_bench.baselines.statistical.history_mean import history_mean_predict
+from wca_bench.utils.frame import numeric_column
 
 
 def psych_sheet_predict(task) -> pd.DataFrame:
@@ -32,16 +33,14 @@ def kde_simulate_placement(task, n_sim: int = 30, seed: int = 7) -> pd.DataFrame
         return preds
     gcols = [c for c in ["competition_id", "event_id", "round_type_id"] if c in preds.columns]
     out = preds.copy()
-    std = pd.to_numeric(out.get("recent_std"), errors="coerce")
-    if std is None:
-        std = pd.Series(np.abs(out["y_pred"]) * 0.08, index=out.index)
+    std = numeric_column(out, "recent_std")
     std = std.fillna(pd.Series(np.abs(out["y_pred"]) * 0.08, index=out.index))
     std = std.clip(lower=1e-6)
 
     p_podium = np.zeros(len(out), dtype=float)
     # sample within groups for rank uncertainty
-    for _, idx in out.groupby(gcols, sort=False).groups.items():
-        idx = list(idx)
+    for _, group_idx in out.groupby(gcols, sort=False).groups.items():
+        idx = list(group_idx)
         mu = out.loc[idx, "y_pred"].to_numpy(dtype=float)
         sd = std.loc[idx].to_numpy(dtype=float)
         sims = rng.normal(mu, sd, size=(n_sim, len(idx)))
@@ -49,7 +48,7 @@ def kde_simulate_placement(task, n_sim: int = 30, seed: int = 7) -> pd.DataFrame
         order = np.argsort(sims, axis=1)
         ranks = np.empty_like(order)
         ranks[np.arange(n_sim)[:, None], order] = np.arange(1, len(idx) + 1)
-        p_podium[out.index.get_indexer(idx)] = (ranks <= 3).mean(axis=0)
+        p_podium[out.index.get_indexer(pd.Index(idx))] = (ranks <= 3).mean(axis=0)
     out["p_podium"] = p_podium
     return out
 

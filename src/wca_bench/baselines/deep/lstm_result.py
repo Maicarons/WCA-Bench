@@ -168,11 +168,9 @@ def lstm_result_predict(task, window: int = 8, cap: int = 20000, device: str | N
     backend = "lstm"
     torch_error: str | None = None
     try:
-        import torch  # noqa: F401
-
         y_pred = _torch_predict(task, feats, train, window, cap, resolved)
-    except ImportError as exc:
-        torch_error = f"ImportError: {exc}"
+    except ImportError:
+        # torch not installed — graceful fallback, not a hard error
         y_pred = None
     except Exception as exc:  # noqa: BLE001 - reported in attrs, never swallowed silently
         torch_error = f"{type(exc).__name__}: {exc}"

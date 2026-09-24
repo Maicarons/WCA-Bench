@@ -5,6 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from wca_bench.utils.frame import numeric_column
+
 
 def _person_stats_frame(task) -> pd.DataFrame:
     stats = task.data.frozen_stats.get("person_event_stats", {}) or {}
@@ -51,8 +53,8 @@ def history_mean_predict(task, window: int = 25) -> pd.DataFrame:
     y_pred = df["recent_mean"].astype(float)
     y_pred = y_pred.fillna(df["fs_mean"]).fillna(gmean)
 
-    best = pd.to_numeric(df.get("best"), errors="coerce")
-    average = pd.to_numeric(df.get("average"), errors="coerce")
+    best = numeric_column(df, "best")
+    average = numeric_column(df, "average")
 
     out = pd.DataFrame(
         {

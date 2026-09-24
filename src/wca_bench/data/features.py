@@ -110,12 +110,12 @@ def build_result_features(
         std = float(vals.std(ddof=0)) if len(vals) > 1 else 0.0
         return pd.Series({"recent_mean": mean, "recent_std": std, "recent_slope": slope})
 
-    recent = pe.apply(_recent_stats, include_groups=False).reset_index()
+    recent = pe.apply(_recent_stats, include_groups=False).reset_index()  # type: ignore[call-overload]
     pe_agg = pe_agg.merge(recent, on=["person_id", "event_id"], how="left")
 
     # recent DNF count in last 10 rounds
     recent_dnf = (
-        pe.apply(lambda g: float(g["is_dnf"].tail(10).sum()), include_groups=False)
+        pe.apply(lambda g: float(g["is_dnf"].tail(10).sum()), include_groups=False)  # type: ignore[call-overload]
         .reset_index(name="recent_dnf_count")
     )
     pe_agg = pe_agg.merge(recent_dnf, on=["person_id", "event_id"], how="left")

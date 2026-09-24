@@ -28,6 +28,7 @@ reports/
 wandb/
 mlruns/
 *.parquet
+!examples/submission_template/predictions.parquet
 *.arrow
 *.zip
 

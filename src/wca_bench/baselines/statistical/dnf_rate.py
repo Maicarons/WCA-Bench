@@ -5,6 +5,8 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
+from wca_bench.utils.frame import numeric_column
+
 
 def historical_dnf_predict(task) -> pd.DataFrame:
     """Predict next-attempt DNF probability from historical person-event DNF rate."""
@@ -31,12 +33,13 @@ def historical_dnf_predict(task) -> pd.DataFrame:
     else:
         feats["fs_dnf"] = np.nan
 
-    p = pd.to_numeric(feats.get("historical_dnf_rate"), errors="coerce")
-    p = p.fillna(pd.to_numeric(feats.get("fs_dnf"), errors="coerce")).fillna(global_rate)
+    p = numeric_column(feats, "historical_dnf_rate")
+    p = p.fillna(numeric_column(feats, "fs_dnf")).fillna(global_rate)
 
-    y = feats.get("target_dnf")
-    if y is None:
-        y = feats.get("best") == -1
+    if "target_dnf" in feats.columns:
+        y = feats["target_dnf"]
+    else:
+        y = feats["best"] == -1
 
     return pd.DataFrame(
         {
