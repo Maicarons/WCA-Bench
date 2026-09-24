@@ -247,22 +247,21 @@ def generate_synthetic_dataset(
     for comp in comps_rows:
         comp_date = date.fromisoformat(str(comp["start_date"]))
         n_entered = int(rng.integers(8, min(cfg.n_persons, 40) + 1))
-        entrants = rng.choice(person_ids, size=n_entered, replace=False)
+        entrants = [str(p) for p in rng.choice(person_ids, size=n_entered, replace=False)]
         n_events = int(rng.integers(2, min(len(cfg.events), 7) + 1))
-        comp_events = list(rng.choice(cfg.events, size=n_events, replace=False))
+        comp_events = [str(e) for e in rng.choice(cfg.events, size=n_events, replace=False)]
 
-        for eid_raw in comp_events:
-            eid = str(eid_raw)
-            fmt_choice = rng.choice(["1", "3", "a", "m"], p=[0.1, 0.25, 0.55, 0.10])
+        for eid in comp_events:
+            fmt_choice = str(rng.choice(["1", "3", "a", "m"], p=[0.1, 0.25, 0.55, 0.10]))
             # multi-blind / fmc tend to use mo3/best-of
             if eid == "333fm":
-                fmt_choice = rng.choice(["1", "m", "3"], p=[0.3, 0.4, 0.3])
+                fmt_choice = str(rng.choice(["1", "m", "3"], p=[0.3, 0.4, 0.3]))
             if eid in {"333mbf", "444bf", "555bf"}:
-                fmt_choice = rng.choice(["1", "3", "a"], p=[0.35, 0.45, 0.2])
+                fmt_choice = str(rng.choice(["1", "3", "a"], p=[0.35, 0.45, 0.2]))
             if eid in {"666", "777"}:
-                fmt_choice = rng.choice(["1", "m", "a"], p=[0.3, 0.4, 0.3])
+                fmt_choice = str(rng.choice(["1", "m", "a"], p=[0.3, 0.4, 0.3]))
             n_attempts = FORMATS[fmt_choice]["attempts"]
-            round_type = rng.choice(["1", "2", "f"], p=[0.55, 0.25, 0.20])
+            round_type = str(rng.choice(["1", "2", "f"], p=[0.55, 0.25, 0.20]))
 
             performances = []
             for pid in entrants:
