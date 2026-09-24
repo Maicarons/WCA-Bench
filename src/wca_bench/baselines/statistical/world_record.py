@@ -68,14 +68,14 @@ def exponential_limit_estimate(
             if sse < best["sse"]:
                 best = {"sse": sse, "limit": float(L), "lambda": float(lam)}
 
-    L = best["limit"]
-    lam = best["lambda"]
+    best_limit = float(best["limit"])
+    best_lam = float(best["lambda"])
     start = pd.to_datetime(s["date"].min())
     t_conv = np.inf
-    if y0 > L and lam > 0:
-        thr = 0.005 / lam
+    if y0 > best_limit and best_lam > 0:
+        thr = 0.005 / best_lam
         if thr > 0:
-            t_conv = -np.log(thr) / lam
+            t_conv = -np.log(thr) / best_lam
     year_converge = start.year + t_conv if np.isfinite(t_conv) else float("nan")
 
     stability = float("nan")
@@ -90,8 +90,8 @@ def exponential_limit_estimate(
         stability = float(np.std(estimates)) if estimates else float("nan")
 
     return {
-        "limit": float(L),
-        "lambda": float(lam),
+        "limit": best_limit,
+        "lambda": best_lam,
         "year_converge": float(year_converge),
         "n_points": int(len(s)),
         "sse": float(best["sse"]),

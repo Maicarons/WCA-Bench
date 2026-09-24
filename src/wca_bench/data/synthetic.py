@@ -251,7 +251,8 @@ def generate_synthetic_dataset(
         n_events = int(rng.integers(2, min(len(cfg.events), 7) + 1))
         comp_events = list(rng.choice(cfg.events, size=n_events, replace=False))
 
-        for eid in comp_events:
+        for eid_raw in comp_events:
+            eid = str(eid_raw)
             fmt_choice = rng.choice(["1", "3", "a", "m"], p=[0.1, 0.25, 0.55, 0.10])
             # multi-blind / fmc tend to use mo3/best-of
             if eid == "333fm":
